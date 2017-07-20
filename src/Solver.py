@@ -33,7 +33,7 @@ class Solver(object):
         self._computational_time = None
 
     def get_x(self):
-        return self._x
+        return np.array(self._x)
 
     def get_computational_time(self):
         return datetime.timedelta(seconds=self._computational_time)
@@ -131,7 +131,7 @@ class LinearSolver(Solver):
 
 class TikhonovLinearSolver(LinearSolver):
 
-    def __init__(self, A, A_adj, B, B_adj, b, alpha, x0,
+    def __init__(self, A, A_adj, B, B_adj, b, alpha, x0, b_reg=0,
                  minimizer="lsmr", data_loss="linear",
                  iter_max=10):
 
@@ -140,6 +140,7 @@ class TikhonovLinearSolver(LinearSolver):
 
         self._B = B
         self._B_adj = B_adj
+        self._b_reg = b_reg
         self._minimizer = minimizer
         self._iter_max = iter_max
 
@@ -225,6 +226,7 @@ class TikhonovLinearSolver(LinearSolver):
             # Define right-hand side b
             b = np.zeros(self._x0.size + self._B(self._x0).size)
             b[0:self._b.size] = self._b
+            b[self._b.size:] = np.sqrt(alpha) * self._b_reg
 
         # No regularization
         else:
@@ -282,23 +284,106 @@ class ADMMLinearSolver(LinearSolver):
         self._D = D
         self._D_adj = D_adj
         self._dimension = dimension
+        self._iter_max = iter_max
         self._rho = rho
         self._ADMM_iterations = ADMM_iterations
 
     def _run(self):
-        pass
+
+        v = self._D(self._x0)
+        w = np.zeros_like(v)
+
+        for i in range(0, self._ADMM_iterations):
+
+            self._x, v, w = self._perform_ADMM_iteration(self._x, v, w)
+
+            # shape = (256, 256)
+
+            # recon = np.array(self._x.reshape(*shape))
+            # ph.show_arrays(recon, title="ADMM_iter%d"%(i+1), fig_number=1)
+
+            # v_split = [h.reshape(*shape) for h in self._get_split(v)]
+            # ph.show_arrays(v_split, title="v", cmap="jet", fig_number=2)
+
+            # w_split = [h.reshape(*shape) for h in self._get_split(w)]
+            # ph.show_arrays(w_split, title="w", cmap="jet", fig_number=3)
+
+            # ph.pause()
+
+    def _perform_ADMM_iteration(self, x, v, w):
+
+        # 1) Update primal variable using first-order Tikhonov regularization
+        x = self._perform_ADMM_step_1_TK1_recon_solution(x, v, w, self._rho)
+
+        # Compute derivatives for steps 2 and 3
+        Dx = self._D(x)
+
+        # 2) Update auxiliary variable
+        v = self._perform_ADMM_step_2_auxiliary_variable(
+            Dx, w, self._alpha / self._rho)
+
+        # 3) Update scaled dual variable
+        w = w + Dx - v
+
+        return x, v, w
+
+    def _perform_ADMM_step_1_TK1_recon_solution(self, x, v, w, rho):
+
+        b_reg = v - w
+
+        tikhonov = TikhonovLinearSolver(
+            A=self._A, A_adj=self._A_adj,
+            B=self._D, B_adj=self._D_adj,
+            b=self._b, b_reg=b_reg,
+            alpha=rho,
+            x0=x,
+            iter_max=self._iter_max)
+        tikhonov.run()
+        tikhonov.print_statistics()
+
+        return tikhonov.get_x()
+
+    def _perform_ADMM_step_2_auxiliary_variable(self, Dx, w, ell):
+
+        v = np.zeros_like(Dx)
+
+        # Compute t = Dx + w
+        t = Dx + w
+        t_split = self._get_split(t)
+        t_norm = np.sqrt(self._get_squared_sum_of_split(t_split))
+
+        ind = t_norm > ell
+
+        m = t_split[0].shape[0]
+        for i in range(0, self._dimension):
+            v_tmp = v[i*m:(i+1)*m, ...]
+            v_tmp[ind] = self._get_soft_threshold(ell, t_norm[ind]) * \
+                t_split[i][ind] / t_norm[ind]
+            v[i*m:(i+1)*m, ...] = v_tmp
+
+        return v
+
+    def _get_soft_threshold(self, ell, t):
+        return np.maximum(np.abs(t) - ell, 0)*np.sign(t)
 
     def _get_cost_regularization_term(self, x):
 
-        Dx = self._D(x)
-        Dx_split = np.array_split(Dx, self._dimension)
+        Dx_split = self._get_split(self._D(x))
+        sum_Dx_i_squared = self._get_squared_sum_of_split(Dx_split)
 
-        # dx_i ** 2
-        tmp = Dx_split[0] ** 2
+        return np.sum(np.sqrt(sum_Dx_i_squared))
 
-        # Compute sum_k dx_k ** 2
+    def _get_split(self, x):
+        x_split = np.array_split(x, self._dimension)
+        return x_split
+
+    def _get_squared_sum_of_split(self, x_split):
+
+        # x_i ** 2
+        tmp = x_split[0] ** 2
+
+        # Compute sum_k x_k^2
         for i in range(1, self._dimension):
-            tmp += Dx_split[i] ** 2
+            tmp += x_split[i]**2
 
-        return np.sum(np.sqrt(tmp))
-        return np.sum()
+        return tmp

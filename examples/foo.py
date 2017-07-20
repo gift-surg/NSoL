@@ -22,7 +22,8 @@ import utilities.PythonHelper as ph
 
 from definitions import DIR_TEST
 
-filename = os.path.join(DIR_TEST, "2D_Lena_512.png")
+filename = os.path.join(DIR_TEST, "2D_Lena_256.png")
+# filename = os.path.join(DIR_TEST, "2D_Lena_512.png")
 original_nda = ph.read_image(filename).astype(np.float64)
 
 cov = np.zeros((2, 2))
@@ -55,41 +56,42 @@ A_adj_1D = lambda x: A_adj(x.reshape(*Y_shape)).flatten()
 D_1D = lambda x: D(x.reshape(*X_shape)).flatten()
 D_adj_1D = lambda x: D_adj(x.reshape(*Z_shape)).flatten()
 
-# b = blurred_noisy_nda.flatten()
-# x0 = blurred_noisy_nda.flatten()
+b = blurred_noisy_nda.flatten()
+x0 = blurred_noisy_nda.flatten()
 
-solver = Solver.TikhonovLinearSolver(
-    A=A_1D, A_adj=A_adj_1D,
-    B=D_1D, B_adj=D_adj_1D,
-    b=b,
-    alpha=0.05,
-    x0=x0,
-    # minimizer="lsmr",
-    # minimizer="least_squares",
-    # minimizer="L-BFGS-B",
-    # data_loss="linear",
-    # data_loss="huber",
-    # data_loss="soft_l1",
-    iter_max=10,
-)
+# solver = Solver.TikhonovLinearSolver(
+#     A=A_1D, A_adj=A_adj_1D,
+#     B=D_1D, B_adj=D_adj_1D,
+#     b=b,
+#     alpha=0.05,
+#     x0=x0,
+#     # minimizer="lsmr",
+#     # minimizer="least_squares",
+#     # minimizer="L-BFGS-B",
+#     # data_loss="linear",
+#     # data_loss="huber",
+#     # data_loss="soft_l1",
+#     iter_max=10,
+# )
 
 solver = Solver.ADMMLinearSolver(
     A=A_1D, A_adj=A_adj_1D,
     b=b,
     D=D_1D, D_adj=D_adj_1D,
     x0=x0,
-    alpha=0.05,
+    alpha=5,
     rho=0.5,
-    ADMM_iterations=2,
+    ADMM_iterations=10,
     dimension=len(original_nda.shape),
     iter_max=10,
+    # data_loss="huber",
 )
 
 solver.run()
 solver.print_statistics()
-# recon_nda = solver.get_x().reshape(*X_shape)
+recon_nda = solver.get_x().reshape(*X_shape)
 
-# ph.show_arrays(
-#     [original_nda, blurred_nda, blurred_noisy_nda, recon_nda],
-#     title=["original", "blurred", "blurred+noise", "recon"],
-#     fig_number=None)
+ph.show_arrays(
+    [original_nda, blurred_nda, blurred_noisy_nda, recon_nda],
+    title=["original", "blurred", "blurred+noise", "recon"],
+    fig_number=None)
