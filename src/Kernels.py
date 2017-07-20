@@ -61,13 +61,45 @@ class Kernels(object):
     def get_dx_backward_difference(self):
         pass
 
-    @abstractmethod
-    def get_dy_forward_difference(self):
-        pass
 
-    @abstractmethod
-    def get_dy_backward_difference(self):
-        pass
+class Kernels1D(Kernels):
+
+    def __init__(self):
+        super(self.__class__, self).__init__(dimension=1)
+
+    def get_gaussian(self, cov, alpha_cut=3, spacing=1):
+
+        # Generate intervals for x based on cut-off distance given by
+        # standard deviation, alpha_cut and spacing
+        x_max = np.ceil(np.sqrt(cov) * alpha_cut/spacing)
+
+        step = 1
+        points = np.arange(-x_max, x_max+step, step)
+
+        # Mean/Origin for Gaussian blurring
+        origin = 0.
+
+        # Compute scaled, inverse covariance matrix
+        cov_scale_inv = spacing**2 / cov
+
+        # Compute Gaussian weights
+        values = (points-origin)*cov_scale_inv * (points-origin)
+        kernel = np.exp(-0.5 * values)
+        kernel = kernel/np.sum(kernel)
+
+        return kernel
+
+    def get_dx_forward_difference(self):
+        kernel = np.zeros(2)
+        kernel = np.array([1, -1])
+
+        return kernel
+
+    def get_dx_backward_difference(self):
+        kernel = np.zeros(3)
+        kernel = np.array([0, 1, -1])
+
+        return kernel
 
 
 class Kernels2D(Kernels):

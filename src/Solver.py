@@ -88,7 +88,7 @@ class LinearSolver(Solver):
         cost_data_ell2 = self.get_cost_data_term_ell2()
         cost_regularizer = self.get_cost_regularization_term()
 
-        ph.print_title("Summary Optimization")
+        ph.print_subtitle("Summary Optimization")
         ph.print_debug_info("Computational time: %s" %
                             (self.get_computational_time()))
         ph.print_debug_info("Cost data term (f, loss=%s): " %
@@ -294,6 +294,9 @@ class ADMMLinearSolver(LinearSolver):
         w = np.zeros_like(v)
 
         for i in range(0, self._ADMM_iterations):
+
+            ph.print_title("ADMM iteration %d/%d" %
+                           (i+1, self._ADMM_iterations))
 
             self._x, v, w = self._perform_ADMM_iteration(self._x, v, w)
 

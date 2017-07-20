@@ -20,11 +20,7 @@ class LinearOperators(object):
 
     def __init__(self, dimension):
         self._dimension = dimension
-
-        if self._dimension == 2:
-            self._kernels = Kernels.Kernels2D()
-        else:
-            self._kernels = Kernels.Kernels3D()
+        self._kernels = eval("Kernels.Kernels%dD()" % (self._dimension))
 
     def get_dimension(self):
         return self._dimension
@@ -68,7 +64,8 @@ class LinearOperators(object):
     def get_gaussian_blurring_operators(self, cov, alpha_cut=3, spacing=None):
 
         if spacing is None:
-            spacing = np.ones(cov.diagonal().size)
+            # also works for dimension = 1
+            spacing = np.ones(np.sqrt(np.array(cov).size).astype(int))
 
         kernel = self._kernels.get_gaussian(
             cov=cov, alpha_cut=alpha_cut, spacing=spacing)
@@ -97,27 +94,6 @@ class LinearOperators(object):
         return D, D_adj
 
     ##
-    # Gets the differential operator in y-direction and its adjoint for both 2D
-    # and 3D
-    # \date       2017-07-19 16:31:55+0100
-    #
-    # \param      self  The object
-    # \param      mode  Mode specifying the boundary conditions for the
-    #                   convolution
-    #
-    # \return     The y-differential operators.
-    #
-    def get_dy_operators(self, mode="constant"):
-
-        kernel = self._kernels.get_dy_forward_difference()
-        kernel_adj = -self._kernels.get_dy_backward_difference()
-
-        D = lambda x: scipy.ndimage.convolve(x, kernel, mode=mode)
-        D_adj = lambda x: scipy.ndimage.convolve(x, kernel_adj, mode=mode)
-
-        return D, D_adj
-
-    ##
     # Gets the gradient operator and its adjoint for both 2D and 3D.
     #
     # Operator \p grad applied on (m x n) numpy array returns an (dim*m x n)
@@ -133,14 +109,20 @@ class LinearOperators(object):
     def get_gradient_operators(self, mode="constant"):
 
         Dx, Dx_adj = self.get_dx_operators(mode=mode)
-        Dy, Dy_adj = self.get_dy_operators(mode=mode)
+
+        if self._dimension == 1:
+            grad = Dx
+            grad_adj = Dx_adj
 
         if self._dimension == 2:
+            Dy, Dy_adj = self.get_dy_operators(mode=mode)
+
             grad = lambda x: np.concatenate((Dx(x), Dy(x)))
             grad_adj = lambda x: self._get_adjoint_gradient_operator(
                 x, [Dx_adj, Dy_adj])
 
         elif self._dimension == 3:
+            Dy, Dy_adj = self.get_dy_operators(mode=mode)
             Dz, Dz_adj = self.get_dz_operators(mode=mode)
 
             grad = lambda x: np.concatenate((Dx(x), Dy(x), Dz(x)))
@@ -175,16 +157,64 @@ class LinearOperators(object):
         return D_adj_x
 
 
+class LinearOperators1D(LinearOperators):
+
+    def __init__(self):
+        super(self.__class__, self).__init__(dimension=1)
+
+
 class LinearOperators2D(LinearOperators):
 
     def __init__(self):
         super(self.__class__, self).__init__(dimension=2)
+
+    ##
+    # Gets the differential operator in y-direction and its adjoint for both 2D
+    # and 3D
+    # \date       2017-07-19 16:31:55+0100
+    #
+    # \param      self  The object
+    # \param      mode  Mode specifying the boundary conditions for the
+    #                   convolution
+    #
+    # \return     The y-differential operators.
+    #
+    def get_dy_operators(self, mode="constant"):
+
+        kernel = self._kernels.get_dy_forward_difference()
+        kernel_adj = -self._kernels.get_dy_backward_difference()
+
+        D = lambda x: scipy.ndimage.convolve(x, kernel, mode=mode)
+        D_adj = lambda x: scipy.ndimage.convolve(x, kernel_adj, mode=mode)
+
+        return D, D_adj
 
 
 class LinearOperators3D(LinearOperators):
 
     def __init__(self):
         super(self.__class__, self).__init__(dimension=3)
+
+    ##
+    # Gets the differential operator in y-direction and its adjoint for both 2D
+    # and 3D
+    # \date       2017-07-19 16:31:55+0100
+    #
+    # \param      self  The object
+    # \param      mode  Mode specifying the boundary conditions for the
+    #                   convolution
+    #
+    # \return     The y-differential operators.
+    #
+    def get_dy_operators(self, mode="constant"):
+
+        kernel = self._kernels.get_dy_forward_difference()
+        kernel_adj = -self._kernels.get_dy_backward_difference()
+
+        D = lambda x: scipy.ndimage.convolve(x, kernel, mode=mode)
+        D_adj = lambda x: scipy.ndimage.convolve(x, kernel_adj, mode=mode)
+
+        return D, D_adj
 
     ##
     # Gets the differential operator in z-direction and its adjoint for 3D

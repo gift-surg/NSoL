@@ -22,8 +22,18 @@ class TestKernels(unittest.TestCase):
 
     def setUp(self):
 
-        self.accuracy = 7
+        self.accuracy = 10
         self.scaling = 1
+
+        # 1D
+        self.shape_1D = (50,)
+
+        self.cov_1D = 2
+
+        self.x_1D = self.scaling * np.random.rand(*self.shape_1D)
+        self.y_1D = self.scaling * np.random.rand(*self.shape_1D)
+
+        self.linear_operators_1D = LinearOperators.LinearOperators1D()
 
         # 2D
         self.shape_2D = (50, 50)
@@ -59,6 +69,17 @@ class TestKernels(unittest.TestCase):
 
     def test_gaussian_blurring(self):
 
+        # ---------------------------------1D----------------------------------
+        A, A_adj = self.linear_operators_1D.get_gaussian_blurring_operators(
+            self.cov_1D)
+
+        A_x = A(self.x_1D)
+        A_adj_y = A_adj(self.y_1D)
+
+        # Check |(Ax,y) - (x,A'y)| = 0
+        abs_diff = np.abs(np.sum(A_x*self.y_1D) - np.sum(self.x_1D*A_adj_y))
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+
         # ---------------------------------2D----------------------------------
         A, A_adj = self.linear_operators_2D.get_gaussian_blurring_operators(
             self.cov_2D)
@@ -81,6 +102,15 @@ class TestKernels(unittest.TestCase):
         self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
 
     def test_differential_operations(self):
+
+        # ---------------------------------1D----------------------------------
+
+        # dx
+        D, D_adj = self.linear_operators_1D.get_dx_operators()
+        D_x = D(self.x_1D)
+        D_adj_y = D_adj(self.y_1D)
+        abs_diff = np.abs(np.sum(D_x*self.y_1D) - np.sum(self.x_1D*D_adj_y))
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
 
         # ---------------------------------2D----------------------------------
 
@@ -122,33 +152,54 @@ class TestKernels(unittest.TestCase):
         self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
 
     def test_get_gradient_operators(self):
-      
-        # # ---------------------------------2D----------------------------------
-        # dx, dx_adj = self.linear_operators_2D.get_dx_operators()
-        # dy, dy_adj = self.linear_operators_2D.get_dy_operators()
-        # grad, grad_adj = self.linear_operators_2D.get_gradient_operators()
 
-        # # grad
-        # x = self.x_2D
-        # y0 = dx(x)
-        # y1 = dy(x)
-        # res = np.concatenate((y0, y1))
-        # res_ = grad(x)
-        # abs_diff = np.abs(np.sum(res_-res))
-        # self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+        # ---------------------------------1D----------------------------------
+        dx, dx_adj = self.linear_operators_1D.get_dx_operators()
+        grad, grad_adj = self.linear_operators_1D.get_gradient_operators()
 
-        # # grad_adj
-        # y = self.scaling * np.concatenate((
-        #     np.random.rand(*self.shape_2D),
-        #     np.random.rand(*self.shape_2D)))
+        # grad
+        x = self.x_1D
+        y0 = dx(x)
+        res = y0
+        res_ = grad(x)
+        abs_diff = np.abs(np.sum(res_-res))
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
 
-        # m = self.shape_2D[0]
-        # y0 = y[:m, :]
-        # y1 = y[m:2*m, :]
-        # res = dx_adj(y0) + dy_adj(y1)
-        # res_ = grad_adj(y)
-        # abs_diff = np.abs(np.sum(res_-res))
-        # self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+        # grad_adj
+        y = self.scaling * np.random.rand(*self.shape_1D)
+
+        y0 = y
+        res = dx_adj(y0)
+        res_ = grad_adj(y)
+        abs_diff = np.abs(np.sum(res_-res))
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+
+        # ---------------------------------2D----------------------------------
+        dx, dx_adj = self.linear_operators_2D.get_dx_operators()
+        dy, dy_adj = self.linear_operators_2D.get_dy_operators()
+        grad, grad_adj = self.linear_operators_2D.get_gradient_operators()
+
+        # grad
+        x = self.x_2D
+        y0 = dx(x)
+        y1 = dy(x)
+        res = np.concatenate((y0, y1))
+        res_ = grad(x)
+        abs_diff = np.abs(np.sum(res_-res))
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+
+        # grad_adj
+        y = self.scaling * np.concatenate((
+            np.random.rand(*self.shape_2D),
+            np.random.rand(*self.shape_2D)))
+
+        m = self.shape_2D[0]
+        y0 = y[:m, :]
+        y1 = y[m:2*m, :]
+        res = dx_adj(y0) + dy_adj(y1)
+        res_ = grad_adj(y)
+        abs_diff = np.abs(np.sum(res_-res))
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
 
         # ---------------------------------3D----------------------------------
         dx, dx_adj = self.linear_operators_3D.get_dx_operators()
@@ -182,6 +233,15 @@ class TestKernels(unittest.TestCase):
         self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
 
     def test_gradient_operators(self):
+
+        # ---------------------------------1D-------------------------------
+
+        grad, grad_adj = self.linear_operators_1D.get_gradient_operators()
+        x = self.x_1D
+        y = self.scaling * np.random.rand(*self.shape_1D)
+
+        abs_diff = np.abs(np.sum(grad(x)*y) - np.sum(x*grad_adj(y)))
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
 
         # ---------------------------------2D-------------------------------
 
