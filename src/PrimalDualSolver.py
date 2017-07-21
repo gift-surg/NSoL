@@ -80,19 +80,22 @@ class PrimalDualSolver(Solver):
         # Number of primal-dual iterations
         self._iterations = iterations
 
-        self._strategy = "ALG2"
         self._strategy = "AHMOD"
+        # self._strategy = "ALG2"
+        # self._strategy = "ALG3"
 
         # parameter initialization depend on chosen method
         self._get_initial_tau_sigma = {
-            "ALG2": self._get_initial_tau_sigma_alg2,
             "AHMOD": self._get_initial_tau_sigma_ahmod,
+            "ALG2": self._get_initial_tau_sigma_alg2,
+            "ALG3": self._get_initial_tau_sigma_alg3,
         }
 
         # parameter updates depend on chosen method
         self._get_update_theta_tau_sigma = {
-            "ALG2": self._get_update_theta_tau_sigma_alg2,
             "AHMOD": self._get_update_theta_tau_sigma_ahmod,
+            "ALG2": self._get_update_theta_tau_sigma_alg2,
+            "ALG3": self._get_update_theta_tau_sigma_alg3,
         }
 
     ##
@@ -110,7 +113,7 @@ class PrimalDualSolver(Solver):
         # regularization parameter lambda as used in Chambolle2011
         lmbda = 1. / self._alpha
 
-        # lmbda = np.sqrt(lmbda)
+        # TODO: Check where the sqrt is missing!
         lmbda = lmbda ** 2
 
         # Dynamic step sizes for primal and dual variable, see p.127
@@ -183,6 +186,59 @@ class PrimalDualSolver(Solver):
         theta_n = 1. / np.sqrt(1. + 2. * gamma * tau_n)
         tau_n = tau_n * theta_n
         sigma_n = sigma_n / theta_n
+        return theta_n, tau_n, sigma_n
+
+
+    ##
+    # Gets the initial step sizes tau_0, sigma_0 and the Lipschitz parameter
+    # gamma according to ALG2 method in Chambolle2011, p.136
+    #
+    # tau_0 and sigma_0 such that tau_0 * sigma_0 * L^2 = 1
+    # \date       2017-07-18 17:57:33+0100
+    #
+    # \param      self   The object
+    # \param      L2     Squared operator norm
+    # \param      lmbda  Regularization parameter
+    #
+    # \return     tau0, sigma0, gamma
+    #
+    def _get_initial_tau_sigma_alg3(self, L2, lmbda=None):
+        
+        # Initial values according to ALG3 in Chambolle2011
+        gamma = lmbda
+        delta = 0.05
+        mu = 2. * np.sqrt(gamma * delta / L2)
+
+        # relaxation parameter in [1/(1+mu), 1]
+        theta = 1. / (1. + mu)
+
+        # step size dual variable
+        sigma = mu / (2. * delta)
+
+        # step size primal variable
+        tau = mu / (2. * gamma)
+
+        return tau, sigma, theta
+
+    ##
+    # Gets the update of the variable relaxation parameter
+    # \f$\theta_n\in[0,1]\f$ and the dynamic step sizes
+    # \f$\tau_n,\,\sigma_n>0\f$ for the primal and dual variable, respectively.
+    #
+    # Update is performed according to ALG2 in Chambolle2011, p.136. It always
+    # holds tau_n * sigma_n * L^2 = 1.
+    # \date       2017-07-18 18:16:28+0100
+    #
+    # \param      self     The object
+    # \param      L2       Squared operator norm
+    # \param      gamma    Lipschitz parameter
+    # \param      tau_n    Dynamic step size for primal variable
+    # \param      sigma_n  Dynamic step size for dual variable
+    #
+    # \return     theta_n, tau_n, sigma_n update
+    #
+    def _get_update_theta_tau_sigma_alg3(self, L2, gamma, tau_n, sigma_n):
+        theta_n = gamma
         return theta_n, tau_n, sigma_n
 
     ##

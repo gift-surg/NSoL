@@ -69,16 +69,15 @@ solver_ADMM = 1
 solver_PrimalDual = 1
 
 flag_normalize = 1
-flag_blurring = 1
+flag_blurring = 0
 flag_noise = 1
 noise = 0.1
 
-
 iter_max = 10
-alpha = 0.1
+alpha = 0.03
 rho = 1
-ADMM_iterations = 50
-PD_iterations = 50
+ADMM_iterations = 100
+PD_iterations = 100
 
 cov = np.diag(np.ones(dimension)) * 1.5
 
@@ -91,15 +90,14 @@ if dimension == 1:
     original_nda[30] = 50
 
 elif dimension == 2:
-    filename = os.path.join(DIR_TEST, "2D_Brain_Source.png")
-    # filename = os.path.join(DIR_TEST, "2D_Lena_256.png")
-    # filename = os.path.join(DIR_TEST, "2D_Lena_512.png")
+    filename = os.path.join(DIR_TEST, "2D_Lena_256.png")
+    # filename = os.path.join(DIR_TEST, "2D_Brain_Source.png")
     original_nda = ph.read_image(filename).astype(np.float64)
 
 elif dimension == 3:
     filename = os.path.join(DIR_TEST, "3D_SheppLoganPhantom_64.nii.gz")
-    original_sitk = sitk.ReadImage(filename, sitk.sitkFloat64)
-    original_nda = sitk.GetArrayFromImage(original_sitk)
+    original_sitk = sitk.ReadImage(filename)
+    original_nda = sitk.GetArrayFromImage(original_sitk).astype(np.float64)
 
 if flag_normalize:
     original_nda = original_nda / original_nda.max()
@@ -112,10 +110,10 @@ grad, grad_adj = linear_operators.get_gradient_operators()
 if flag_blurring:
     blurred_nda = A(original_nda)
 else:
-    blurred_nda = original_nd0
+    blurred_nda = original_nda
 
 if flag_noise:
-    blurred_noisy_nda = blurred_nda + noise * \
+    blurred_noisy_nda = blurred_nda + noise * blurred_nda.max() * \
         np.random.rand(*original_nda.shape)
 else:
     blurred_noisy_nda = blurred_nda
@@ -144,16 +142,23 @@ D_adj_1D = lambda x: D_adj(x.reshape(*Z_shape)).flatten()
 prox_tau_f = lambda x, tau: prox_tau_linear_least_squares(
     x=x, tau=tau,
     A=A_1D, A_adj=A_adj_1D, B=I_1D, B_adj=I_adj_1D, b=b, x0=x0)
-# prox_tau_f = lambda x, tau: prox_tau_least_squares_denoising(x, tau, x0=b)
+
+prox_tau_f = lambda x, tau: prox_tau_least_squares_denoising(x, tau, x0=b)
 
 prox_sigma_g_conj = lambda x, sigma: prox_sigma_tv_conj(
     x=x, sigma=sigma)
-prox_sigma_g_conj = lambda x, sigma: prox_sigma_huber_conj(
-    x=x, sigma=sigma,
-    alpha=0.05)
+# prox_sigma_g_conj = lambda x, sigma: prox_sigma_huber_conj(
+#     x=x, sigma=sigma,
+#     alpha=0.05)
 
-data_nda = [original_nda, blurred_nda, blurred_noisy_nda]
-data_labels = ["original", "blurred", "blurred+noise"]
+data_nda = [original_nda]
+data_labels = ["original"]
+
+# data_nda.append(blurred_nda)
+# data_labels.append("blurred")
+
+data_nda.append(blurred_noisy_nda)
+data_labels.append("blurred+noise")
 
 if dimension == 1:
     ph.show_curves(data_nda, labels=data_labels, fig_number=1)
@@ -162,14 +167,17 @@ elif dimension == 2:
     ph.show_arrays(data_nda, title=data_labels, fig_number=1)
 
 elif dimension == 3:
-    blurred_sitk = sitk.GetImageFromArray(blurred_nda)
-    blurred_sitk.CopyInformation(original_sitk)
+
+    original_sitk = sitk.GetImageFromArray(original_nda)
+    data_sitk = [original_sitk]
+
+    # blurred_sitk = sitk.GetImageFromArray(blurred_nda)
+    # data_sitk.append(blurred_sitk)
 
     blurred_noisy_sitk = sitk.GetImageFromArray(blurred_noisy_nda)
-    blurred_noisy_sitk.CopyInformation(original_sitk)
+    data_sitk.append(blurred_noisy_sitk)
 
-    data_sitk = [original_sitk, blurred_sitk, blurred_noisy_sitk]
-
+    ph.killall_itksnap()
     sitkh.show_sitk_image(data_sitk, label=data_labels)
 
 if solver_TK:
@@ -199,8 +207,8 @@ if solver_TK:
 
 if solver_ADMM:
     solver = admm.ADMMLinearSolver(
-        A=A_1D, A_adj=A_adj_1D,
-        # A=I_1D, A_adj=I_adj_1D,
+        # A=A_1D, A_adj=A_adj_1D,
+        A=I_1D, A_adj=I_adj_1D,
         b=b,
         D=D_1D, D_adj=D_adj_1D,
         x0=x0,
@@ -249,6 +257,4 @@ elif dimension == 2:
     ph.show_arrays(data_nda, title=data_labels, fig_number=1)
 
 elif dimension == 3:
-    sitkh.show_sitk_image(
-        [original_sitk, blurred_sitk, blurred_noisy_sitk, recon_sitk],
-        label=data_labels)
+    sitkh.show_sitk_image(data_sitk, label=data_labels)

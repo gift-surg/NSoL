@@ -85,7 +85,7 @@ class TikhonovLinearSolver(LinearSolver):
 
             # Linear least-squares method
             self._x = scipy.sparse.linalg.lsmr(
-                A, b, maxiter=self._iter_max, show=True)[0]
+                A, b, maxiter=self._iter_max, show=True, atol=0, btol=0)[0]
 
             # Clip negative values
             self._x = np.clip(self._x, 0, np.inf)
