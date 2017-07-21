@@ -1,7 +1,7 @@
 ##
 # \file Kernels.py
 # \brief      Class to create kernels used for blurring and differentiation in
-#             both 2D and 3D
+#             1D, 2D and 3D
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
 # \date       July 2017

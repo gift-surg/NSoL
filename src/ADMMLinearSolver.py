@@ -1,0 +1,212 @@
+##
+# \file ADMM LinearSolver.py
+# \brief      Class to define a numerical solver for solving the linear
+#             least-squares problems with TV regularization via the Alternating
+#             Direction Method of Multipliers (ADMM) method
+#
+# \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
+# \date       July 2017
+#
+
+import os
+import sys
+import numpy as np
+
+from src.LinearSolver import LinearSolver
+import src.TikhonovLinearSolver as tk
+
+sys.path.insert(1, os.path.join(
+    os.path.abspath(os.environ['VOLUMETRIC_RECONSTRUCTION_DIR']), 'src', 'py'))
+import utilities.PythonHelper as ph
+
+
+##
+# Class to estimate the unique minimizer to the convex minimization problem
+# max_x [1/2 ||rho( Ax-b )||^2 + alpha TV(x)].
+# \date       2017-07-21 00:23:34+0100
+#
+class ADMMLinearSolver(LinearSolver):
+
+    ##
+    # Store relevant information for solving a linear least-squares problem
+    # with TV regularization via ADMM
+    # \date       2017-07-21 00:24:24+0100
+    #
+    # \param      self             The object
+    # \param      A                Function associated to linear operator A:
+    #                              X->Y; x->A(x) with x being a 1D numpy array
+    # \param      A_adj            Function associated to adjoint linear
+    #                              operator A^*: Y->X; y->A^*(y)
+    # \param      b                Right hand-side of linear system Ax = b as
+    #                              1D numpy array
+    # \param      x0               Initial value as 1D numpy array
+    # \param      D                Function associated to differential operator
+    #                              D: x->D(x) with x and D(x) 1D numpy arrays
+    # \param      D_adj            Function associated to adjoint linear
+    #                              operator D^*
+    # \param      dimension        Dimension of space as integer indicating
+    #                              either 1D, 2D or 3D problems
+    # \param      alpha            Regularization parameter; scalar > 0
+    # \param      data_loss        Data loss function rho specified as string,
+    #                              e.g. "linear", "soft_l1", "huber", "cauchy",
+    #                              "arctan".
+    # \param      iter_max         Number of maximum iterations for used
+    #                              minimizer, integer value
+    # \param      rho              regularization parameter of augmented
+    #                              Lagrangian term; scalar > 0
+    # \param      ADMM_iterations  Number of ADMM iterations, integer value
+    #
+    def __init__(self, A, A_adj, b, x0,
+                 D, D_adj, dimension,
+                 alpha=0.05, data_loss="linear", iter_max=10,
+                 rho=0.5, ADMM_iterations=10):
+
+        super(self.__class__, self).__init__(
+            A=A, A_adj=A_adj, b=b, x0=x0, alpha=alpha, data_loss=data_loss)
+
+        self._D = D
+        self._D_adj = D_adj
+        self._dimension = dimension
+        self._iter_max = iter_max
+        self._rho = rho
+        self._ADMM_iterations = ADMM_iterations
+
+    def _run(self):
+
+        v = self._D(self._x0)
+        w = np.zeros_like(v)
+
+        for i in range(0, self._ADMM_iterations):
+
+            ph.print_title("ADMM iteration %d/%d" %
+                           (i+1, self._ADMM_iterations))
+
+            self._x, v, w = self._perform_ADMM_iteration(self._x, v, w)
+
+            # shape = (256, 256)
+
+            # recon = np.array(self._x.reshape(*shape))
+            # ph.show_arrays(recon, title="ADMM_iter%d"%(i+1), fig_number=1)
+
+            # v_split = [h.reshape(*shape) for h in self._get_split(v, self._dimension)]
+            # ph.show_arrays(v_split, title="v", cmap="jet", fig_number=2)
+
+            # w_split = [h.reshape(*shape) for h in self._get_split(w, self._dimension)]
+            # ph.show_arrays(w_split, title="w", cmap="jet", fig_number=3)
+
+            # ph.pause()
+
+    def _perform_ADMM_iteration(self, x, v, w):
+
+        # 1) Update primal variable using first-order Tikhonov regularization
+        x = self._perform_ADMM_step_1_TK1_recon_solution(x, v, w, self._rho)
+
+        # Compute derivatives for steps 2 and 3
+        Dx = self._D(x)
+
+        # 2) Update auxiliary variable
+        v = self._perform_ADMM_step_2_auxiliary_variable(
+            Dx, w, self._alpha / self._rho, self._dimension)
+
+        # 3) Update scaled dual variable
+        w = w + Dx - v
+
+        return x, v, w
+
+    def _perform_ADMM_step_1_TK1_recon_solution(self, x, v, w, rho):
+
+        b_reg = v - w
+
+        tikhonov = tk.TikhonovLinearSolver(
+            A=self._A, A_adj=self._A_adj,
+            B=self._D, B_adj=self._D_adj,
+            b=self._b, b_reg=b_reg,
+            alpha=rho,
+            x0=x,
+            iter_max=self._iter_max)
+        tikhonov.run()
+
+        return tikhonov.get_x()
+
+    def _perform_ADMM_step_2_auxiliary_variable(self, Dx, w, ell, dimension):
+
+        v = np.zeros_like(Dx)
+
+        # Compute t = Dx + w
+        t = Dx + w
+        t_split = self._get_split(t, dimension)
+        t_norm = np.sqrt(self._get_squared_sum_of_split(t_split))
+
+        ind = t_norm > ell
+
+        m = t_split[0].shape[0]
+        for i in range(0, dimension):
+            v_tmp = v[i*m:(i+1)*m, ...]
+            v_tmp[ind] = self._get_soft_threshold(ell, t_norm[ind]) * \
+                t_split[i][ind] / t_norm[ind]
+            v[i*m:(i+1)*m, ...] = v_tmp
+
+        return v
+
+    ##
+    # Gets the soft threshold.
+    #
+    # The soft threshold is defined as
+    # \f[ S_\ell(t) =  \max(|t|-\ell,0)\,\text{sgn}(t) = \begin{cases}
+    # t-\ell,& \text{if } t>\ell \\ 0,& \text{if } |t|\le\ell \\ t+\ell,&
+    # \text{if } t<\ell \end{cases}
+    # \f]
+    # \date       2017-07-21 00:37:13+0100
+    #
+    # \param      self  The object
+    # \param      ell   threshold as scalar > 0
+    # \param      t     array containing the values to be thresholded
+    #
+    # \return     The soft threshold.
+    #
+    def _get_soft_threshold(self, ell, t):
+        return np.maximum(np.abs(t) - ell, 0) * np.sign(t)
+
+    def _get_cost_regularization_term(self, x):
+
+        Dx_split = self._get_split(self._D(x), self._dimension)
+        sum_Dx_i_squared = self._get_squared_sum_of_split(Dx_split)
+
+        return np.sum(np.sqrt(sum_Dx_i_squared))
+
+    ##
+    # Gets the split of (n, ...) numpy into d (n/d, ...) numpy arrays with d
+    # being the dimension of space
+    #
+    # This recovers the respective x (y, z) variables from a single numpy array
+    # \date       2017-07-21 00:38:54+0100
+    #
+    # \param      self       The object
+    # \param      x          Numpy array
+    # \param      dimension  Numpy array as integer
+    #
+    # \return     List of d numpy arrays corresponding to the split
+    #
+    def _get_split(self, x, dimension):
+        x_split = np.array_split(x, dimension)
+        return x_split
+
+    ##
+    # Given a split, return the squared sum
+    # \date       2017-07-21 00:41:49+0100
+    #
+    # \param      self     The object
+    # \param      x_split  List of split obtained via 'get_split'
+    #
+    # \return     The squared sum of the split.
+    #
+    def _get_squared_sum_of_split(self, x_split):
+
+        # x_i ** 2
+        tmp = x_split[0] ** 2
+
+        # Compute sum_k x_k^2
+        for i in range(1, len(x_split)):
+            tmp += x_split[i]**2
+
+        return tmp
