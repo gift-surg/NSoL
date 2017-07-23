@@ -22,7 +22,8 @@ import utilities.PythonHelper as ph
 
 ##
 # Class to estimate the unique minimizer to the convex minimization problem
-# max_x [1/2 ||rho( Ax-b )||^2 + alpha TV(x)].
+# max_x [1/2 ||rho( Ax-b )||^2 + alpha g(Bx-b_reg)] with g(z) = TV(z) using
+# ADMM.
 # \date       2017-07-21 00:23:34+0100
 #
 class ADMMLinearSolver(LinearSolver):
@@ -40,12 +41,14 @@ class ADMMLinearSolver(LinearSolver):
     # \param      b                Right hand-side of linear system Ax = b as
     #                              1D numpy array
     # \param      x0               Initial value as 1D numpy array
-    # \param      D                Function associated to differential operator
-    #                              D: x->D(x) with x and D(x) 1D numpy arrays
-    # \param      D_adj            Function associated to adjoint linear
-    #                              operator D^*
+    # \param      B                Function associated to linear operator B:
+    #                              x->B(x) with x and B(x) 1D numpy arrays
+    # \param      B_adj            Function associated to adjoint linear
+    #                              operator B^*
     # \param      dimension        Dimension of space as integer indicating
     #                              either 1D, 2D or 3D problems
+    # \param      b_reg            Right hand-side of linear system associated
+    #                              to the regularizer, i.e. Bx = b_reg.
     # \param      alpha            Regularization parameter; scalar > 0
     # \param      data_loss        Data loss function rho specified as string,
     #                              e.g. "linear", "soft_l1", "huber", "cauchy",
@@ -55,17 +58,20 @@ class ADMMLinearSolver(LinearSolver):
     # \param      rho              regularization parameter of augmented
     #                              Lagrangian term; scalar > 0
     # \param      ADMM_iterations  Number of ADMM iterations, integer value
+    # \param      verbose          Verbose output, bool
     #
     def __init__(self, A, A_adj, b, x0,
-                 D, D_adj, dimension,
+                 B, B_adj, dimension, b_reg=0,
                  alpha=0.05, data_loss="linear", iter_max=10,
-                 rho=0.5, ADMM_iterations=10):
+                 rho=0.5, ADMM_iterations=10, verbose=0):
 
         super(self.__class__, self).__init__(
-            A=A, A_adj=A_adj, b=b, x0=x0, alpha=alpha, data_loss=data_loss)
+            A=A, A_adj=A_adj, b=b, x0=x0, alpha=alpha, data_loss=data_loss,
+            verbose=verbose)
 
-        self._D = D
-        self._D_adj = D_adj
+        self._B = B
+        self._B_adj = B_adj
+        self._b_reg = b_reg
         self._dimension = dimension
         self._iter_max = iter_max
         self._rho = rho
@@ -73,16 +79,25 @@ class ADMMLinearSolver(LinearSolver):
 
     def _run(self):
 
-        v = self._D(self._x0)
+        # Monitor output
+        if self._monitor is not None:
+            self._monitor.add_x(self._x)
+
+        v = self._B(self._x0) - self._b_reg
         w = np.zeros_like(v)
 
         for i in range(0, self._ADMM_iterations):
 
-            ph.print_title("ADMM iteration %d/%d" %
-                           (i+1, self._ADMM_iterations))
+            if self._verbose:
+                ph.print_title("ADMM iteration %d/%d" %
+                               (i+1, self._ADMM_iterations))
 
             self._x, v, w = self._perform_ADMM_iteration(self._x, v, w)
 
+            # Monitor output
+            if self._monitor is not None:
+                self._monitor.add_x(self._x)
+            
             # shape = (256, 256)
 
             # recon = np.array(self._x.reshape(*shape))
@@ -98,51 +113,49 @@ class ADMMLinearSolver(LinearSolver):
 
     def _perform_ADMM_iteration(self, x, v, w):
 
-        # 1) Update primal variable using first-order Tikhonov regularization
-        x = self._perform_ADMM_step_1_TK1_recon_solution(x, v, w, self._rho)
+        # 1) Update primal variable
+        x = self._solve_tikhonov_least_squares(x, v, w)
 
         # Compute derivatives for steps 2 and 3
-        Dx = self._D(x)
+        Bx_plus_w_minus_b_reg = self._B(x) + w - self._b_reg
 
         # 2) Update auxiliary variable
-        v = self._perform_ADMM_step_2_auxiliary_variable(
-            Dx, w, self._alpha / self._rho, self._dimension)
+        v = self._prox_g(Bx_plus_w_minus_b_reg,
+                         tau=self._alpha / self._rho,
+                         dimension=self._dimension)
 
         # 3) Update scaled dual variable
-        w = w + Dx - v
+        w = Bx_plus_w_minus_b_reg - v
 
         return x, v, w
 
-    def _perform_ADMM_step_1_TK1_recon_solution(self, x, v, w, rho):
+    def _solve_tikhonov_least_squares(self, x, v, w):
 
-        b_reg = v - w
+        b_reg = v - w + self._b_reg
 
         tikhonov = tk.TikhonovLinearSolver(
             A=self._A, A_adj=self._A_adj,
-            B=self._D, B_adj=self._D_adj,
+            B=self._B, B_adj=self._B_adj,
             b=self._b, b_reg=b_reg,
-            alpha=rho,
+            alpha=self._rho,
             x0=x,
-            iter_max=self._iter_max)
+            iter_max=self._iter_max,
+            verbose=self._verbose)
         tikhonov.run()
 
         return tikhonov.get_x()
 
-    def _perform_ADMM_step_2_auxiliary_variable(self, Dx, w, ell, dimension):
-
-        v = np.zeros_like(Dx)
-
-        # Compute t = Dx + w
-        t = Dx + w
+    def _prox_g(self, t, tau, dimension):
         t_split = self._get_split(t, dimension)
         t_norm = np.sqrt(self._get_squared_sum_of_split(t_split))
 
-        ind = t_norm > ell
+        ind = t_norm > tau
 
+        v = np.zeros_like(t)
         m = t_split[0].shape[0]
         for i in range(0, dimension):
             v_tmp = v[i*m:(i+1)*m, ...]
-            v_tmp[ind] = self._get_soft_threshold(ell, t_norm[ind]) * \
+            v_tmp[ind] = self._get_soft_threshold(tau, t_norm[ind]) * \
                 t_split[i][ind] / t_norm[ind]
             v[i*m:(i+1)*m, ...] = v_tmp
 
@@ -169,7 +182,7 @@ class ADMMLinearSolver(LinearSolver):
 
     def _get_cost_regularization_term(self, x):
 
-        Dx_split = self._get_split(self._D(x), self._dimension)
+        Dx_split = self._get_split(self._B(x), self._dimension)
         sum_Dx_i_squared = self._get_squared_sum_of_split(Dx_split)
 
         return np.sum(np.sqrt(sum_Dx_i_squared))

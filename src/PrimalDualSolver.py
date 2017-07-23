@@ -1,7 +1,7 @@
 ##
 # \file PrimalDualSolver.py
 # \brief      Implementation of First-order primal-dual algorithm for convex
-#             problems min_x [f(x) + alpha g(Kx)] with K being a continuous
+#             problems min_x [f(x) + alpha g(Bx)] with B being a continuous
 #             linear operator.
 #
 # First-order primal-dual algorithm for convex problems as introduced in
@@ -17,72 +17,73 @@ import numpy as np
 
 from src.Solver import Solver
 
+
 ##
 # First-order primal-dual algorithm for convex problems
-# min_x [f(x) + alpha g(Kx)] with K being a continuous linear operator.
+# min_x [f(x) + alpha g(Bx)] with B being a continuous linear operator.
 #
-
-
 class PrimalDualSolver(Solver):
 
     ##
     # Store all essential variables
     # \date       2017-07-20 22:30:07+0100
     #
-    # \param      self               The object
-    # \param      prox_tau_f         Proximal operator of tau * f; prox_tau_f:
-    #                                (x, tau) -> prox_tau_f(x, tau)
-    # \param      prox_sigma_g_conj  Proximal operator of sigma * g^* with g^*
-    #                                being the conjugate of a convex,
-    #                                lower-semicontinuous function g; typically
-    #                                g acts as regularizer like TV or Huber;
-    #                                prox_sigma_g_conj: (x, sigma) ->
-    #                                prox_sigma_g_conj(x, sigma)
-    # \param      K                  Function associated to continuous linear
-    #                                operator K
-    # \param      K_conj             The conjugate of the continuous linear
-    #                                operator K
-    # \param      L2                 Squared operator norm of K, i.e. L2 =
-    #                                ||K||^2
-    # \param      x0                 Initial value, 1D numpy data array
-    # \param      alpha              Regularization parameter alpha > 0.
+    # \param      self         The object
+    # \param      prox_f       Proximal operator of f; prox_f: (x, tau) ->
+    #                          prox_f(x, tau) = min_y [1/2 ||x-y||^2 + tau
+    #                          f(y)]
+    # \param      prox_g_conj  Proximal operator of g' with g' being the
+    #                          conjugate of a convex, lower-semicontinuous
+    #                          function g; typically g acts as regularizer like
+    #                          TV or Huber; prox_g_conj: (x, sigma) ->
+    #                          prox_g_conj(x, sigma) = min_y [1/2 ||x-y||^2 +
+    #                          sigma g'(y)]
+    # \param      B            Function associated to continuous linear
+    #                          operator B
+    # \param      B_conj       The conjugate of the continuous linear operator
+    #                          B
+    # \param      L2           Squared operator norm of B, i.e. L2 = ||B||^2
+    # \param      x0           Initial value, 1D numpy data array
+    # \param      alpha        Regularization parameter alpha > 0.
+    # \param      iterations   The iterations
     #
     def __init__(self,
-                 prox_tau_f,
-                 prox_sigma_g_conj,
-                 K,
-                 K_conj,
+                 prox_f,
+                 prox_g_conj,
+                 B,
+                 B_conj,
                  L2,
                  x0,
                  alpha,
-                 iterations=10):
+                 iterations=10,
+                 verbose=0):
 
-        Solver.__init__(self, x0=x0)
+        Solver.__init__(self, x0=x0, verbose=verbose)
 
-        # proximal operator of tau * f
-        self._prox_tau_f = prox_tau_f
+        # proximal operator of f
+        self._prox_f = prox_f
 
-        # proximal operator of sigma * g^*
-        self._prox_sigma_g_conj = prox_sigma_g_conj
+        # proximal operator of g'
+        self._prox_g_conj = prox_g_conj
 
-        # Continuous linear operator K in regularizer term g(Kx)
-        self._K = K
+        # Continuous linear operator B in regularizer term g(Bx)
+        self._B = B
 
-        # Conjugate operator of K
-        self._K_conj = K_conj
+        # Conjugate operator of B, i.e. B'
+        self._B_conj = B_conj
 
-        # Squared operator norm of K
+        # Squared operator norm of B, i.e. L2 = ||B||^2
         self._L2 = L2
 
-        # Regularization parameter in f(x) + alpha g(Kx)
+        # Regularization parameter in f(x) + alpha g(Bx)
         self._alpha = alpha
 
         # Number of primal-dual iterations
         self._iterations = iterations
 
-        self._strategy = "AHMOD"
+        # self._strategy = "AHMOD"
         # self._strategy = "ALG2"
-        # self._strategy = "ALG3"
+        self._strategy = "ALG3"
 
         # parameter initialization depend on chosen method
         self._get_initial_tau_sigma = {
@@ -110,11 +111,12 @@ class PrimalDualSolver(Solver):
 
     def _run(self):
 
+        # Monitor output
+        if self._monitor is not None:
+            self._monitor.add_x(self._x)
+
         # regularization parameter lambda as used in Chambolle2011
         lmbda = 1. / self._alpha
-
-        # TODO: Check where the sqrt is missing!
-        lmbda = lmbda ** 2
 
         # Dynamic step sizes for primal and dual variable, see p.127
         tau_n, sigma_n, gamma = self._get_initial_tau_sigma[
@@ -126,12 +128,16 @@ class PrimalDualSolver(Solver):
 
         for i in range(0, self._iterations):
 
+            if self._verbose:
+                ph.print_title("Primal-Dual iteration %d/%d" %
+                           (i+1, self._ADMM_iterations))
+
             # Update dual variable
-            p_n = self._prox_sigma_g_conj(
-                p_n + sigma_n * self._K(x_mean), sigma_n)
+            p_n = self._prox_g_conj(
+                p_n + sigma_n * self._B(x_mean), sigma_n)
 
             # Update primal variable
-            x_np1 = self._prox_tau_f(x_n - tau_n * self._K_conj(p_n), tau_n)
+            x_np1 = self._prox_f(x_n - tau_n * self._B_conj(p_n), tau_n*lmbda)
 
             # Update parameter
             theta_n, tau_n, sigma_n = self._get_update_theta_tau_sigma[
@@ -142,6 +148,10 @@ class PrimalDualSolver(Solver):
 
             # Prepare for next iteration
             x_n = x_np1
+
+            # Monitor output
+            if self._monitor is not None:
+                self._monitor.add_x(x_n)
 
         self._x = x_n
 
@@ -188,7 +198,6 @@ class PrimalDualSolver(Solver):
         sigma_n = sigma_n / theta_n
         return theta_n, tau_n, sigma_n
 
-
     ##
     # Gets the initial step sizes tau_0, sigma_0 and the Lipschitz parameter
     # gamma according to ALG2 method in Chambolle2011, p.136
@@ -203,7 +212,7 @@ class PrimalDualSolver(Solver):
     # \return     tau0, sigma0, gamma
     #
     def _get_initial_tau_sigma_alg3(self, L2, lmbda=None):
-        
+
         # Initial values according to ALG3 in Chambolle2011
         gamma = lmbda
         delta = 0.05

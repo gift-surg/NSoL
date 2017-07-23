@@ -53,13 +53,15 @@ class TikhonovLinearSolver(LinearSolver):
     #                        "linear", "soft_l1", "huber", "cauchy", "arctan".
     # \param      iter_max   Number of maximum iterations for used minimizer,
     #                        integer value
+    # \param      verbose    Verbose output, bool
     #
     def __init__(self, A, A_adj, B, B_adj, b, alpha, x0, b_reg=0,
                  minimizer="lsmr", data_loss="linear",
-                 iter_max=10):
+                 iter_max=10, verbose=0):
 
         super(self.__class__, self).__init__(
-            A=A, A_adj=A_adj, b=b, x0=x0, alpha=alpha, data_loss=data_loss)
+            A=A, A_adj=A_adj, b=b, x0=x0, alpha=alpha, data_loss=data_loss,
+            verbose=verbose)
 
         self._B = B
         self._B_adj = B_adj
@@ -68,6 +70,10 @@ class TikhonovLinearSolver(LinearSolver):
         self._iter_max = iter_max
 
     def _run(self):
+
+        # Monitor output
+        if self._monitor is not None:
+            self._monitor.add_x(self._x)
 
         # Get augmented linear system
         A, b = self._get_augmented_linear_system(self._alpha)
@@ -85,7 +91,11 @@ class TikhonovLinearSolver(LinearSolver):
 
             # Linear least-squares method
             self._x = scipy.sparse.linalg.lsmr(
-                A, b, maxiter=self._iter_max, show=True, atol=0, btol=0)[0]
+                A, b,
+                maxiter=self._iter_max,
+                show=self._verbose,
+                atol=0,
+                btol=0)[0]
 
             # Clip negative values
             self._x = np.clip(self._x, 0, np.inf)
@@ -113,7 +123,7 @@ class TikhonovLinearSolver(LinearSolver):
                 bounds=bounds,
                 loss=self._data_loss,
                 max_nfev=self._iter_max,
-                verbose=2,
+                verbose=2*self._verbose,
             ).x
 
         # Use scipy.optimize.minimize
@@ -135,7 +145,11 @@ class TikhonovLinearSolver(LinearSolver):
                 jac=grad_cost,
                 x0=x0,
                 bounds=bounds,
-                options={'maxiter': self._iter_max, 'disp': True}).x
+                options={'maxiter': self._iter_max, 'disp': self._verbose}).x
+
+        # Monitor output
+        if self._monitor is not None:
+            self._monitor.add_x(self._x)
 
     def _get_augmented_linear_system(self, alpha):
 

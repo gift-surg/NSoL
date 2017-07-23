@@ -24,13 +24,16 @@ class Solver(object):
     # Store relevant information common for all numerical solvers
     # \date       2017-07-20 23:39:13+0100
     #
-    # \param      self  The object
-    # \param      x0    Initial value as 1D numpy array
+    # \param      self     The object
+    # \param      x0       Initial value as 1D numpy array
+    # \param      verbose  Verbose output, bool
     #
-    def __init__(self, x0):
+    def __init__(self, x0, verbose):
         self._x0 = np.array(x0, dtype=np.float64)
         self._x = np.array(x0, dtype=np.float64)
+        self._verbose = verbose
         self._computational_time = None
+        self._monitor = None
 
     ##
     # Gets the obtained numerical estimate to the minimization problem
@@ -54,6 +57,9 @@ class Solver(object):
     def get_computational_time(self):
         return datetime.timedelta(seconds=self._computational_time)
 
+    def set_monitor(self, monitor):
+        self._monitor = monitor
+
     ##
     # Run the numerical solver to obtain the numerical estimate
     # \date       2017-07-20 23:41:08+0100
@@ -69,8 +75,12 @@ class Solver(object):
         # Get computational time in seconds
         self._computational_time = time.time()-time_start
 
-        print("Required computational time: %s" %
-              (self.get_computational_time()))
+        if self._verbose:
+            print("Required computational time: %s" %
+                  (self.get_computational_time()))
+
+        if self._monitor is not None:
+            self._monitor.set_computational_time(self.get_computational_time())
 
     @abstractmethod
     def _run(self):

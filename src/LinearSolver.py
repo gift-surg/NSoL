@@ -46,10 +46,11 @@ class LinearSolver(Solver):
     # \param      alpha      Regularization parameter; scalar
     # \param      data_loss  Data loss function rho specified as string, e.g.
     #                        "linear", "soft_l1", "huber", "cauchy", "arctan".
+    # \param      verbose    Verbose output, bool
     #
-    def __init__(self, A, A_adj, b, x0, alpha, data_loss):
+    def __init__(self, A, A_adj, b, x0, alpha, data_loss, verbose=0):
 
-        Solver.__init__(self, x0=x0)
+        Solver.__init__(self, x0=x0, verbose=verbose)
 
         self._A = A
         self._A_adj = A_adj
