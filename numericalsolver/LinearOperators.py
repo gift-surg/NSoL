@@ -12,15 +12,35 @@ import numpy as np
 import scipy.ndimage
 from abc import ABCMeta, abstractmethod
 
-import src.Kernels as Kernels
+import numericalsolver.Kernels as Kernels
 
 
 class LinearOperators(object):
     __metaclass__ = ABCMeta
 
-    def __init__(self, dimension):
+    ##
+    # { constructor_description }
+    # \date       2017-07-23 16:42:57+0100
+    #
+    # \param      self       The object
+    # \param      dimension  Dimension of space, integer
+    # \param      spacing    Spacing in each spatial direction in x- (y-, z-)
+    #                        direction as numpy array or scalar (only 1D)
+    #
+    def __init__(self, dimension, spacing):
+
         self._dimension = dimension
-        self._kernels = eval("Kernels.Kernels%dD()" % (self._dimension))
+        self._spacing = spacing
+
+        if dimension == 1:
+            self._kernels = Kernels.Kernels1D(spacing=spacing)
+        elif dimension == 2:
+            self._kernels = Kernels.Kernels2D(spacing=spacing)
+        elif dimension == 3:
+            self._kernels = Kernels.Kernels3D(spacing=spacing)
+
+    def get_spacing(self):
+        return self._spacing
 
     def get_dimension(self):
         return self._dimension
@@ -56,25 +76,17 @@ class LinearOperators(object):
     # \param      cov        Variance covariance matrix as numpy array
     # \param      alpha_cut  Cut-off distance in integer, i.e. 3 means cutting
     #                        off a 3 sigma in each direction
-    # \param      spacing    Image spacing in x-, y- (z-) direction as numpy
-    #                        array
     #
     # \return     The gaussian blurring operators.
     #
-    def get_gaussian_blurring_operators(self, cov, alpha_cut=3, spacing=None):
+    def get_gaussian_blurring_operators(self, cov, alpha_cut=3):
 
-        if spacing is None:
-            # also works for dimension = 1
-            spacing = np.ones(np.sqrt(np.array(cov).size).astype(int))
-
-        kernel = self._kernels.get_gaussian(
-            cov=cov, alpha_cut=alpha_cut, spacing=spacing)
+        kernel = self._kernels.get_gaussian(cov=cov, alpha_cut=alpha_cut)
 
         return self.get_convolution_and_adjoint_convolution_operators(kernel)
 
     ##
-    # Gets the differential operator in x-direction and its adjoint for both 2D
-    # and 3D
+    # Gets the differential operator in x-direction and its adjoint
     # \date       2017-07-19 16:31:55+0100
     #
     # \param      self  The object
@@ -160,17 +172,16 @@ class LinearOperators(object):
 class LinearOperators1D(LinearOperators):
 
     def __init__(self):
-        super(self.__class__, self).__init__(dimension=1)
+        super(self.__class__, self).__init__(dimension=1, spacing=1)
 
 
 class LinearOperators2D(LinearOperators):
 
     def __init__(self):
-        super(self.__class__, self).__init__(dimension=2)
+        super(self.__class__, self).__init__(dimension=2, spacing=np.ones(2))
 
     ##
-    # Gets the differential operator in y-direction and its adjoint for both 2D
-    # and 3D
+    # Gets the differential operator in y-direction and its adjoint
     # \date       2017-07-19 16:31:55+0100
     #
     # \param      self  The object
@@ -193,11 +204,10 @@ class LinearOperators2D(LinearOperators):
 class LinearOperators3D(LinearOperators):
 
     def __init__(self):
-        super(self.__class__, self).__init__(dimension=3)
+        super(self.__class__, self).__init__(dimension=3, spacing=np.ones(3))
 
     ##
-    # Gets the differential operator in y-direction and its adjoint for both 2D
-    # and 3D
+    # Gets the differential operator in y-direction and its adjoint
     # \date       2017-07-19 16:31:55+0100
     #
     # \param      self  The object

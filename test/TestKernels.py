@@ -9,15 +9,12 @@ import numpy as np
 import scipy
 import unittest
 
-import src.Kernels as Kernels
-import src.LinearOperators as LinearOperators
+import numericalsolver.Kernels as Kernels
+import numericalsolver.LinearOperators as LinearOperators
 
 from definitions import DIR_TEST
 
 
-# Concept of unit testing for python used in here is based on
-#  http://pythontesting.net/framework/unittest/unittest-introduction/
-#  Retrieved: Aug 6, 2015
 class TestKernels(unittest.TestCase):
 
     def setUp(self):
@@ -47,10 +44,6 @@ class TestKernels(unittest.TestCase):
 
         self.linear_operators_2D = LinearOperators.LinearOperators2D()
 
-        # self.kernel_2D = self.kernels_2D.get_gaussian(self.cov_2D)
-        # self.A_2D, self.A_adj_2D = self.linear_operators_2D.\
-        #     get_convolution_and_adjoint_convolution_operators(self.kernel_2D)
-
         # 3D
         self.shape_3D = (50, 50, 10)
         self.cov_3D = np.zeros((3, 3))
@@ -63,9 +56,84 @@ class TestKernels(unittest.TestCase):
 
         self.linear_operators_3D = LinearOperators.LinearOperators3D()
 
-        # self.kernel_3D = self.kernels_3D.get_gaussian(self.cov_3D)
-        # self.A_3D, self.A_adj_3D = self.linear_operators_3D.\
-        #     get_convolution_and_adjoint_convolution_operators(self.kernel_3D)
+    def test_kernel_spacings(self):
+        # ---------------------------------1D----------------------------------
+        spacing = 2
+        kernel = Kernels.Kernels1D(spacing=spacing)
+
+        # dx
+        k = kernel.get_dx_forward_difference()
+        abs_diff = np.linalg.norm(
+            np.abs(k[k.nonzero()]) - 1./spacing)
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+
+        k = kernel.get_dx_backward_difference()
+        abs_diff = np.linalg.norm(
+            np.abs(k[k.nonzero()]) - 1./spacing)
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+
+        # ---------------------------------2D----------------------------------
+        spacing = np.array([2, 4])
+        kernel = Kernels.Kernels2D(spacing=spacing)
+
+        # dx
+        k = kernel.get_dx_forward_difference()
+        abs_diff = np.linalg.norm(
+            np.abs(k[k.nonzero()]) - 1./spacing[0])
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+
+        k = kernel.get_dx_backward_difference()
+        abs_diff = np.linalg.norm(
+            np.abs(k[k.nonzero()]) - 1./spacing[0])
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+
+        # dy
+        k = kernel.get_dy_forward_difference()
+        abs_diff = np.linalg.norm(
+            np.abs(k[k.nonzero()]) - 1./spacing[1])
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+
+        k = kernel.get_dy_backward_difference()
+        abs_diff = np.linalg.norm(
+            np.abs(k[k.nonzero()]) - 1./spacing[1])
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+
+        # ---------------------------------3D----------------------------------
+        spacing = np.array([2, 4, 6])
+        kernel = Kernels.Kernels3D(spacing=spacing)
+
+        # dx
+        k = kernel.get_dx_forward_difference()
+        abs_diff = np.linalg.norm(
+            np.abs(k[k.nonzero()]) - 1./spacing[0])
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+
+        k = kernel.get_dx_backward_difference()
+        abs_diff = np.linalg.norm(
+            np.abs(k[k.nonzero()]) - 1./spacing[0])
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+
+        # dy
+        k = kernel.get_dy_forward_difference()
+        abs_diff = np.linalg.norm(
+            np.abs(k[k.nonzero()]) - 1./spacing[1])
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+
+        k = kernel.get_dy_backward_difference()
+        abs_diff = np.linalg.norm(
+            np.abs(k[k.nonzero()]) - 1./spacing[1])
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+
+        # dz
+        k = kernel.get_dz_forward_difference()
+        abs_diff = np.linalg.norm(
+            np.abs(k[k.nonzero()]) - 1./spacing[2])
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
+
+        k = kernel.get_dz_backward_difference()
+        abs_diff = np.linalg.norm(
+            np.abs(k[k.nonzero()]) - 1./spacing[2])
+        self.assertEqual(np.round(abs_diff, decimals=self.accuracy), 0)
 
     def test_gaussian_blurring(self):
 

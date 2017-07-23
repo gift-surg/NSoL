@@ -12,11 +12,10 @@ import sys
 import scipy
 import numpy as np
 
-from src.LinearSolver import LinearSolver
+from numericalsolver.LinearSolver import LinearSolver
 
-sys.path.insert(1, os.path.join(
-    os.environ['VOLUMETRIC_RECONSTRUCTION_DIR'], 'src', 'py'))
-import utilities.lossFunctions as lf
+from definitions import EPS
+import numericalsolver.lossFunctions as lf
 
 
 ##
@@ -154,7 +153,7 @@ class TikhonovLinearSolver(LinearSolver):
     def _get_augmented_linear_system(self, alpha):
 
         # With regularization
-        if alpha > 0:
+        if alpha > EPS:
 
             # Define forward and backward operators
             A_fw = lambda x: self._A_augmented(x, np.sqrt(alpha))

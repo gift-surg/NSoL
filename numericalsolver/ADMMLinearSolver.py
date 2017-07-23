@@ -12,12 +12,10 @@ import os
 import sys
 import numpy as np
 
-from src.LinearSolver import LinearSolver
-import src.TikhonovLinearSolver as tk
+import pythonhelper.PythonHelper as ph
 
-sys.path.insert(1, os.path.join(
-    os.path.abspath(os.environ['VOLUMETRIC_RECONSTRUCTION_DIR']), 'src', 'py'))
-import utilities.PythonHelper as ph
+from numericalsolver.LinearSolver import LinearSolver
+import numericalsolver.TikhonovLinearSolver as tk
 
 
 ##
@@ -55,6 +53,9 @@ class ADMMLinearSolver(LinearSolver):
     #                              "arctan".
     # \param      iter_max         Number of maximum iterations for used
     #                              minimizer, integer value
+    # \param      minimizer        String defining the used optimizer, i.e.
+    #                              "lsmr", "least_squares" or any solver as
+    #                              provided by scipy.optimize.minimize
     # \param      rho              regularization parameter of augmented
     #                              Lagrangian term; scalar > 0
     # \param      ADMM_iterations  Number of ADMM iterations, integer value
@@ -63,6 +64,7 @@ class ADMMLinearSolver(LinearSolver):
     def __init__(self, A, A_adj, b, x0,
                  B, B_adj, dimension, b_reg=0,
                  alpha=0.05, data_loss="linear", iter_max=10,
+                 minimizer="lsmr",
                  rho=0.5, ADMM_iterations=10, verbose=0):
 
         super(self.__class__, self).__init__(
@@ -74,7 +76,8 @@ class ADMMLinearSolver(LinearSolver):
         self._b_reg = b_reg
         self._dimension = dimension
         self._iter_max = iter_max
-        self._rho = rho
+        self._minimizer = minimizer
+        self._rho = float(rho)
         self._ADMM_iterations = ADMM_iterations
 
     def _run(self):
@@ -140,6 +143,8 @@ class ADMMLinearSolver(LinearSolver):
             alpha=self._rho,
             x0=x,
             iter_max=self._iter_max,
+            data_loss=self._data_loss,
+            minimizer=self._minimizer,
             verbose=self._verbose)
         tikhonov.run()
 

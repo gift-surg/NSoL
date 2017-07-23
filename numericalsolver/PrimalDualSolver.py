@@ -15,7 +15,7 @@
 
 import numpy as np
 
-from src.Solver import Solver
+from numericalsolver.Solver import Solver
 
 
 ##
@@ -56,7 +56,9 @@ class PrimalDualSolver(Solver):
                  x0,
                  alpha,
                  iterations=10,
-                 verbose=0):
+                 verbose=0,
+                 alg_type="ALG2",
+                 ):
 
         Solver.__init__(self, x0=x0, verbose=verbose)
 
@@ -73,28 +75,26 @@ class PrimalDualSolver(Solver):
         self._B_conj = B_conj
 
         # Squared operator norm of B, i.e. L2 = ||B||^2
-        self._L2 = L2
+        self._L2 = float(L2)
 
         # Regularization parameter in f(x) + alpha g(Bx)
-        self._alpha = alpha
+        self._alpha = float(alpha)
 
         # Number of primal-dual iterations
         self._iterations = iterations
 
-        # self._strategy = "AHMOD"
-        # self._strategy = "ALG2"
-        self._strategy = "ALG3"
+        self._alg_type = alg_type
 
         # parameter initialization depend on chosen method
         self._get_initial_tau_sigma = {
-            "AHMOD": self._get_initial_tau_sigma_ahmod,
+            "ALG2_AHMOD": self._get_initial_tau_sigma_alg2_ahmod,
             "ALG2": self._get_initial_tau_sigma_alg2,
             "ALG3": self._get_initial_tau_sigma_alg3,
         }
 
         # parameter updates depend on chosen method
         self._get_update_theta_tau_sigma = {
-            "AHMOD": self._get_update_theta_tau_sigma_ahmod,
+            "ALG2_AHMOD": self._get_update_theta_tau_sigma_alg2_ahmod,
             "ALG2": self._get_update_theta_tau_sigma_alg2,
             "ALG3": self._get_update_theta_tau_sigma_alg3,
         }
@@ -120,7 +120,7 @@ class PrimalDualSolver(Solver):
 
         # Dynamic step sizes for primal and dual variable, see p.127
         tau_n, sigma_n, gamma = self._get_initial_tau_sigma[
-            self._strategy](L2=self._L2, lmbda=lmbda)
+            self._alg_type](L2=self._L2, lmbda=lmbda)
 
         x_n = np.array(self._x0)
         x_mean = np.array(self._x0)
@@ -130,7 +130,7 @@ class PrimalDualSolver(Solver):
 
             if self._verbose:
                 ph.print_title("Primal-Dual iteration %d/%d" %
-                           (i+1, self._ADMM_iterations))
+                               (i+1, self._ADMM_iterations))
 
             # Update dual variable
             p_n = self._prox_g_conj(
@@ -141,7 +141,7 @@ class PrimalDualSolver(Solver):
 
             # Update parameter
             theta_n, tau_n, sigma_n = self._get_update_theta_tau_sigma[
-                self._strategy](self._L2, gamma, tau_n, sigma_n)
+                self._alg_type](self._L2, gamma, tau_n, sigma_n)
 
             # Update mean variable
             x_mean = x_np1 + theta_n * (x_np1 - x_n)
@@ -264,7 +264,7 @@ class PrimalDualSolver(Solver):
     #
     # \return     tau0, sigma0, gamma
     #
-    def _get_initial_tau_sigma_ahmod(self, L2, lmbda):
+    def _get_initial_tau_sigma_alg2_ahmod(self, L2, lmbda):
         # Initial values according to AHMOD in Chambolle2011
         tau0 = 0.02
         sigma0 = 4. / (L2 * tau0)
@@ -288,7 +288,7 @@ class PrimalDualSolver(Solver):
     #
     # \return     theta_n, tau_n, sigma_n update
     #
-    def _get_update_theta_tau_sigma_ahmod(self, L2, gamma, tau_n, sigma_n):
+    def _get_update_theta_tau_sigma_alg2_ahmod(self, L2, gamma, tau_n, sigma_n):
         theta_n = 1. / np.sqrt(1. + 2. * gamma * tau_n)
         tau_n = tau_n * theta_n
         sigma_n = sigma_n / theta_n

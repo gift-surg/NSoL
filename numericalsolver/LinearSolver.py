@@ -12,12 +12,10 @@ import sys
 import numpy as np
 from abc import ABCMeta, abstractmethod
 
-from src.Solver import Solver
+import pythonhelper.PythonHelper as ph
 
-sys.path.insert(1, os.path.join(
-    os.environ['VOLUMETRIC_RECONSTRUCTION_DIR'], 'src', 'py'))
-import utilities.lossFunctions as lf
-import utilities.PythonHelper as ph
+from numericalsolver.Solver import Solver
+import numericalsolver.lossFunctions as lf
 
 ##
 # Abstract class to define a numerical solver for linear least-squares
@@ -55,7 +53,7 @@ class LinearSolver(Solver):
         self._A = A
         self._A_adj = A_adj
         self._b = b
-        self._alpha = alpha
+        self._alpha = float(alpha)
         self._data_loss = data_loss
 
     ##
