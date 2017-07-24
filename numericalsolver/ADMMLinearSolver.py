@@ -38,34 +38,43 @@ class ADMMLinearSolver(LinearSolver):
     #                              operator A^*: Y->X; y->A^*(y)
     # \param      b                Right hand-side of linear system Ax = b as
     #                              1D numpy array
-    # \param      x0               Initial value as 1D numpy array
     # \param      B                Function associated to linear operator B:
     #                              x->B(x) with x and B(x) 1D numpy arrays
     # \param      B_adj            Function associated to adjoint linear
     #                              operator B^*
+    # \param      x0               Initial value as 1D numpy array
     # \param      dimension        Dimension of space as integer indicating
     #                              either 1D, 2D or 3D problems
     # \param      b_reg            Right hand-side of linear system associated
     #                              to the regularizer, i.e. Bx = b_reg.
     # \param      alpha            Regularization parameter; scalar > 0
-    # \param      data_loss        Data loss function rho specified as string,
-    #                              e.g. "linear", "soft_l1", "huber", "cauchy",
-    #                              "arctan".
     # \param      iter_max         Number of maximum iterations for used
     #                              minimizer, integer value
     # \param      minimizer        String defining the used optimizer, i.e.
     #                              "lsmr", "least_squares" or any solver as
     #                              provided by scipy.optimize.minimize
+    # \param      data_loss        Data loss function rho specified as string,
+    #                              e.g. "linear", "soft_l1", "huber", "cauchy",
+    #                              "arctan".
     # \param      rho              regularization parameter of augmented
     #                              Lagrangian term; scalar > 0
     # \param      ADMM_iterations  Number of ADMM iterations, integer value
     # \param      verbose          Verbose output, bool
     #
-    def __init__(self, A, A_adj, b, x0,
-                 B, B_adj, dimension, b_reg=0,
-                 alpha=0.05, data_loss="linear", iter_max=10,
+    def __init__(self,
+                 A, A_adj,
+                 b,
+                 B, B_adj,
+                 x0,
+                 dimension,
+                 b_reg=0,
+                 alpha=0.05,
+                 iter_max=10,
                  minimizer="lsmr",
-                 rho=0.5, ADMM_iterations=10, verbose=0):
+                 data_loss="linear",
+                 rho=0.5,
+                 ADMM_iterations=10,
+                 verbose=0):
 
         super(self.__class__, self).__init__(
             A=A, A_adj=A_adj, b=b, x0=x0, alpha=alpha, data_loss=data_loss,
@@ -100,7 +109,7 @@ class ADMMLinearSolver(LinearSolver):
             # Monitor output
             if self._monitor is not None:
                 self._monitor.add_x(self._x)
-            
+
             # shape = (256, 256)
 
             # recon = np.array(self._x.reshape(*shape))

@@ -44,12 +44,24 @@ class Noise(object):
     #
     # \param      self         The object
     # \param      noise_level  The noise level between 0 and 1
-    # \param      mean         Mean for Gaussian
+    # \param      mean         Mean/centre for Gaussian distribution
     # \param      sigma        Standard deviation for Gaussian
     #
     def add_gaussian_noise(self, noise_level=0.01, mean=0, sigma=1):
         self._data += noise_level * self._data.max() * \
-            np.random.normal(size=self._data.shape)
+            np.random.normal(size=self._data.shape, loc=mean, scale=sigma)
+
+    ##
+    # Adds additive Poisson noise.
+    # \date       2017-07-22 23:41:29+0100
+    #
+    # \param      self         The object
+    # \param      noise_level  The noise level between 0 and 1
+    # \param      lmbda        Expectation of interval, float >= 0
+    #
+    def add_poisson_noise(self, noise_level=0.01, lmbda=1):
+        self._data += noise_level * self._data.max() * \
+            np.random.poisson(size=self._data.shape, lam=lmbda)
 
     ##
     # Adds an uniform noise.

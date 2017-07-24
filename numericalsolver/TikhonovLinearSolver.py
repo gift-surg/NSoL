@@ -35,14 +35,14 @@ class TikhonovLinearSolver(LinearSolver):
     #                        -> A(x) with x being a 1D numpy array
     # \param      A_adj      Function associated to adjoint linear operator
     #                        A^*: Y -> X; y -> A^*(y)
+    # \param      b          Right hand-side of linear system Ax = b as 1D
+    #                        numpy array
     # \param      B          Function associated to the linear operator B:
     #                        X->Z; x->B(x) with x being a 1D numpy array
     # \param      B_adj      Function associated to adjoint linear operator
     #                        B^*: Z->X; z->B^*(z)
-    # \param      b          Right hand-side of linear system Ax = b as 1D
-    #                        numpy array
-    # \param      alpha      Regularization parameter; scalar >= 0
     # \param      x0         Initial value as 1D numpy array
+    # \param      alpha      Regularization parameter; scalar >= 0
     # \param      b_reg      Right hand-side of linear system associated to the
     #                        regularizer, i.e. Bx = b_reg.
     # \param      minimizer  String defining the used optimizer, i.e. "lsmr",
@@ -53,10 +53,20 @@ class TikhonovLinearSolver(LinearSolver):
     # \param      iter_max   Number of maximum iterations for used minimizer,
     #                        integer value
     # \param      verbose    Verbose output, bool
+    # \param      bounds     The bounds
     #
-    def __init__(self, A, A_adj, B, B_adj, b, alpha, x0, b_reg=0,
-                 minimizer="lsmr", data_loss="linear",
-                 iter_max=10, verbose=0):
+    def __init__(self,
+                 A, A_adj,
+                 b,
+                 B, B_adj,
+                 x0,
+                 alpha,
+                 b_reg=0,
+                 minimizer="lsmr",
+                 data_loss="linear",
+                 iter_max=10,
+                 verbose=0,
+                 bounds=(0, np.inf)):
 
         super(self.__class__, self).__init__(
             A=A, A_adj=A_adj, b=b, x0=x0, alpha=alpha, data_loss=data_loss,
@@ -67,8 +77,17 @@ class TikhonovLinearSolver(LinearSolver):
         self._b_reg = b_reg
         self._minimizer = minimizer
         self._iter_max = iter_max
+        self._bounds = bounds
 
     def _run(self):
+
+        if self._minimizer == "lsmr" and self._data_loss != "linear":
+            raise ValueError(
+                "lsmr solver cannot be used with non-linear data loss")
+
+        elif self._minimizer == "lsq_linear" and self._data_loss != "linear":
+            raise ValueError(
+                "lsq_linear solver cannot be used with non-linear data loss")
 
         # Monitor output
         if self._monitor is not None:
@@ -81,12 +100,12 @@ class TikhonovLinearSolver(LinearSolver):
         residual = lambda x: A*x - b
         jacobian_residual = lambda x: A
 
-        if self._minimizer == "lsmr" and self._data_loss != "linear":
-            raise ValueError(
-                "LSMR solver cannot be used with non-linear data loss")
+        # Clip to bounds
+        if self._bounds is not None:
+            self._x0 = np.clip(self._x0, self._bounds[0], self._bounds[1])
 
         # Use scipy.sparse.linalg.lsmr
-        elif self._minimizer == "lsmr" and self._data_loss == "linear":
+        if self._minimizer == "lsmr" and self._data_loss == "linear":
 
             # Linear least-squares method
             self._x = scipy.sparse.linalg.lsmr(
@@ -96,8 +115,22 @@ class TikhonovLinearSolver(LinearSolver):
                 atol=0,
                 btol=0)[0]
 
-            # Clip negative values
-            self._x = np.clip(self._x, 0, np.inf)
+            if self._bounds is not None:
+                # Clip to bounds
+                self._x = np.clip(self._x, self._bounds[0], self._bounds[1])
+
+        # Use scipy.optimize.lsq_linear
+        elif self._minimizer == "lsq_linear" and self._data_loss == "linear":
+
+            # linear least-squares problem with bounds on the variables
+            self._x = scipy.optimize.lsq_linear(
+                A, b,
+                max_iter=self._iter_max,
+                lsq_solver='lsmr',
+                lsmr_tol='auto',
+                bounds=self._bounds,
+                verbose=2*self._verbose,
+            ).x
 
         # Use scipy.optimize.least_squares
         elif self._minimizer == "least_squares":
@@ -107,19 +140,15 @@ class TikhonovLinearSolver(LinearSolver):
             # non-linear loss. Maybe because of the use of sparse linear
             # operator?
 
-            method = "trf"
-            bounds = (0, np.inf)
-            x0 = np.clip(self._x0, 0, np.inf)
-
             # Non-linear least squares algorithm
             self._x = scipy.optimize.least_squares(
                 fun=residual,
                 jac=jacobian_residual,
-                jac_sparsity=jacobian_residual,
-                x0=x0,
-                method=method,
-                tr_solver='lsmr',
-                bounds=bounds,
+                # jac_sparsity=jacobian_residual,
+                x0=self._x0,
+                # method="trf",
+                # tr_solver='lsmr',
+                bounds=self._bounds,
                 loss=self._data_loss,
                 max_nfev=self._iter_max,
                 verbose=2*self._verbose,
@@ -127,8 +156,7 @@ class TikhonovLinearSolver(LinearSolver):
 
         # Use scipy.optimize.minimize
         else:
-            x0 = np.clip(self._x0, 0, np.inf)
-            bounds = [[0, None]]*x0.size
+            bounds = [[self._bounds[0], self._bounds[1]]] * self._x0.size
 
             # Define cost function and its Jacobian
             cost = lambda x: \
@@ -142,7 +170,7 @@ class TikhonovLinearSolver(LinearSolver):
                 method=self._minimizer,
                 fun=cost,
                 jac=grad_cost,
-                x0=x0,
+                x0=self._x0,
                 bounds=bounds,
                 options={'maxiter': self._iter_max, 'disp': self._verbose}).x
 

@@ -16,6 +16,7 @@
 import numpy as np
 
 from numericalsolver.Solver import Solver
+import pythonhelper.PythonHelper as ph
 
 
 ##
@@ -130,7 +131,7 @@ class PrimalDualSolver(Solver):
 
             if self._verbose:
                 ph.print_title("Primal-Dual iteration %d/%d" %
-                               (i+1, self._ADMM_iterations))
+                               (i+1, self._iterations))
 
             # Update dual variable
             p_n = self._prox_g_conj(

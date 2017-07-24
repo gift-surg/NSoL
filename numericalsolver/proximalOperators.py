@@ -21,22 +21,25 @@ import numericalsolver.TikhonovLinearSolver as tk
 # solver
 # \date       2017-07-23 01:32:15+0100
 #
-# \param      x      1D numpy array
-# \param      tau    step size; scalar >= 0
-# \param      A      Function handle lambda x: A(x) with x being 1D numpy array
-# \param      A_adj  Function handle for adjoint operator lambda x: A^*(x)
-# \param      b      1D numpy array
-# \param      x0     initial value for minimization problem as 1D numpy array
+# \param      x        1D numpy array
+# \param      tau      step size; scalar >= 0
+# \param      A        Function handle lambda x: A(x) with x being 1D numpy
+#                      array
+# \param      A_adj    Function handle for adjoint operator lambda x: A^*(x)
+# \param      b        1D numpy array
+# \param      x0       initial value for minimization problem as 1D numpy array
+# \param      verbose  Verbose output; bool
 #
 # \return     prox_g(x, tau) as numpy array
 #
-def prox_linear_least_squares(x, tau, A, A_adj, b, x0):
+def prox_linear_least_squares(x, tau, A, A_adj, b, x0, verbose=1):
+
     # Identity
     I = lambda x: x
 
     tikhonov = tk.TikhonovLinearSolver(
         A=A, A_adj=A_adj, B=I, B_adj=I, b=b, x0=x0, b_reg=x, alpha=1./tau,
-        verbose=0)
+        verbose=verbose)
     tikhonov.run()
     return tikhonov.get_x()
 
