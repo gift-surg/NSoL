@@ -32,10 +32,10 @@ import numericalsolver.TikhonovLinearSolver as tk
 #
 # \return     prox_g(x, tau) as numpy array
 #
-def prox_linear_least_squares(x, tau, A, A_adj, b, x0, verbose=1):
+def prox_linear_least_squares(x, tau, A, A_adj, b, x0, verbose=0):
 
     # Identity
-    I = lambda x: x
+    I = lambda x: x.flatten()
 
     tikhonov = tk.TikhonovLinearSolver(
         A=A, A_adj=A_adj, B=I, B_adj=I, b=b, x0=x0, b_reg=x, alpha=1./tau,

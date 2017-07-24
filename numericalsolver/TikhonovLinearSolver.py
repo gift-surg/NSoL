@@ -144,10 +144,10 @@ class TikhonovLinearSolver(LinearSolver):
             self._x = scipy.optimize.least_squares(
                 fun=residual,
                 jac=jacobian_residual,
-                # jac_sparsity=jacobian_residual,
+                jac_sparsity=jacobian_residual,
                 x0=self._x0,
                 # method="trf",
-                # tr_solver='lsmr',
+                tr_solver='lsmr',
                 bounds=self._bounds,
                 loss=self._data_loss,
                 max_nfev=self._iter_max,
@@ -214,7 +214,7 @@ class TikhonovLinearSolver(LinearSolver):
 
         A_augmented_x = np.concatenate((
             self._A(x),
-            sqrt_alpha*self._B(x)))
+            sqrt_alpha * self._B(x)))
 
         return A_augmented_x
 

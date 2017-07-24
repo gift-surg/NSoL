@@ -210,13 +210,13 @@ class PrimalDualSolver(Solver):
     # \param      L2     Squared operator norm
     # \param      lmbda  Regularization parameter
     #
-    # \return     tau0, sigma0, gamma
+    # \return     tau0, sigma0, theta
     #
-    def _get_initial_tau_sigma_alg3(self, L2, lmbda=None):
+    def _get_initial_tau_sigma_alg3(self, L2, lmbda, huber_alpha=0.05):
 
         # Initial values according to ALG3 in Chambolle2011
         gamma = lmbda
-        delta = 0.05
+        delta = huber_alpha
         mu = 2. * np.sqrt(gamma * delta / L2)
 
         # relaxation parameter in [1/(1+mu), 1]
@@ -248,7 +248,7 @@ class PrimalDualSolver(Solver):
     # \return     theta_n, tau_n, sigma_n update
     #
     def _get_update_theta_tau_sigma_alg3(self, L2, gamma, tau_n, sigma_n):
-        theta_n = gamma
+        theta_n = gamma  # gamma is used as place holder for tau
         return theta_n, tau_n, sigma_n
 
     ##
