@@ -171,14 +171,14 @@ class LinearOperators(object):
 
 class LinearOperators1D(LinearOperators):
 
-    def __init__(self):
-        super(self.__class__, self).__init__(dimension=1, spacing=1)
+    def __init__(self, spacing=1):
+        super(self.__class__, self).__init__(dimension=1, spacing=spacing)
 
 
 class LinearOperators2D(LinearOperators):
 
-    def __init__(self):
-        super(self.__class__, self).__init__(dimension=2, spacing=np.ones(2))
+    def __init__(self, spacing=np.ones(2)):
+        super(self.__class__, self).__init__(dimension=2, spacing=spacing)
 
     ##
     # Gets the differential operator in y-direction and its adjoint
@@ -203,8 +203,8 @@ class LinearOperators2D(LinearOperators):
 
 class LinearOperators3D(LinearOperators):
 
-    def __init__(self):
-        super(self.__class__, self).__init__(dimension=3, spacing=np.ones(3))
+    def __init__(self, spacing=np.ones(3)):
+        super(self.__class__, self).__init__(dimension=3, spacing=spacing)
 
     ##
     # Gets the differential operator in y-direction and its adjoint

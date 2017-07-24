@@ -160,7 +160,7 @@ class TikhonovLinearSolver(LinearSolver):
             A_bw = lambda x: self._A_augmented_adj(x, np.sqrt(alpha))
 
             # Define right-hand side b
-            b = np.zeros(self._x0.size + self._B(self._x0).size)
+            b = np.zeros(A_fw(self._x0).size)
             b[0:self._b.size] = self._b
             b[self._b.size:] = np.sqrt(alpha) * self._b_reg
 
