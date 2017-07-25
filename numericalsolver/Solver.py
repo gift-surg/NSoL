@@ -12,6 +12,7 @@ import time
 import datetime
 from abc import ABCMeta, abstractmethod
 
+import pythonhelper.PythonHelper as ph
 
 ##
 # Abstract class to define a numerical solver
@@ -76,8 +77,8 @@ class Solver(object):
         self._computational_time = time.time()-time_start
 
         if self._verbose:
-            print("Required computational time: %s" %
-                  (self.get_computational_time()))
+            ph.print_info("Required computational time: %s" %
+                          (self.get_computational_time()))
 
         if self._monitor is not None:
             self._monitor.set_computational_time(self.get_computational_time())

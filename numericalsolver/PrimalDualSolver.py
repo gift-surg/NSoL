@@ -132,6 +132,9 @@ class PrimalDualSolver(Solver):
             if self._verbose:
                 ph.print_title("Primal-Dual iteration %d/%d" %
                                (i+1, self._iterations))
+            else:
+                ph.print_info("Primal-Dual iteration %d/%d" %
+                              (i+1, self._iterations))
 
             # Update dual variable
             p_n = self._prox_g_conj(
@@ -289,7 +292,8 @@ class PrimalDualSolver(Solver):
     #
     # \return     theta_n, tau_n, sigma_n update
     #
-    def _get_update_theta_tau_sigma_alg2_ahmod(self, L2, gamma, tau_n, sigma_n):
+    def _get_update_theta_tau_sigma_alg2_ahmod(self,
+                                               L2, gamma, tau_n, sigma_n):
         theta_n = 1. / np.sqrt(1. + 2. * gamma * tau_n)
         tau_n = tau_n * theta_n
         sigma_n = sigma_n / theta_n

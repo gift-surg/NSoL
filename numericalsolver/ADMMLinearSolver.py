@@ -58,7 +58,7 @@ class ADMMLinearSolver(LinearSolver):
     #                              "arctan".
     # \param      rho              regularization parameter of augmented
     #                              Lagrangian term; scalar > 0
-    # \param      ADMM_iterations  Number of ADMM iterations, integer value
+    # \param      iterations  Number of ADMM iterations, integer value
     # \param      verbose          Verbose output, bool
     #
     def __init__(self,
@@ -73,7 +73,7 @@ class ADMMLinearSolver(LinearSolver):
                  minimizer="lsmr",
                  data_loss="linear",
                  rho=0.5,
-                 ADMM_iterations=10,
+                 iterations=10,
                  verbose=0):
 
         super(self.__class__, self).__init__(
@@ -87,7 +87,7 @@ class ADMMLinearSolver(LinearSolver):
         self._iter_max = iter_max
         self._minimizer = minimizer
         self._rho = float(rho)
-        self._ADMM_iterations = ADMM_iterations
+        self._iterations = iterations
 
     def _run(self):
 
@@ -98,11 +98,14 @@ class ADMMLinearSolver(LinearSolver):
         v = self._B(self._x0) - self._b_reg
         w = np.zeros_like(v)
 
-        for i in range(0, self._ADMM_iterations):
+        for i in range(0, self._iterations):
 
             if self._verbose:
                 ph.print_title("ADMM iteration %d/%d" %
-                               (i+1, self._ADMM_iterations))
+                               (i+1, self._iterations))
+            else:
+                ph.print_info("ADMM iteration %d/%d" %
+                              (i+1, self._iterations))
 
             self._x, v, w = self._perform_ADMM_iteration(self._x, v, w)
 

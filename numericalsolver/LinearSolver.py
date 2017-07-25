@@ -17,6 +17,7 @@ import pythonhelper.PythonHelper as ph
 from numericalsolver.Solver import Solver
 import numericalsolver.lossFunctions as lf
 
+
 ##
 # Abstract class to define a numerical solver for linear least-squares
 # problems.
@@ -116,15 +117,15 @@ class LinearSolver(Solver):
         cost_regularizer = self.get_cost_regularization_term()
 
         ph.print_subtitle("Summary Optimization")
-        ph.print_debug_info("Computational time: %s" %
-                            (self.get_computational_time()))
-        ph.print_debug_info("Cost data term (f, loss=%s): " %
-                            (self._data_loss) + fmt % (cost_data) +
-                            " (ell2-cost: " + fmt % (cost_data_ell2) + ")")
-        ph.print_debug_info(
+        ph.print_info("Computational time: %s" %
+                      (self.get_computational_time()))
+        ph.print_info("Cost data term (f, loss=%s): " %
+                      (self._data_loss) + fmt % (cost_data) +
+                      " (ell2-cost: " + fmt % (cost_data_ell2) + ")")
+        ph.print_info(
             "Cost regularization term (g): " +
             fmt % (cost_regularizer))
-        ph.print_debug_info(
+        ph.print_info(
             "Total cost (f + alpha g; alpha = %g" % (self._alpha) + "): " +
             fmt % (cost_data + self._alpha * cost_regularizer))
 
