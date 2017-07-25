@@ -17,20 +17,19 @@ import pythonhelper.PythonHelper as ph
 import numericalsolver.lossFunctions as lf
 
 
-
 class TestLossFunctions(unittest.TestCase):
 
-    accuracy = 7
-    m = 500     # 4e5
-    n = 1000    # 1e6
-
     def setUp(self):
+
         self.accuracy = 7
         self.m = 500
         self.n = 1000
 
         self.A = np.random.rand(self.m, self.n)
         self.b = np.random.rand(self.m) * 10
+        self.x = np.random.rand(self.n) * 23
+
+    # -----------------------------Loss functions-----------------------------
 
     def test_linear(self):
 
@@ -134,31 +133,112 @@ class TestLossFunctions(unittest.TestCase):
 
         residual2 = residual**2
 
-        losses = ["linear", "soft_l1", "huber"]
-        loss = []
-        grad_loss = []
-        jac = []
+        losses = []
+        grad_losses = []
+        jacobians = []
         labels = []
 
-        loss.append(lf.linear(residual2))
-        grad_loss.append(lf.gradient_linear(residual2))
-        jac.append(lf.gradient_linear(residual2)*residual)
-        labels.append("linear")
+        for loss in ["linear", "soft_l1", "cauchy", "arctan"]:
+            losses.append(lf.get_loss[loss](residual2))
+            grad_losses.append(lf.get_gradient_loss[loss](residual2))
+            jacobians.append(lf.get_gradient_loss[loss](residual2)*residual)
+            labels.append(loss)
 
-        loss.append(lf.soft_l1(residual2))
-        grad_loss.append(lf.gradient_soft_l1(residual2))
-        jac.append(lf.gradient_soft_l1(residual2)*residual)
-        labels.append("soft_l1")
+        # losses.append(lf.soft_l1(residual2))
+        # grad_losses.append(lf.gradient_soft_l1(residual2))
+        # jacobians.append(lf.gradient_soft_l1(residual2)*residual)
+        # labels.append("soft_l1")
 
         for gamma in (1, 1.345, 5, 10, 15):
-            loss.append(lf.huber(residual2, gamma=gamma))
-            grad_loss.append(lf.gradient_huber(residual2, gamma=gamma))
-            jac.append(lf.gradient_huber(residual2, gamma=gamma)*residual)
+            losses.append(lf.huber(residual2, gamma=gamma))
+            grad_losses.append(lf.gradient_huber(residual2, gamma=gamma))
+            jacobians.append(lf.gradient_huber(residual2, gamma=gamma)*residual)
             labels.append("huber(" + str(gamma) + ")")
 
-        ph.show_curves(loss, x=residual, labels=labels,
+        ph.show_curves(losses, x=residual, labels=labels,
                        title="losses rho(x^2)")
-        ph.show_curves(grad_loss, x=residual, labels=labels,
+        ph.show_curves(grad_losses, x=residual, labels=labels,
                        title="gradient losses rho'(x^2)")
-        ph.show_curves(jac, x=residual, labels=labels,
+        ph.show_curves(jacobians, x=residual, labels=labels,
                        title="jacobian rho'(x^2)*x")
+
+    # --------------------Conversion from residual to cost--------------------
+
+    def test_cost_from_residual_linear(self):
+
+        loss = "linear"
+
+        def f(x):
+            nda = np.zeros(3)
+            nda[0] = x[0]**2 - 3*x[1]**3 + 5
+            nda[1] = 2*x[0] + x[1]**2 - 1
+            nda[2] = x[0] + x[1]
+            return nda
+
+        def df(x):
+            nda = np.zeros((3, 2))
+            nda[0, 0] = 2*x[0]
+            nda[1, 0] = 2
+            nda[2, 0] = 1
+
+            nda[0, 1] = -9*x[1]**2
+            nda[1, 1] = 2*x[1]
+            nda[2, 1] = 1
+            return nda
+
+        X0, X1 = np.meshgrid(np.arange(-5, 5, 0.1), np.arange(0, 10, 0.2))
+        points = np.array([X1.flatten(), X0.flatten()])
+
+        cost_gd = lambda x: 0.5 * np.sum(f(x)**2)
+        grad_cost_gd = lambda x: np.sum(f(x)[:, np.newaxis]*df(x), 0)
+
+        for i in range(points.shape[1]):
+            point = points[:, i]
+            diff_cost = cost_gd(point) - \
+                lf.get_ell2_cost_from_residual(f(point), loss=loss)
+            diff_grad = grad_cost_gd(point) - \
+                lf.get_gradient_ell2_cost_from_residual(
+                    f(point), df(point), loss=loss)
+
+            self.assertEqual(np.around(
+                np.linalg.norm(diff_cost), decimals=self.accuracy), 0)
+            self.assertEqual(np.around(
+                np.linalg.norm(diff_grad), decimals=self.accuracy), 0)
+
+    def test_linear_least_squares_cost_gradient(self):
+
+        residual = self.A.dot(self.x) - self.b
+        ell2 = 0.5*np.sum(residual**2)
+        diff = lf.get_ell2_cost_from_residual(f=residual, loss="linear")
+        diff -= ell2
+        self.assertEqual(np.around(
+            np.linalg.norm(diff), decimals=self.accuracy), 0)
+
+        grad_ell2 = self.A.transpose().dot(residual)
+        diff = lf.get_gradient_ell2_cost_from_residual(
+            f=residual,
+            jac_f=self.A,
+            loss="linear")
+        diff -= grad_ell2
+        self.assertEqual(np.around(
+            np.linalg.norm(diff), decimals=self.accuracy), 0)
+
+    def test_soft_l1_least_squares_cost_gradient(self):
+
+        residual = self.A.dot(self.x) - self.b
+        ell2 = 0.5*np.sum(lf.soft_l1(residual**2))
+        diff = lf.get_ell2_cost_from_residual(f=residual, loss="soft_l1")
+        diff -= ell2
+        self.assertEqual(np.around(
+            np.linalg.norm(diff), decimals=self.accuracy), 0)
+
+        # Derive analytical cost function; However, unit tests in
+        # TestRegistration.py suggest that all good
+    #     grad_ell2 = lf.gradient_soft_l1(res**2).dot(self.A.transpose().dot(residual))
+    #     diff = lf.get_gradient_ell2_cost_from_residual(
+    #         f=residual,
+    #         jac_f=self.A,
+    #         loss="linear")
+    #     diff -= grad_ell2
+    #     self.assertEqual(np.around(
+    #         np.linalg.norm(diff), decimals=self.accuracy), 0)

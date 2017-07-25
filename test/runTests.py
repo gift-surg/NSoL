@@ -16,10 +16,8 @@ import os
 
 # Import modules for unit testing
 from TestKernels import *
+from TestLossFunctions import *
 
-""" ###########################################################################
-Main Function
-"""
 if __name__ == '__main__':
     print("\nUnit tests:\n--------------")
     unittest.main()

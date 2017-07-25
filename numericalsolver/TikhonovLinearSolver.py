@@ -159,12 +159,18 @@ class TikhonovLinearSolver(LinearSolver):
             bounds = [[self._bounds[0], self._bounds[1]]] * self._x0.size
 
             # Define cost function and its Jacobian
-            cost = lambda x: \
-                self._get_cost_data_term(x) + \
-                self._alpha * self._get_cost_regularization_term(x)
-            grad_cost = lambda x: \
-                self._get_gradient_cost_data_term(x) + \
-                self._alpha * self._get_gradient_cost_regularization_term(x)
+            if self._alpha > EPS:
+                cost = lambda x: \
+                    self._get_cost_data_term(x) + \
+                    self._alpha * self._get_cost_regularization_term(x)
+                grad_cost = lambda x: \
+                    self._get_gradient_cost_data_term(x) + \
+                    self._alpha * \
+                    self._get_gradient_cost_regularization_term(x)
+
+            else:
+                cost = lambda x: self._get_cost_data_term(x)
+                grad_cost = lambda x: self._get_gradient_cost_data_term(x)
 
             self._x = scipy.optimize.minimize(
                 method=self._minimizer,

@@ -12,7 +12,7 @@ import unittest
 import numericalsolver.Kernels as Kernels
 import numericalsolver.LinearOperators as LinearOperators
 
-from definitions import DIR_TEST
+from numericalsolver.definitions import DIR_TEST
 
 
 class TestKernels(unittest.TestCase):
