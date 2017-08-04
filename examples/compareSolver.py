@@ -12,19 +12,18 @@ import os
 import sys
 import numpy as np
 import SimpleITK as sitk
-import skimage.measure
 
 import pythonhelper.PythonHelper as ph
 import pythonhelper.SimpleITKHelper as sitkh
 
-import numericalsolver.Kernels as Kernels
 import numericalsolver.LinearOperators as LinearOperators
 import numericalsolver.Noise as Noise
 import numericalsolver.TikhonovLinearSolver as tk
 import numericalsolver.ADMMLinearSolver as admm
 import numericalsolver.PrimalDualSolver as pd
 import numericalsolver.Monitor as monitor
-import numericalsolver.proximalOperators as prox
+from numericalsolver.ProximalOperators import ProximalOperators as prox
+from numericalsolver.SimilarityMeasures import SimilarityMeasures as sim_meas
 
 from numericalsolver.definitions import DIR_TEST
 
@@ -41,13 +40,14 @@ solver_PrimalDual = 1
 
 verbose = 0
 flag_normalize = 1
+max_intensity_normalization = 10000
 flag_blurring = 1
 flag_noise = 1
 noise_level = 0.05
 
 iter_max = 10
 alpha = 0.01  # Denoising (S&P) 0.6; default: 0.01
-rho = 1
+rho = 0.5
 ADMM_iterations = 50
 PD_iterations = 50
 
@@ -75,6 +75,7 @@ elif dimension == 3:
 
 if flag_normalize:
     original_nda = original_nda / original_nda.max()
+    original_nda *= max_intensity_normalization
 
 linear_operators = eval("LinearOperators.LinearOperators%dD()" % (dimension))
 
@@ -88,8 +89,8 @@ else:
 
 noise = Noise.Noise(blurred_nda)
 if flag_noise:
-    noise.add_gaussian_noise(noise_level=noise_level)
-    # noise.add_poisson_noise(noise_level=noise_level)
+    # noise.add_gaussian_noise(noise_level=noise_level)
+    noise.add_poisson_noise(noise_level=noise_level)
     # noise.add_uniform_noise(noise_level=noise_level)
     # noise.add_salt_and_pepper_noise()
 blurred_noisy_nda = noise.get_noisy_data()
@@ -103,8 +104,8 @@ Z_shape = grad(original_nda).shape
 b = blurred_noisy_nda.flatten()
 x0 = blurred_noisy_nda.flatten()
 
-D = lambda x: grad(x)
-D_adj = lambda x: grad_adj(x)
+x_scale = np.max(original_nda)
+# x_scale = 1
 
 I_1D = lambda x: x.flatten()
 I_adj_1D = lambda x: x.flatten()
@@ -112,22 +113,16 @@ I_adj_1D = lambda x: x.flatten()
 A_1D = lambda x: A(x.reshape(*X_shape)).flatten()
 A_adj_1D = lambda x: A_adj(x.reshape(*Y_shape)).flatten()
 
-D_1D = lambda x: D(x.reshape(*X_shape)).flatten()
-D_adj_1D = lambda x: D_adj(x.reshape(*Z_shape)).flatten()
+D_1D = lambda x: grad(x.reshape(*X_shape)).flatten()
+D_adj_1D = lambda x: grad_adj(x.reshape(*Z_shape)).flatten()
 
 if flag_blurring:
     prox_f = lambda x, tau: prox.prox_linear_least_squares(
         x=x, tau=tau,
-        A=A_1D, A_adj=A_adj_1D, b=b, x0=x0)
+        A=A_1D, A_adj=A_adj_1D, b=b, x0=x0, x_scale=x_scale)
 else:
     prox_f = lambda x, tau: prox.prox_ell1_denoising(x, tau, x0=b)
-    # prox_f = lambda x, tau: prox.prox_ell2_denoising(x, tau, x0=b)
 
-# prox_g_conj = lambda x, sigma: prox.prox_tv_conj(
-#     x=x, sigma=sigma)
-# # prox_g_conj = lambda x, sigma: prox.prox_huber_conj(
-# #     x=x, sigma=sigma,
-# #     alpha=0.05)
 
 if not flag_blurring:
     A_1D = I_1D
@@ -163,22 +158,31 @@ elif dimension == 3:
     sitkh.show_sitk_image(data_sitk, label=data_labels)
 
 x_ref = original_nda.flatten()
-ssd = lambda x: np.sum(np.square(x-x_ref))
-mse = lambda x: ssd(x) / x_ref.size
-psnr = lambda x: 10 * np.log10(np.max(x)**2 / mse(x))
-ssim = lambda x: skimage.measure.compare_ssim(x, x_ref)
+
+# -----------------------------Similarity Measures-----------------------------
+ssd = lambda x: sim_meas.sum_of_squared_differences(x, x_ref)
+mse = lambda x: sim_meas.mean_squared_error(x, x_ref)
+rmse = lambda x: sim_meas.root_mean_square_error(x, x_ref)
+psnr = lambda x: sim_meas.peak_signal_to_noise_ratio(x, x_ref)
+ssim = lambda x: sim_meas.structural_similarity(x, x_ref)
+ncc = lambda x: sim_meas.normalized_cross_correlation(x, x_ref)
+mi = lambda x: sim_meas.mutual_information(x, x_ref)
+nmi = lambda x: sim_meas.normalized_mutual_information(x, x_ref)
 
 monitors = []
 measures_dic = {
-    "SSD": ssd,
-    # "MSE": mse,
+    "RMSE": rmse,
     "PSNR": psnr,
-    "SSIM": ssim,
+    # "SSIM": ssim,
+    "NCC": ncc,
+    # "MI": mi,
+    "NMI": nmi,
 }
 
 # ----------------------------------Tikhonov----------------------------------
 if solver_TK:
     name = "TK"
+    minimizer = "L-BFGS-B"
     monitor_tk = monitor.Monitor(name)
     monitor_tk.set_measures(measures_dic)
     monitors.append(monitor_tk)
@@ -189,7 +193,9 @@ if solver_TK:
         alpha=alpha,
         x0=x0,
         iter_max=iter_max,
+        minimizer=minimizer,
         verbose=verbose,
+        x_scale=x_scale,
     )
     solver.set_monitor(monitor_tk)
     solver.run()
@@ -201,6 +207,33 @@ if solver_TK:
         recon_sitk = sitk.GetImageFromArray(recon_nda)
         recon_sitk.CopyInformation(original_sitk)
         data_sitk.append(recon_sitk)
+
+# if solver_TK:
+#     minimizer = "L-BFGS-B"
+#     # for data_loss_scale in [1, 5, 10, 20, 40]:
+#     for data_loss_scale in [1]:
+#         for data_loss in ["arctan", "cauchy"]:
+#             name = "TK-loss" + data_loss + "_scale" + str(data_loss_scale)
+#             monitor_tk = monitor.Monitor(name)
+#             monitor_tk.set_measures(measures_dic)
+#             monitors.append(monitor_tk)
+#             solver = tk.TikhonovLinearSolver(
+#                 A=A_1D, A_adj=A_adj_1D,
+#                 B=D_1D, B_adj=D_adj_1D,
+#                 b=b,
+#                 alpha=alpha,
+#                 x0=x0,
+#                 minimizer=minimizer,
+#                 data_loss=data_loss,
+#                 data_loss_scale=data_loss_scale,
+#                 iter_max=iter_max,
+#                 verbose=verbose,
+#             )
+#             solver.set_monitor(monitor_tk)
+#             solver.run()
+#             recon_nda = solver.get_x().reshape(*X_shape)
+#             data_nda.append(recon_nda)
+#             data_labels.append(name)
 
 # if solver_TK:
 #     name = "TK_least_squares"
@@ -285,6 +318,7 @@ if solver_TK:
 
 # if solver_TK:
 #     data_loss = "arctan"
+#     minimizer = "CG"
 #     name = "TK-loss" + data_loss
 #     monitor_tk = monitor.Monitor(name)
 #     monitor_tk.set_measures(measures_dic)
@@ -295,7 +329,7 @@ if solver_TK:
 #         b=b,
 #         alpha=alpha,
 #         x0=x0,
-#         minimizer="CG",
+#         minimizer=minimizer,
 #         data_loss=data_loss,
 #         iter_max=iter_max,
 #         verbose=verbose,
@@ -327,6 +361,7 @@ if solver_ADMM:
         iterations=ADMM_iterations,
         dimension=dimension,
         iter_max=iter_max,
+        x_scale=x_scale,
         verbose=verbose,
     )
     solver.set_monitor(monitor_admm)
@@ -389,6 +424,7 @@ if solver_PrimalDual:
         iterations=PD_iterations,
         alg_type="ALG2",
         verbose=verbose,
+        x_scale=x_scale,
     )
     solver.set_monitor(monitor_pd)
     solver.run()
@@ -401,89 +437,89 @@ if solver_PrimalDual:
         recon_sitk.CopyInformation(original_sitk)
         data_sitk.append(recon_sitk)
 
-if solver_PrimalDual:
-    name = "PrimalDual-TV-ALG2_AHMOD"
-    monitor_pd = monitor.Monitor(name)
-    monitor_pd.set_measures(measures_dic)
-    monitors.append(monitor_pd)
-    solver = pd.PrimalDualSolver(
-        prox_f=prox_f,
-        prox_g_conj=prox.prox_tv_conj,
-        B=D_1D,
-        B_conj=D_adj_1D,
-        L2=8,
-        x0=x0,
-        alpha=alpha,
-        iterations=PD_iterations,
-        alg_type="ALG2_AHMOD",
-        verbose=verbose,
-    )
-    solver.set_monitor(monitor_pd)
-    solver.run()
-    recon_nda = solver.get_x().reshape(*X_shape)
-    data_nda.append(recon_nda)
-    data_labels.append(name)
+# if solver_PrimalDual:
+#     name = "PrimalDual-TV-ALG2_AHMOD"
+#     monitor_pd = monitor.Monitor(name)
+#     monitor_pd.set_measures(measures_dic)
+#     monitors.append(monitor_pd)
+#     solver = pd.PrimalDualSolver(
+#         prox_f=prox_f,
+#         prox_g_conj=prox.prox_tv_conj,
+#         B=D_1D,
+#         B_conj=D_adj_1D,
+#         L2=8,
+#         x0=x0,
+#         alpha=alpha,
+#         iterations=PD_iterations,
+#         alg_type="ALG2_AHMOD",
+#         verbose=verbose,
+#     )
+#     solver.set_monitor(monitor_pd)
+#     solver.run()
+#     recon_nda = solver.get_x().reshape(*X_shape)
+#     data_nda.append(recon_nda)
+#     data_labels.append(name)
 
-    if dimension == 3:
-        recon_sitk = sitk.GetImageFromArray(recon_nda)
-        recon_sitk.CopyInformation(original_sitk)
-        data_sitk.append(recon_sitk)
+#     if dimension == 3:
+#         recon_sitk = sitk.GetImageFromArray(recon_nda)
+#         recon_sitk.CopyInformation(original_sitk)
+#         data_sitk.append(recon_sitk)
 
-if solver_PrimalDual:
-    name = "PrimalDual-TV-ALG3"
-    monitor_pd = monitor.Monitor(name)
-    monitor_pd.set_measures(measures_dic)
-    monitors.append(monitor_pd)
-    solver = pd.PrimalDualSolver(
-        prox_f=prox_f,
-        prox_g_conj=prox.prox_tv_conj,
-        B=D_1D,
-        B_conj=D_adj_1D,
-        L2=8,
-        x0=x0,
-        alpha=alpha,
-        iterations=PD_iterations,
-        alg_type="ALG3",
-        verbose=verbose,
-    )
-    solver.set_monitor(monitor_pd)
-    solver.run()
-    recon_nda = solver.get_x().reshape(*X_shape)
-    data_nda.append(recon_nda)
-    data_labels.append(name)
+# if solver_PrimalDual:
+#     name = "PrimalDual-TV-ALG3"
+#     monitor_pd = monitor.Monitor(name)
+#     monitor_pd.set_measures(measures_dic)
+#     monitors.append(monitor_pd)
+#     solver = pd.PrimalDualSolver(
+#         prox_f=prox_f,
+#         prox_g_conj=prox.prox_tv_conj,
+#         B=D_1D,
+#         B_conj=D_adj_1D,
+#         L2=8,
+#         x0=x0,
+#         alpha=alpha,
+#         iterations=PD_iterations,
+#         alg_type="ALG3",
+#         verbose=verbose,
+#     )
+#     solver.set_monitor(monitor_pd)
+#     solver.run()
+#     recon_nda = solver.get_x().reshape(*X_shape)
+#     data_nda.append(recon_nda)
+#     data_labels.append(name)
 
-    if dimension == 3:
-        recon_sitk = sitk.GetImageFromArray(recon_nda)
-        recon_sitk.CopyInformation(original_sitk)
-        data_sitk.append(recon_sitk)
+#     if dimension == 3:
+#         recon_sitk = sitk.GetImageFromArray(recon_nda)
+#         recon_sitk.CopyInformation(original_sitk)
+#         data_sitk.append(recon_sitk)
 
-if solver_PrimalDual:
-    name = "PrimalDual-Huber-ALG2"
-    monitor_pd = monitor.Monitor(name)
-    monitor_pd.set_measures(measures_dic)
-    monitors.append(monitor_pd)
-    solver = pd.PrimalDualSolver(
-        prox_f=prox_f,
-        prox_g_conj=prox.prox_huber_conj,
-        B=D_1D,
-        B_conj=D_adj_1D,
-        L2=8,
-        x0=x0,
-        alpha=alpha,
-        iterations=PD_iterations,
-        alg_type="ALG2",
-        verbose=verbose,
-    )
-    solver.set_monitor(monitor_pd)
-    solver.run()
-    recon_nda = solver.get_x().reshape(*X_shape)
-    data_nda.append(recon_nda)
-    data_labels.append(name)
+# if solver_PrimalDual:
+#     name = "PrimalDual-Huber-ALG2"
+#     monitor_pd = monitor.Monitor(name)
+#     monitor_pd.set_measures(measures_dic)
+#     monitors.append(monitor_pd)
+#     solver = pd.PrimalDualSolver(
+#         prox_f=prox_f,
+#         prox_g_conj=prox.prox_huber_conj,
+#         B=D_1D,
+#         B_conj=D_adj_1D,
+#         L2=8,
+#         x0=x0,
+#         alpha=alpha,
+#         iterations=PD_iterations,
+#         alg_type="ALG2",
+#         verbose=verbose,
+#     )
+#     solver.set_monitor(monitor_pd)
+#     solver.run()
+#     recon_nda = solver.get_x().reshape(*X_shape)
+#     data_nda.append(recon_nda)
+#     data_labels.append(name)
 
-    if dimension == 3:
-        recon_sitk = sitk.GetImageFromArray(recon_nda)
-        recon_sitk.CopyInformation(original_sitk)
-        data_sitk.append(recon_sitk)
+#     if dimension == 3:
+#         recon_sitk = sitk.GetImageFromArray(recon_nda)
+#         recon_sitk.CopyInformation(original_sitk)
+#         data_sitk.append(recon_sitk)
 
 # if solver_PrimalDual:
 #     name = "PrimalDual-Huber-ALG2_AHMOD"
@@ -542,6 +578,7 @@ if solver_PrimalDual:
 #         data_sitk.append(recon_sitk)
 
 
+# ------------------------------Visualize Results------------------------------
 linestyles = ["-", ":", "-", "-."] * 10
 if dimension == 1:
     ph.show_curves(data_nda, labels=data_labels, fig_number=1,

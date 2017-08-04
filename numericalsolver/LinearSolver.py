@@ -15,7 +15,7 @@ from abc import ABCMeta, abstractmethod
 import pythonhelper.PythonHelper as ph
 
 from numericalsolver.Solver import Solver
-import numericalsolver.lossFunctions as lf
+from numericalsolver.LossFunctions import LossFunctions as lf
 
 
 ##
@@ -34,28 +34,50 @@ class LinearSolver(Solver):
     # Store relevant information for linear solvers
     # \date       2017-07-20 23:27:49+0100
     #
-    # \param      self       The object
-    # \param      A          Function associated to linear operator A: X->Y;
-    #                        x->A(x) with x being a 1D numpy array
-    # \param      A_adj      Function associated to adjoint linear operator
-    #                        A^*: Y->X; y->A^*(y)
-    # \param      b          Right hand-side of linear system Ax = b as 1D
-    #                        numpy array
-    # \param      x0         Initial value as 1D numpy array
-    # \param      alpha      Regularization parameter; scalar
-    # \param      data_loss  Data loss function rho specified as string, e.g.
-    #                        "linear", "soft_l1", "huber", "cauchy", "arctan".
-    # \param      verbose    Verbose output, bool
+    # \param      self             The object
+    # \param      A                Function associated to linear operator A:
+    #                              X->Y; x->A(x) with x being a 1D numpy array
+    # \param      A_adj            Function associated to adjoint linear
+    #                              operator A^*: Y->X; y->A^*(y)
+    # \param      b                Right hand-side of linear system Ax = b as
+    #                              1D numpy array
+    # \param      x0               Initial value as 1D numpy array
+    # \param      alpha            Regularization parameter; scalar
+    # \param      x_scale          Characteristic scale of each variable.
+    #                              Setting x_scale is equivalent to
+    #                              reformulating the problem in scaled
+    #                              variables ``xs = x / x_scale``
+    # \param      data_loss        Data loss function rho specified as string,
+    #                              e.g. "linear", "soft_l1", "huber", "cauchy",
+    #                              "arctan".
+    # \param      data_loss_scale  Value of soft margin between inlier and
+    #                              outlier residuals, default is 1.0. The loss
+    #                              function is evaluated as rho_(f2) = C**2 *
+    #                              rho(f2 / C**2), where C is data_loss_scale.
+    #                              This parameter has no effect with
+    #                              data_loss='linear', but for other loss
+    #                              values it is of crucial importance.
+    # \param      verbose          Verbose output, bool
     #
-    def __init__(self, A, A_adj, b, x0, alpha, data_loss, verbose=0):
+    def __init__(self,
+                 A,
+                 A_adj,
+                 b,
+                 x0,
+                 alpha,
+                 x_scale,
+                 data_loss,
+                 data_loss_scale,
+                 verbose):
 
-        Solver.__init__(self, x0=x0, verbose=verbose)
+        Solver.__init__(self, x0=x0, x_scale=x_scale, verbose=verbose)
 
         self._A = A
         self._A_adj = A_adj
-        self._b = b
+        self._b = b / self._x_scale
         self._alpha = float(alpha)
         self._data_loss = data_loss
+        self._data_loss_scale = float(data_loss_scale)
 
     ##
     # Gets the total cost as 1/2 ||rho( Ax-b )||^2 + alpha g(x)
@@ -119,8 +141,9 @@ class LinearSolver(Solver):
         ph.print_subtitle("Summary Optimization")
         ph.print_info("Computational time: %s" %
                       (self.get_computational_time()))
-        ph.print_info("Cost data term (f, loss=%s): " %
-                      (self._data_loss) + fmt % (cost_data) +
+        ph.print_info("Cost data term (f, loss=%s, scale=%g): " %
+                      (self._data_loss, self._data_loss_scale) +
+                      fmt % (cost_data) +
                       " (ell2-cost: " + fmt % (cost_data_ell2) + ")")
         ph.print_info(
             "Cost regularization term (g): " +
@@ -132,7 +155,9 @@ class LinearSolver(Solver):
     def _get_cost_data_term(self, x):
 
         residual = self._A(x) - self._b
-        cost = 0.5 * np.sum(lf.get_loss[self._data_loss](residual ** 2))
+        cost = 0.5 * np.sum(
+            lf.get_loss[self._data_loss](f2=residual ** 2,
+                                         f_scale=self._data_loss_scale))
 
         return cost
 
@@ -148,7 +173,9 @@ class LinearSolver(Solver):
         residual = self._A(x) - self._b
 
         grad = self._A_adj(
-            lf.get_gradient_loss[self._data_loss](residual ** 2) * residual)
+            lf.get_gradient_loss[self._data_loss](f2=residual ** 2,
+                                                  f_scale=self._data_loss_scale
+                                                  ) * residual)
 
         return grad
 

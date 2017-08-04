@@ -56,9 +56,20 @@ class ADMMLinearSolver(LinearSolver):
     # \param      data_loss        Data loss function rho specified as string,
     #                              e.g. "linear", "soft_l1", "huber", "cauchy",
     #                              "arctan".
+    # \param      data_loss_scale  Value of soft margin between inlier and
+    #                              outlier residuals, default is 1.0. The loss
+    #                              function is evaluated as rho_(f2) = C**2 *
+    #                              rho(f2 / C**2), where C is data_loss_scale.
+    #                              This parameter has no effect with
+    #                              data_loss='linear', but for other loss
+    #                              values it is of crucial importance.
     # \param      rho              regularization parameter of augmented
     #                              Lagrangian term; scalar > 0
-    # \param      iterations  Number of ADMM iterations, integer value
+    # \param      iterations       Number of ADMM iterations, integer value
+    # \param      x_scale          Characteristic scale of each variable.
+    #                              Setting x_scale is equivalent to
+    #                              reformulating the problem in scaled
+    #                              variables ``xs = x / x_scale``
     # \param      verbose          Verbose output, bool
     #
     def __init__(self,
@@ -68,21 +79,23 @@ class ADMMLinearSolver(LinearSolver):
                  x0,
                  dimension,
                  b_reg=0,
-                 alpha=0.05,
+                 alpha=0.01,
                  iter_max=10,
                  minimizer="lsmr",
                  data_loss="linear",
+                 data_loss_scale=1,
                  rho=0.5,
                  iterations=10,
+                 x_scale=1,
                  verbose=0):
 
         super(self.__class__, self).__init__(
             A=A, A_adj=A_adj, b=b, x0=x0, alpha=alpha, data_loss=data_loss,
-            verbose=verbose)
+            data_loss_scale=data_loss_scale, x_scale=x_scale, verbose=verbose)
 
         self._B = B
         self._B_adj = B_adj
-        self._b_reg = b_reg
+        self._b_reg = b_reg / self._x_scale
         self._dimension = dimension
         self._iter_max = iter_max
         self._minimizer = minimizer
@@ -93,7 +106,7 @@ class ADMMLinearSolver(LinearSolver):
 
         # Monitor output
         if self._monitor is not None:
-            self._monitor.add_x(self._x)
+            self._monitor.add_x(self.get_x())
 
         v = self._B(self._x0) - self._b_reg
         w = np.zeros_like(v)
@@ -111,7 +124,7 @@ class ADMMLinearSolver(LinearSolver):
 
             # Monitor output
             if self._monitor is not None:
-                self._monitor.add_x(self._x)
+                self._monitor.add_x(self.get_x())
 
             # shape = (256, 256)
 
@@ -154,6 +167,7 @@ class ADMMLinearSolver(LinearSolver):
             b=self._b, b_reg=b_reg,
             alpha=self._rho,
             x0=x,
+            x_scale=1,
             iter_max=self._iter_max,
             data_loss=self._data_loss,
             minimizer=self._minimizer,

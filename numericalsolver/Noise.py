@@ -23,9 +23,10 @@ class Noise(object):
     # \param      self  The object
     # \param      data   Data as numpy array
     #
-    def __init__(self, data):
-
+    def __init__(self, data, seed=None):
+        np.random.seed(seed=seed)
         self._data = np.array(data)
+
 
     ##
     # Gets the noisy data.

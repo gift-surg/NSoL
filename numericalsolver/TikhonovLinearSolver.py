@@ -15,7 +15,7 @@ import numpy as np
 from numericalsolver.LinearSolver import LinearSolver
 
 from definitions import EPS
-import numericalsolver.lossFunctions as lf
+from numericalsolver.LossFunctions import LossFunctions as lf
 
 
 ##
@@ -30,51 +30,67 @@ class TikhonovLinearSolver(LinearSolver):
     # with Tikhonov regularization
     # \date       2017-07-20 23:47:48+0100
     #
-    # \param      self       The object
-    # \param      A          Function associated to linear operator A: X->Y; x
-    #                        -> A(x) with x being a 1D numpy array
-    # \param      A_adj      Function associated to adjoint linear operator
-    #                        A^*: Y -> X; y -> A^*(y)
-    # \param      b          Right hand-side of linear system Ax = b as 1D
-    #                        numpy array
-    # \param      B          Function associated to the linear operator B:
-    #                        X->Z; x->B(x) with x being a 1D numpy array
-    # \param      B_adj      Function associated to adjoint linear operator
-    #                        B^*: Z->X; z->B^*(z)
-    # \param      x0         Initial value as 1D numpy array
-    # \param      alpha      Regularization parameter; scalar >= 0
-    # \param      b_reg      Right hand-side of linear system associated to the
-    #                        regularizer, i.e. Bx = b_reg.
-    # \param      minimizer  String defining the used optimizer, i.e. "lsmr",
-    #                        "least_squares" or any solver as provided by
-    #                        scipy.optimize.minimize
-    # \param      data_loss  Data loss function rho specified as string, e.g.
-    #                        "linear", "soft_l1", "huber", "cauchy", "arctan".
-    # \param      iter_max   Number of maximum iterations for used minimizer,
-    #                        integer value
-    # \param      verbose    Verbose output, bool
-    # \param      bounds     The bounds
+    # \param      self             The object
+    # \param      A                Function associated to linear operator A:
+    #                              X->Y; x -> A(x) with x being a 1D numpy
+    #                              array
+    # \param      A_adj            Function associated to adjoint linear
+    #                              operator A^*: Y -> X; y -> A^*(y)
+    # \param      b                Right hand-side of linear system Ax = b as
+    #                              1D numpy array
+    # \param      B                Function associated to the linear operator
+    #                              B: X->Z; x->B(x) with x being a 1D numpy
+    #                              array
+    # \param      B_adj            Function associated to adjoint linear
+    #                              operator B^*: Z->X; z->B^*(z)
+    # \param      x0               Initial value as 1D numpy array
+    # \param      alpha            Regularization parameter; scalar >= 0
+    # \param      b_reg            Right hand-side of linear system associated
+    #                              to the regularizer, i.e. Bx = b_reg.
+    # \param      minimizer        String defining the used optimizer, i.e.
+    #                              "lsmr", "least_squares" or any solver as
+    #                              provided by scipy.optimize.minimize
+    # \param      data_loss        Data loss function rho specified as string,
+    #                              e.g. "linear", "soft_l1", "huber", "cauchy",
+    #                              "arctan".
+    # \param      data_loss_scale  Value of soft margin between inlier and
+    #                              outlier residuals, default is 1.0. The loss
+    #                              function is evaluated as rho_(f2) = C**2 *
+    #                              rho(f2 / C**2), where C is data_loss_scale.
+    #                              This parameter has no effect with
+    #                              data_loss='linear', but for other loss
+    #                              values it is of crucial importance.
+    # \param      iter_max         Number of maximum iterations for used
+    #                              minimizer, integer value
+    # \param      x_scale          Characteristic scale of each variable.
+    #                              Setting x_scale is equivalent to
+    #                              reformulating the problem in scaled
+    #                              variables ``xs = x / x_scale``
+    # \param      verbose          Verbose output, bool
+    # \param      bounds           The bounds
     #
     def __init__(self,
                  A, A_adj,
                  b,
                  B, B_adj,
                  x0,
-                 alpha,
+                 alpha=0.01,
                  b_reg=0,
                  minimizer="lsmr",
                  data_loss="linear",
+                 data_loss_scale=1,
                  iter_max=10,
+                 x_scale=1,
                  verbose=0,
                  bounds=(0, np.inf)):
 
         super(self.__class__, self).__init__(
             A=A, A_adj=A_adj, b=b, x0=x0, alpha=alpha, data_loss=data_loss,
-            verbose=verbose)
+            data_loss_scale=data_loss_scale, x_scale=x_scale, verbose=verbose)
 
         self._B = B
         self._B_adj = B_adj
-        self._b_reg = b_reg
+        self._b_reg = b_reg / self._x_scale
         self._minimizer = minimizer
         self._iter_max = iter_max
         self._bounds = bounds
@@ -91,7 +107,7 @@ class TikhonovLinearSolver(LinearSolver):
 
         # Monitor output
         if self._monitor is not None:
-            self._monitor.add_x(self._x)
+            self._monitor.add_x(self.get_x())
 
         # Get augmented linear system
         A, b = self._get_augmented_linear_system(self._alpha)
@@ -150,6 +166,7 @@ class TikhonovLinearSolver(LinearSolver):
                 tr_solver='lsmr',
                 bounds=self._bounds,
                 loss=self._data_loss,
+                f_scale=self._data_loss_scale,
                 max_nfev=self._iter_max,
                 verbose=2*self._verbose,
             ).x
@@ -182,7 +199,7 @@ class TikhonovLinearSolver(LinearSolver):
 
         # Monitor output
         if self._monitor is not None:
-            self._monitor.add_x(self._x)
+            self._monitor.add_x(self.get_x())
 
     def _get_augmented_linear_system(self, alpha):
 

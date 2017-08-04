@@ -17,6 +17,7 @@ import os
 # Import modules for unit testing
 from TestKernels import *
 from TestLossFunctions import *
+from TestSolvers import *
 
 if __name__ == '__main__':
     print("\nUnit tests:\n--------------")

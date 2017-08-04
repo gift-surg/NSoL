@@ -27,11 +27,15 @@ class Solver(object):
     #
     # \param      self     The object
     # \param      x0       Initial value as 1D numpy array
+    # \param      x_scale  Characteristic scale of each variable. Setting
+    #                      x_scale is equivalent to reformulating the problem
+    #                      in scaled variables ``xs = x / x_scale``
     # \param      verbose  Verbose output, bool
     #
-    def __init__(self, x0, verbose):
-        self._x0 = np.array(x0, dtype=np.float64)
-        self._x = np.array(x0, dtype=np.float64)
+    def __init__(self, x0, x_scale, verbose):
+        self._x_scale = float(x_scale)
+        self._x0 = np.array(x0, dtype=np.float64) / self._x_scale
+        self._x = np.array(self._x0)
         self._verbose = verbose
         self._computational_time = None
         self._monitor = None
@@ -45,7 +49,7 @@ class Solver(object):
     # \return     Numerical solution as 1D numpy array
     #
     def get_x(self):
-        return np.array(self._x)
+        return np.array(self._x) * self._x_scale
 
     ##
     # Gets the computational time it took to obtain the numerical estimate.

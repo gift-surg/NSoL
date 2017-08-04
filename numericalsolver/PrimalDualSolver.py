@@ -46,7 +46,13 @@ class PrimalDualSolver(Solver):
     # \param      L2           Squared operator norm of B, i.e. L2 = ||B||^2
     # \param      x0           Initial value, 1D numpy data array
     # \param      alpha        Regularization parameter alpha > 0.
-    # \param      iterations   The iterations
+    # \param      iterations   Number of primal-dual iterations, int
+    # \param      x_scale      Characteristic scale of each variable. Setting
+    #                          x_scale is equivalent to reformulating the
+    #                          problem in scaled variables ``xs = x / x_scale``
+    # \param      verbose      Verbose output, bool
+    # \param      alg_type     Type of algorithm to dynamically update
+    #                          parameters for each iteration
     #
     def __init__(self,
                  prox_f,
@@ -55,13 +61,14 @@ class PrimalDualSolver(Solver):
                  B_conj,
                  L2,
                  x0,
-                 alpha,
+                 alpha=0.01,
                  iterations=10,
+                 x_scale=1.,
                  verbose=0,
                  alg_type="ALG2",
                  ):
 
-        Solver.__init__(self, x0=x0, verbose=verbose)
+        Solver.__init__(self, x0=x0, verbose=verbose, x_scale=x_scale)
 
         # proximal operator of f
         self._prox_f = prox_f
@@ -114,7 +121,7 @@ class PrimalDualSolver(Solver):
 
         # Monitor output
         if self._monitor is not None:
-            self._monitor.add_x(self._x)
+            self._monitor.add_x(self.get_x())
 
         # regularization parameter lambda as used in Chambolle2011
         lmbda = 1. / self._alpha
@@ -151,11 +158,12 @@ class PrimalDualSolver(Solver):
             x_mean = x_np1 + theta_n * (x_np1 - x_n)
 
             # Prepare for next iteration
+            self._x = x_np1
             x_n = x_np1
 
             # Monitor output
             if self._monitor is not None:
-                self._monitor.add_x(x_n)
+                self._monitor.add_x(self.get_x())
 
         self._x = x_n
 

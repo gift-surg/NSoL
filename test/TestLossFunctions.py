@@ -14,8 +14,7 @@ import matplotlib.pyplot as plt
 import pythonhelper.PythonHelper as ph
 
 # Import modules
-import numericalsolver.lossFunctions as lf
-
+from numericalsolver.LossFunctions import LossFunctions as lf
 
 class TestLossFunctions(unittest.TestCase):
 
@@ -127,8 +126,8 @@ class TestLossFunctions(unittest.TestCase):
 
     def test_show_curves(self):
 
-        M = 20
-        steps = 100*M
+        M = 50
+        steps = 100 * M
         residual = np.linspace(-M, M, steps)
 
         residual2 = residual**2
@@ -138,22 +137,28 @@ class TestLossFunctions(unittest.TestCase):
         jacobians = []
         labels = []
 
-        for loss in ["linear", "soft_l1", "cauchy", "arctan"]:
-            losses.append(lf.get_loss[loss](residual2))
-            grad_losses.append(lf.get_gradient_loss[loss](residual2))
-            jacobians.append(lf.get_gradient_loss[loss](residual2)*residual)
-            labels.append(loss)
+        # for loss in ["linear", "soft_l1", "cauchy", "arctan"]:
+        for loss in ["linear", "cauchy", "arctan"]:
+            for f_scale in [1., 1.1, 1.2]:
+                losses.append(lf.get_loss[loss](
+                    f2=residual2, f_scale=f_scale))
+                grad_losses.append(lf.get_gradient_loss[loss](
+                    f2=residual2, f_scale=f_scale))
+                jacobians.append(lf.get_gradient_loss[loss](
+                    f2=residual2, f_scale=f_scale)*residual)
+                labels.append(loss+"_scale"+str(f_scale))
 
         # losses.append(lf.soft_l1(residual2))
         # grad_losses.append(lf.gradient_soft_l1(residual2))
         # jacobians.append(lf.gradient_soft_l1(residual2)*residual)
         # labels.append("soft_l1")
 
-        for gamma in (1, 1.345, 5, 10, 15):
-            losses.append(lf.huber(residual2, gamma=gamma))
-            grad_losses.append(lf.gradient_huber(residual2, gamma=gamma))
-            jacobians.append(lf.gradient_huber(residual2, gamma=gamma)*residual)
-            labels.append("huber(" + str(gamma) + ")")
+        # for gamma in (1, 1.345, 5, 10, 15):
+        #     losses.append(lf.huber(residual2, gamma=gamma))
+        #     grad_losses.append(lf.gradient_huber(residual2, gamma=gamma))
+        #     jacobians.append(lf.gradient_huber(
+        #         residual2, gamma=gamma)*residual)
+            # labels.append("huber(" + str(gamma) + ")")
 
         ph.show_curves(losses, x=residual, labels=labels,
                        title="losses rho(x^2)")
