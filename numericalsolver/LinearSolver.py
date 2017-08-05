@@ -80,6 +80,78 @@ class LinearSolver(Solver):
         self._data_loss_scale = float(data_loss_scale)
 
     ##
+    # Sets the regularization parameter alpha.
+    # \date       2017-08-04 18:54:24+0100
+    #
+    # \param      self   The object
+    # \param      alpha  Regularization  parameter; scalar
+    #
+    def set_alpha(self, alpha):
+        self._alpha = alpha
+
+    ##
+    # Gets the regularization parameter alpha.
+    # \date       2017-08-04 18:54:59+0100
+    #
+    # \param      self  The object
+    #
+    # \return     scalar
+    #
+    def get_alpha(self):
+        return self._alpha
+
+    ##
+    # Sets the data loss function specified as string
+    # \date       2017-08-04 18:55:38+0100
+    #
+    # \param      self       The object
+    # \param      data_loss  The data loss as defined in LossFunctions, string
+    #
+    def set_data_loss(self, data_loss):
+        if data_loss not in lf.get_loss.keys():
+            raise ValueError("data_loss must be in " +
+                             str(lf.get_loss.keys()))
+        self._data_loss = data_loss
+
+    ##
+    # Gets the data loss.
+    # \date       2017-08-04 19:00:42+0100
+    #
+    # \param      self  The object
+    #
+    # \return     The data loss function specifier, string
+    #
+    def get_data_loss(self):
+        return self._data_loss
+
+    ##
+    # Sets the data loss scale.
+    # \date       2017-08-04 19:00:54+0100
+    #
+    # \param      self             The object
+    # \param      data_loss_scale  Value of soft margin between inlier and
+    #                              outlier residuals, default is 1.0. The loss
+    #                              function is evaluated as rho_(f2) = C**2 *
+    #                              rho(f2 / C**2), where C is data_loss_scale.
+    #                              This parameter has no effect with
+    #                              data_loss='linear', but for other loss
+    #                              values it is of crucial importance.
+    #
+    def set_data_loss_scale(self, data_loss_scale):
+        self._data_loss_scale = data_loss_scale
+
+    ##
+    # Gets the data loss scale.
+    # \date       2017-08-04 19:01:57+0100
+    #
+    # \param      self  The object
+    #
+    # \return     The data loss scale; scalar
+    #
+    def get_data_loss_scale(self):
+        return self._data_loss_scale
+
+    ##
     # Gets the total cost as 1/2 ||rho( Ax-b )||^2 + alpha g(x)
     # \date       2017-07-20 23:38:46+0100
     #

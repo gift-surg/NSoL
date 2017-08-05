@@ -19,11 +19,14 @@ import pythonhelper.SimpleITKHelper as sitkh
 import numericalsolver.LinearOperators as LinearOperators
 import numericalsolver.Noise as Noise
 import numericalsolver.TikhonovLinearSolver as tk
+import numericalsolver.TikhonovParameterStudy as tkparam
+import numericalsolver.ParameterStudyReader as psreader
 import numericalsolver.ADMMLinearSolver as admm
 import numericalsolver.PrimalDualSolver as pd
 import numericalsolver.Monitor as monitor
 from numericalsolver.ProximalOperators import ProximalOperators as prox
 from numericalsolver.SimilarityMeasures import SimilarityMeasures as sim_meas
+from numericalsolver.PriorMeasures import PriorMeasures as prior_meas
 
 from numericalsolver.definitions import DIR_TEST
 
@@ -36,7 +39,7 @@ dimension = 2
 
 solver_TK = 1
 solver_ADMM = 1
-solver_PrimalDual = 1
+solver_PrimalDual = 0
 
 verbose = 0
 flag_normalize = 1
@@ -137,25 +140,25 @@ data_labels = ["original"]
 data_nda.append(blurred_noisy_nda)
 data_labels.append("blurred+noise")
 
-if dimension == 1:
-    ph.show_curves(data_nda, labels=data_labels, fig_number=1)
+# if dimension == 1:
+#     ph.show_curves(data_nda, labels=data_labels, fig_number=1)
 
-elif dimension == 2:
-    ph.show_arrays(data_nda, title=data_labels, fig_number=1)
+# elif dimension == 2:
+#     ph.show_arrays(data_nda, title=data_labels, fig_number=1)
 
-elif dimension == 3:
+# elif dimension == 3:
 
-    original_sitk = sitk.GetImageFromArray(original_nda)
-    data_sitk = [original_sitk]
+#     original_sitk = sitk.GetImageFromArray(original_nda)
+#     data_sitk = [original_sitk]
 
-    # blurred_sitk = sitk.GetImageFromArray(blurred_nda)
-    # data_sitk.append(blurred_sitk)
+#     # blurred_sitk = sitk.GetImageFromArray(blurred_nda)
+#     # data_sitk.append(blurred_sitk)
 
-    blurred_noisy_sitk = sitk.GetImageFromArray(blurred_noisy_nda)
-    data_sitk.append(blurred_noisy_sitk)
+#     blurred_noisy_sitk = sitk.GetImageFromArray(blurred_noisy_nda)
+#     data_sitk.append(blurred_noisy_sitk)
 
-    ph.killall_itksnap()
-    sitkh.show_sitk_image(data_sitk, label=data_labels)
+#     ph.killall_itksnap()
+#     sitkh.show_sitk_image(data_sitk, label=data_labels)
 
 x_ref = original_nda.flatten()
 
@@ -169,14 +172,20 @@ ncc = lambda x: sim_meas.normalized_cross_correlation(x, x_ref)
 mi = lambda x: sim_meas.mutual_information(x, x_ref)
 nmi = lambda x: sim_meas.normalized_mutual_information(x, x_ref)
 
+tk1 = lambda x: prior_meas.first_order_tikhonov(x, D_1D)
+tv = lambda x: prior_meas.total_variation(x, D_1D, dimension)
+
 monitors = []
 measures_dic = {
+    "SSD": ssd,
     "RMSE": rmse,
     "PSNR": psnr,
     # "SSIM": ssim,
     "NCC": ncc,
     # "MI": mi,
     "NMI": nmi,
+    "TK1": tk1,
+    "TV": tv,
 }
 
 # ----------------------------------Tikhonov----------------------------------
@@ -207,6 +216,26 @@ if solver_TK:
         recon_sitk = sitk.GetImageFromArray(recon_nda)
         recon_sitk.CopyInformation(original_sitk)
         data_sitk.append(recon_sitk)
+
+directory = "/tmp/ParameterStudy"
+name = "Tikhonov"
+tikhonov_parameter_study = tkparam.TikhonovParameterStudy(
+    solver, monitor_tk, dir_output=directory, name=name, alphas=[0.01, 0.05],
+    # data_losses=["linear"],
+    data_loss_scales=[2, 3, 4],
+    )
+tikhonov_parameter_study.run()
+
+parameter_study_reader = psreader.ParameterStudyReader(
+    directory=directory, name=name)
+parameter_study_reader.read_study()
+# print parameter_study_reader.get_measures()
+# print parameter_study_reader.get_parameters()
+# print parameter_study_reader.get_line_to_parameter_labels()
+
+foo = parameter_study_reader.get_results("NMI")
+print foo
+ph.exit()
 
 # if solver_TK:
 #     minimizer = "L-BFGS-B"

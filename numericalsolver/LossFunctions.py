@@ -65,10 +65,10 @@ class LossFunctions(object):
     @staticmethod
     def get_gradient_ell2_cost_from_residual(f, jac_f, loss="linear",
                                              f_scale=1.):
-        grad = np.sum((LossFunctions.get_gradient_loss[loss](f2=f**2,
-                                                             f_scale=f_scale) * f
-                       )[:, np.newaxis] * jac_f,
-                      axis=0)
+        grad = np.sum((LossFunctions.get_gradient_loss[loss](
+            f2=f**2,
+            f_scale=f_scale) * f)[:, np.newaxis] * jac_f,
+            axis=0)
         return grad
 
     ##

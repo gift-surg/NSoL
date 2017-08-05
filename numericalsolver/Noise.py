@@ -27,7 +27,6 @@ class Noise(object):
         np.random.seed(seed=seed)
         self._data = np.array(data)
 
-
     ##
     # Gets the noisy data.
     # \date       2017-07-22 23:41:17+0100

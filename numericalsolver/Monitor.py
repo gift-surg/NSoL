@@ -42,6 +42,15 @@ class Monitor(object):
         self._x_list.append(x)
 
     ##
+    # Clear list of data arrays
+    # \date       2017-08-04 19:45:12+0100
+    #
+    # \param      self  The object
+    #
+    def clear_x_list(self):
+        self._x_list = []
+
+    ##
     # Sets the measures to be computed
     # \date       2017-07-23 01:44:14+0100
     #
@@ -56,6 +65,17 @@ class Monitor(object):
             self._measures_names.append(measures_names[i])
             self._measures.append(measures_dic[measures_names[i]])
             self._dic_measures.update({measures_names[i]: None})
+
+    ##
+    # Gets the measures.
+    # \date       2017-08-04 19:51:00+0100
+    #
+    # \param      self  The object
+    #
+    # \return     The measures as dictionary.
+    #
+    def get_measures(self):
+        return self._dic_measures
 
     ##
     # Sets the computational time.

@@ -1,5 +1,5 @@
 ##
-# \file ADMM LinearSolver.py
+# \file ADMMLinearSolver.py
 # \brief      Class to define a numerical solver for solving the linear
 #             least-squares problems with TV regularization via the Alternating
 #             Direction Method of Multipliers (ADMM) method
@@ -16,6 +16,7 @@ import pythonhelper.PythonHelper as ph
 
 from numericalsolver.LinearSolver import LinearSolver
 import numericalsolver.TikhonovLinearSolver as tk
+from numericalsolver.PriorMeasures import PriorMeasures as prior_meas
 
 
 ##
@@ -212,11 +213,7 @@ class ADMMLinearSolver(LinearSolver):
         return np.maximum(np.abs(t) - ell, 0) * np.sign(t)
 
     def _get_cost_regularization_term(self, x):
-
-        Dx_split = self._get_split(self._B(x), self._dimension)
-        sum_Dx_i_squared = self._get_squared_sum_of_split(Dx_split)
-
-        return np.sum(np.sqrt(sum_Dx_i_squared))
+        return prior_meas.total_variation(x, self._B, self._dimension)
 
     ##
     # Gets the split of (n, ...) numpy into d (n/d, ...) numpy arrays with d

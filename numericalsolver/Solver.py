@@ -8,7 +8,6 @@
 
 # Import libraries
 import numpy as np
-import time
 import datetime
 from abc import ABCMeta, abstractmethod
 
@@ -18,6 +17,8 @@ import pythonhelper.PythonHelper as ph
 # Abstract class to define a numerical solver
 # \date       2017-07-20 23:17:11+0100
 #
+
+
 class Solver(object):
     __metaclass__ = ABCMeta
 
@@ -37,8 +38,31 @@ class Solver(object):
         self._x0 = np.array(x0, dtype=np.float64) / self._x_scale
         self._x = np.array(self._x0)
         self._verbose = verbose
-        self._computational_time = None
+        self._computational_time = datetime.timedelta(seconds=0)
         self._monitor = None
+
+    ##
+    # Sets the characteristic scale for each variable.
+    # \date       2017-08-04 19:09:20+0100
+    #
+    # \param      self     The object
+    # \param      x_scale  Characteristic scale of each variable. Setting
+    #                      x_scale is equivalent to reformulating the problem
+    #                      in scaled variables ``xs = x / x_scale``
+    #
+    def set_x_scale(self, x_scale):
+        self._x_scale = x_scale
+
+    ##
+    # Gets the characteristic scale for each variable.
+    # \date       2017-08-04 19:10:13+0100
+    #
+    # \param      self  The object
+    #
+    # \return     the characteristic scale for each variable, float or array.
+    #
+    def get_x_scale(self):
+        return self._x_scale
 
     ##
     # Gets the obtained numerical estimate to the minimization problem
@@ -60,7 +84,7 @@ class Solver(object):
     # \return     The computational time as string
     #
     def get_computational_time(self):
-        return datetime.timedelta(seconds=self._computational_time)
+        return self._computational_time
 
     def set_monitor(self, monitor):
         self._monitor = monitor
@@ -73,12 +97,12 @@ class Solver(object):
     #
     def run(self):
 
-        time_start = time.time()
+        time_start = ph.start_timing()
 
         self._run()
 
         # Get computational time in seconds
-        self._computational_time = time.time()-time_start
+        self._computational_time = ph.stop_timing(time_start)
 
         if self._verbose:
             ph.print_info("Required computational time: %s" %

@@ -13,8 +13,7 @@ import scipy
 import numpy as np
 
 from numericalsolver.LinearSolver import LinearSolver
-
-from definitions import EPS
+from numericalsolver.definitions import EPS
 from numericalsolver.LossFunctions import LossFunctions as lf
 
 
@@ -94,6 +93,52 @@ class TikhonovLinearSolver(LinearSolver):
         self._minimizer = minimizer
         self._iter_max = iter_max
         self._bounds = bounds
+
+    ##
+    # Sets the minimizer.
+    # \date       2017-08-04 19:06:16+0100
+    #
+    # \param      self       The object
+    # \param      minimizer  String defining the used optimizer, i.e. "lsmr",
+    #                        "least_squares" or any solver as provided by
+    #                        scipy.optimize.minimize
+    #
+    def set_minimizer(self, minimizer):
+        self._minimizer = minimizer
+
+    ##
+    # Gets the minimizer.
+    # \date       2017-08-04 19:06:58+0100
+    #
+    # \param      self  The object
+    #
+    # \return     The minimizer as string
+    #
+    def get_minimizer(self):
+        return self._minimizer
+
+    ##
+    # Sets the number of maximum iterations.
+    # \date       2017-08-04 19:07:23+0100
+    #
+    # \param      self      The object
+    # \param      iter_max  Number of maximum iterations for used minimizer,
+    #                       integer value
+    #
+    def set_iter_max(self, iter_max):
+        self._iter_max = iter_max
+
+    ##
+    # Gets the iterator maximum.
+    # \date       2017-08-04 19:08:06+0100
+    #
+    # \param      self  The object
+    #
+    # \return     Number of maximum iterations for used minimizer, integer
+    #             value
+    #
+    def get_iter_max(self):
+        return self._iter_max
 
     def _run(self):
 

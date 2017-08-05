@@ -16,6 +16,7 @@ import pythonhelper.PythonHelper as ph
 # Import modules
 from numericalsolver.LossFunctions import LossFunctions as lf
 
+
 class TestLossFunctions(unittest.TestCase):
 
     def setUp(self):
