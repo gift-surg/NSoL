@@ -46,9 +46,6 @@ class TikhonovLinearSolver(LinearSolver):
     # \param      alpha            Regularization parameter; scalar >= 0
     # \param      b_reg            Right hand-side of linear system associated
     #                              to the regularizer, i.e. Bx = b_reg.
-    # \param      minimizer        String defining the used optimizer, i.e.
-    #                              "lsmr", "least_squares" or any solver as
-    #                              provided by scipy.optimize.minimize
     # \param      data_loss        Data loss function rho specified as string,
     #                              e.g. "linear", "soft_l1", "huber", "cauchy",
     #                              "arctan".
@@ -59,8 +56,10 @@ class TikhonovLinearSolver(LinearSolver):
     #                              This parameter has no effect with
     #                              data_loss='linear', but for other loss
     #                              values it is of crucial importance.
-    # \param      iter_max         Number of maximum iterations for used
-    #                              minimizer, integer value
+    # \param      minimizer        String defining the used optimizer, i.e.
+    #                              "lsmr", "least_squares" or any solver as
+    #                              provided by scipy.optimize.minimize
+    # \param      iter_max         The iterator maximum
     # \param      x_scale          Characteristic scale of each variable.
     #                              Setting x_scale is equivalent to
     #                              reformulating the problem in scaled
@@ -75,70 +74,23 @@ class TikhonovLinearSolver(LinearSolver):
                  x0,
                  alpha=0.01,
                  b_reg=0,
-                 minimizer="lsmr",
                  data_loss="linear",
                  data_loss_scale=1,
+                 minimizer="lsmr",
                  iter_max=10,
                  x_scale=1,
                  verbose=0,
                  bounds=(0, np.inf)):
 
         super(self.__class__, self).__init__(
-            A=A, A_adj=A_adj, b=b, x0=x0, alpha=alpha, data_loss=data_loss,
+            A=A, A_adj=A_adj, b=b, x0=x0, alpha=alpha, iter_max=iter_max,
+            minimizer=minimizer, data_loss=data_loss,
             data_loss_scale=data_loss_scale, x_scale=x_scale, verbose=verbose)
 
         self._B = B
         self._B_adj = B_adj
         self._b_reg = b_reg / self._x_scale
-        self._minimizer = minimizer
-        self._iter_max = iter_max
         self._bounds = bounds
-
-    ##
-    # Sets the minimizer.
-    # \date       2017-08-04 19:06:16+0100
-    #
-    # \param      self       The object
-    # \param      minimizer  String defining the used optimizer, i.e. "lsmr",
-    #                        "least_squares" or any solver as provided by
-    #                        scipy.optimize.minimize
-    #
-    def set_minimizer(self, minimizer):
-        self._minimizer = minimizer
-
-    ##
-    # Gets the minimizer.
-    # \date       2017-08-04 19:06:58+0100
-    #
-    # \param      self  The object
-    #
-    # \return     The minimizer as string
-    #
-    def get_minimizer(self):
-        return self._minimizer
-
-    ##
-    # Sets the number of maximum iterations.
-    # \date       2017-08-04 19:07:23+0100
-    #
-    # \param      self      The object
-    # \param      iter_max  Number of maximum iterations for used minimizer,
-    #                       integer value
-    #
-    def set_iter_max(self, iter_max):
-        self._iter_max = iter_max
-
-    ##
-    # Gets the iterator maximum.
-    # \date       2017-08-04 19:08:06+0100
-    #
-    # \param      self  The object
-    #
-    # \return     Number of maximum iterations for used minimizer, integer
-    #             value
-    #
-    def get_iter_max(self):
-        return self._iter_max
 
     def _run(self):
 

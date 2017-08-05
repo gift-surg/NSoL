@@ -15,6 +15,10 @@ import pythonhelper.PythonHelper as ph
 from numericalsolver.ParameterStudy import ParameterStudy
 
 
+##
+# Abstract class to run parameter studies for solvers
+# \date       2017-08-05 19:19:21+0100
+#
 class SolverParameterStudy(ParameterStudy):
     __metaclass__ = ABCMeta
 
@@ -31,12 +35,19 @@ class SolverParameterStudy(ParameterStudy):
         self._parameters = parameters
         self._monitor = monitor
 
+    ##
+    # Run parameter study and write results to specified files
+    # \date       2017-08-05 19:27:16+0100
+    #
+    # \param      self  The object
+    #
     def run(self):
 
         # Reset monitor and attach to solver in case this has not happened
         self._monitor.set_name(self._name)
         self._monitor.clear_x_list()
         self._solver.set_monitor(self._monitor)
+
 
         # Create files where output is written to
         self._create_file_parameters()
@@ -64,15 +75,12 @@ class SolverParameterStudy(ParameterStudy):
 
             for j, key in enumerate(self._parameters.keys()):
 
-                # Update varying parameters, i.e. those which are not None
-                if vals[j] is not None:
-                    map(eval("self._solver.set_" + key), [vals[j]])
+                # Update varying parameters of solver
+                map(eval("self._solver.set_" + key), [vals[j]])
 
-                # Get current parameter values
+                # Store current parameter values and print it on the screen
                 dic_parameter[key] = \
                     eval("str(self._solver.get_" + key + "())")
-
-                # Print current parameter values
                 ph.print_info(key + " = %s" % (dic_parameter[key]))
 
             # Write current parameter values to file
@@ -87,6 +95,8 @@ class SolverParameterStudy(ParameterStudy):
             # Write all measure results to file for all iterations
             measures = self._monitor.get_measures()
             for measure in measures:
+
+                # Write measure results as line to the measure's file
                 nda = measures[measure].reshape(1, -1)
                 self._add_to_file_measures(measure, nda)
 
@@ -97,6 +107,12 @@ class SolverParameterStudy(ParameterStudy):
             # Clear monitor for next parameter selection
             self._monitor.clear_x_list()
 
+    ##
+    # Creates file where all parameters configurations are stored.
+    # \date       2017-08-05 19:25:04+0100
+    #
+    # \param      self  The object
+    #
     def _create_file_parameters(self):
 
         # Build header
@@ -106,6 +122,13 @@ class SolverParameterStudy(ParameterStudy):
         # Write file
         ph.write_to_file(self._get_path_to_file_parameters(), header, "w")
 
+    ##
+    # Creates a file for each chosen measure where all solver iterations are
+    # stored for each parameter configuration
+    # \date       2017-08-05 19:25:28+0100
+    #
+    # \param      self  The object
+    #
     def _create_files_measures(self):
 
         measures = self._monitor.get_measures()
@@ -119,6 +142,13 @@ class SolverParameterStudy(ParameterStudy):
             ph.write_to_file(self._get_path_to_file_measures(measure),
                              header, "w")
 
+    ##
+    # Creates a file to computational time required to run each parameter
+    # configuration.
+    # \date       2017-08-05 19:26:09+0100
+    #
+    # \param      self  The object
+    #
     def _create_file_computational_time(self):
 
         # Build header
@@ -130,26 +160,50 @@ class SolverParameterStudy(ParameterStudy):
                          header, "w")
 
     ##
-    # Adds to file parameters.
+    # Adds parameter configuration to parameter file.
     # \date       2017-08-04 22:06:58+0100
     #
-    # \param      self        The object
-    # \param      parameters  parameter dictionary
+    # \param      self            The object
+    # \param      dic_parameters  dictionary holding the parameters and their
+    #                             values
     #
     def _add_to_file_parameters(self, dic_parameters):
         text = ("\t").join(dic_parameters.values())
         text += "\n"
         ph.write_to_file(self._get_path_to_file_parameters(), text, "a")
 
+    ##
+    # Adds obtained results for all iterations to the measure's file
+    # \date       2017-08-05 19:19:51+0100
+    #
+    # \param      self     The object
+    # \param      measure  ID of measure which was evaluated
+    # \param      nda      Numpy data array as (1 x N) data array
+    #
     def _add_to_file_measures(self, measure, nda):
         ph.write_array_to_file(self._get_path_to_file_measures(measure), nda)
 
+    ##
+    # Adds measured computational time to file.
+    # \date       2017-08-05 19:23:35+0100
+    #
+    # \param      self                The object
+    # \param      computational_time  computational time as timedelta object
+    #
     def _add_to_file_computational_time(self, computational_time):
         text = str(computational_time)
         text += "\n"
         ph.write_to_file(
             self._get_path_to_file_computational_time(), text, "a")
 
+    ##
+    # Get solver-specific header for all files to be written
+    # \date       2017-08-05 19:24:23+0100
+    #
+    # \param      self  The object
+    #
+    # \return     The fileheader as tring.
+    #
     @abstractmethod
     def _get_fileheader(self):
         pass

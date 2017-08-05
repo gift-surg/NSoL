@@ -65,6 +65,38 @@ class Solver(object):
         return self._x_scale
 
     ##
+    # Sets the verbose.
+    # \date       2017-08-05 18:26:15+0100
+    #
+    # \param      self     The object
+    # \param      verbose  Turn on/off verbose; bool
+    #
+    def set_verbose(self, verbose):
+        self._verbose = verbose
+
+    ##
+    # Gets the verbose.
+    # \date       2017-08-05 18:26:44+0100
+    #
+    # \param      self  The object
+    #
+    # \return     boolean flag.
+    #
+    def get_verbose(self):
+        return self._verbose
+
+    ##
+    # Gets the initial value.
+    # \date       2017-08-05 18:30:48+0100
+    #
+    # \param      self  The object
+    #
+    # \return     Initial value as 1D numpy array.
+    #
+    def get_x0(self):
+        return np.array(self._x0) * self._x_scale
+
+    ##
     # Gets the obtained numerical estimate to the minimization problem
     # \date       2017-07-20 23:39:36+0100
     #
@@ -86,6 +118,13 @@ class Solver(object):
     def get_computational_time(self):
         return self._computational_time
 
+    ##
+    # Sets the monitor to analyse performance
+    # \date       2017-08-05 18:31:18+0100
+    #
+    # \param      self     The object
+    # \param      monitor  The monitor as Monitor object
+    #
     def set_monitor(self, monitor):
         self._monitor = monitor
 
@@ -99,6 +138,7 @@ class Solver(object):
 
         time_start = ph.start_timing()
 
+        # Execute solver
         self._run()
 
         # Get computational time in seconds

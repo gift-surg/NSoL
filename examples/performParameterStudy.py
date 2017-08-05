@@ -22,6 +22,7 @@ import numericalsolver.Noise as Noise
 import numericalsolver.TikhonovLinearSolver as tk
 import numericalsolver.TikhonovLinearSolverParameterStudy as tkparam
 import numericalsolver.ADMMLinearSolverParameterStudy as admmparam
+import numericalsolver.PrimalDualSolverParameterStudy as pdparam
 import numericalsolver.ReaderParameterStudy as readerps
 import numericalsolver.ADMMLinearSolver as admm
 import numericalsolver.PrimalDualSolver as pd
@@ -40,8 +41,8 @@ dimension = 2
 # dimension = 3
 
 solver_TK = 0
-solver_ADMM = 1
-solver_PrimalDual = 0
+solver_ADMM = 0
+solver_PrimalDual = 1
 
 verbose = 0
 flag_normalize = 1
@@ -162,7 +163,7 @@ measures_dic = {
     "SSD": ssd,
     "RMSE": rmse,
     "PSNR": psnr,
-    # "SSIM": ssim,
+    "SSIM": ssim,
     "NCC": ncc,
     # "MI": mi,
     "NMI": nmi,
@@ -202,24 +203,73 @@ solver_admm = admm.ADMMLinearSolver(
     verbose=verbose,
 )
 
-# ----------------------------------Tikhonov----------------------------------
+monitor_pd = monitor.Monitor()
+monitor_pd.set_measures(measures_dic)
+
+solver_pd = pd.PrimalDualSolver(
+    prox_f=prox_f,
+    prox_g_conj=prox.prox_tv_conj,
+    B=D_1D,
+    B_conj=D_adj_1D,
+    L2=8,
+    x0=x0,
+    alpha=alpha,
+    iterations=PD_iterations,
+    alg_type="ALG2",
+    verbose=verbose,
+    x_scale=x_scale,
+)
+
+# ---------------------------------Run Studies---------------------------------
 if solver_TK:
-    name = "Tikhonov"
+    name_tk = "Tikhonov"
     tikhonov_parameter_study = tkparam.TikhonovLinearSolverParameterStudy(
         solver_tk, monitor_tk,
         dir_output=directory,
-        name=name,
+        name=name_tk,
     )
-    tikhonov_parameter_study.run()
+    # tikhonov_parameter_study.run()
 
+if solver_ADMM:
+    name_admm = "ADMM"
+    admm_parameter_study = admmparam.ADMMLinearSolverParameterStudy(
+        solver_admm, monitor_admm,
+        dir_output=directory,
+        name=name_admm,
+    )
+    # admm_parameter_study.run()
+
+if solver_PrimalDual:
+    name_pd = "PrimalDual"
+    pd_parameter_study = pdparam.PrimalDualSolverParameterStudy(
+        solver_pd, monitor_pd,
+        dir_output=directory,
+        name=name_pd,
+    )
+    # pd_parameter_study.run()
+
+# --------------------------------Read Studies--------------------------------
+if solver_TK:
     parameter_study_reader = readerps.ReaderParameterStudy(
-        directory=directory, name=name)
+        directory=directory, name=name_tk)
     parameter_study_reader.read_study()
 
     nda_SSD = parameter_study_reader.get_results("SSD")
     nda_TK1 = parameter_study_reader.get_results("TK1")
-    dic_line_to_parameter_labels = parameter_study_reader.\
+
+    parameters_dic = parameter_study_reader.get_parameters()
+    parameters_to_line_dic = parameter_study_reader.get_parameters_to_line()
+    line_to_parameter_labels_dic = parameter_study_reader.\
         get_line_to_parameter_labels()
+
+    print parameters_dic
+    print parameters_to_line_dic
+    print line_to_parameter_labels_dic
+
+    p = {k: (parameters_dic[k] if k == 'alpha' else parameters_dic[
+             k][0]) for k in parameters_dic.keys()}
+    lines = parameter_study_reader.get_lines_to_parameters(p)
+    print lines
 
     x = [nda_SSD[i, -1] for i in range(nda_SSD.shape[0])]
     y = [nda_TK1[i, -1] for i in range(nda_TK1.shape[0])]
@@ -230,7 +280,7 @@ if solver_TK:
     }
     label = []
     for i in range(nda_SSD.shape[0]):
-        ell = dic_line_to_parameter_labels[i]
+        ell = line_to_parameter_labels_dic[i]
         for k in label_sub.keys():
             ell = re.sub(k, label_sub[k], ell)
         label.append(ell)
@@ -240,38 +290,28 @@ if solver_TK:
                    xlabel="SSD",
                    ylabel="TK1",
                    labels=label,
-                   markers=ph.MARKERS,
+                   markers=ph.MARKERS*100,
                    markevery=1,
                    # y_axis_style="loglog",
                    )
-
-# ------------------------------------ADMM------------------------------------
 if solver_ADMM:
-    name = "ADMM"
-    admm_parameter_study = admmparam.ADMMLinearSolverParameterStudy(
-        solver_admm, monitor_admm,
-        dir_output=directory,
-        name=name,
-    )
-    admm_parameter_study.run()
+    parameter_study_reader = readerps.ReaderParameterStudy(
+        directory=directory, name=name_admm)
+    parameter_study_reader.read_study()
 
     nda_SSD = parameter_study_reader.get_results("SSD")
     nda_TV = parameter_study_reader.get_results("TV")
-    dic_line_to_parameter_labels = parameter_study_reader.\
+    nda_NCC = parameter_study_reader.get_results("NCC")
+
+    parameters_dic = parameter_study_reader.get_parameters()
+    line_to_parameter_labels_dic = parameter_study_reader.\
         get_line_to_parameter_labels()
 
     x = [nda_SSD[i, -1] for i in range(nda_SSD.shape[0])]
     y = [nda_TV[i, -1] for i in range(nda_TV.shape[0])]
-    label_sub = {
-        "alpha": "$a$",
-        "data_loss": "r",
-        "data_loss_scale": "f",
-    }
     label = []
     for i in range(nda_SSD.shape[0]):
-        ell = dic_line_to_parameter_labels[i]
-        for k in label_sub.keys():
-            ell = re.sub(k, label_sub[k], ell)
+        ell = line_to_parameter_labels_dic[i]
         label.append(ell)
     # label = [label_sub[] for i in range(nda_SSD.shape[0])]
 
@@ -279,7 +319,59 @@ if solver_ADMM:
                    xlabel="SSD",
                    ylabel="TV",
                    labels=label,
-                   markers=ph.MARKERS,
+                   markers=ph.MARKERS*100,
+                   markevery=1,
+                   # y_axis_style="loglog",
+                   )
+
+    i = 0
+    ph.show_curves(nda_NCC[i, :],
+                   xlabel="iterations",
+                   ylabel="NCC",
+                   # labels=label,
+                   labels=line_to_parameter_labels_dic[i],
+                   markers=ph.MARKERS*100,
+                   markevery=1,
+                   # y_axis_style="loglog",
+                   )
+
+if solver_PrimalDual:
+    parameter_study_reader = readerps.ReaderParameterStudy(
+        directory=directory, name=name_pd)
+    parameter_study_reader.read_study()
+
+    nda_SSD = parameter_study_reader.get_results("SSD")
+    nda_TV = parameter_study_reader.get_results("TV")
+    nda_NCC = parameter_study_reader.get_results("NCC")
+
+    parameters_dic = parameter_study_reader.get_parameters()
+    line_to_parameter_labels_dic = parameter_study_reader.\
+        get_line_to_parameter_labels()
+
+    x = [nda_SSD[i, -1] for i in range(nda_SSD.shape[0])]
+    y = [nda_TV[i, -1] for i in range(nda_TV.shape[0])]
+    label = []
+    for i in range(nda_SSD.shape[0]):
+        ell = line_to_parameter_labels_dic[i]
+        label.append(ell)
+    # label = [label_sub[] for i in range(nda_SSD.shape[0])]
+
+    ph.show_curves(y, x=x,
+                   xlabel="SSD",
+                   ylabel="TV",
+                   labels=label,
+                   markers=ph.MARKERS*100,
+                   markevery=1,
+                   # y_axis_style="loglog",
+                   )
+
+    i = 0
+    ph.show_curves(nda_NCC[i, :],
+                   xlabel="iterations",
+                   ylabel="NCC",
+                   # labels=label,
+                   labels=line_to_parameter_labels_dic[i],
+                   markers=ph.MARKERS*100,
                    markevery=1,
                    # y_axis_style="loglog",
                    )

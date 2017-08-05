@@ -37,8 +37,8 @@ np.random.seed(seed=1)
 dimension = 2
 # dimension = 3
 
-solver_TK = 1
-solver_ADMM = 0
+solver_TK = 0
+solver_ADMM = 1
 solver_PrimalDual = 0
 
 verbose = 0
@@ -50,7 +50,7 @@ noise_level = 0.05
 
 iter_max = 10
 alpha = 0.01  # Denoising (S&P) 0.6; default: 0.01
-rho = 0.5
+rho = 0.1
 ADMM_iterations = 50
 PD_iterations = 50
 

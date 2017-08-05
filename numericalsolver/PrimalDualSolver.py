@@ -108,6 +108,92 @@ class PrimalDualSolver(Solver):
         }
 
     ##
+    # Sets the regularization parameter alpha.
+    # \date       2017-08-04 18:54:24+0100
+    #
+    # \param      self   The object
+    # \param      alpha  Regularization  parameter; scalar
+    #
+    def set_alpha(self, alpha):
+        self._alpha = alpha
+
+    ##
+    # Gets the regularization parameter alpha.
+    # \date       2017-08-04 18:54:59+0100
+    #
+    # \param      self  The object
+    #
+    # \return     scalar
+    #
+    def get_alpha(self):
+        return self._alpha
+
+    ##
+    # Sets the squared operator norm of B, i.e. L2 = ||B||^2.
+    # \date       2017-08-05 19:08:33+0100
+    #
+    # \param      self  The object
+    # \param      L2    scalar value > 0
+    #
+    def set_L2(self, L2):
+        self._L2 = L2
+
+    ##
+    # Gets the squared operator norm of B, i.e. L2 = ||B||^2.
+    # \date       2017-08-05 19:09:29+0100
+    #
+    # \param      self  The object
+    #
+    # \return     Scalar value > 0
+    #
+    def get_L2(self):
+        return self._L2
+
+    ##
+    # Sets the type of algorithm to dynamically update parameters for each
+    # iteration.
+    # \date       2017-08-05 19:16:11+0100
+    #
+    # \param      self      The object
+    # \param      alg_type  string being either 'ALG2', 'ALG2_AHMOD' or 'ALG3'
+    #
+    def set_alg_type(self, alg_type):
+        self._alg_type = alg_type
+
+    ##
+    # Gets the type of algorithm to dynamically update parameters for each
+    # iteration.
+    # \date       2017-08-05 19:17:26+0100
+    #
+    # \param      self  The object
+    #
+    # \return     string.
+    #
+    def get_alg_type(self):
+        return self._alg_type
+
+    ##
+    # Sets the number of primal-dual iterations.
+    # \date       2017-08-05 18:59:12+0100
+    #
+    # \param      self        The object
+    # \param      iterations  Number of primal-dual iterations, integer value
+    #
+    def set_iterations(self, iterations):
+        self._iterations = iterations
+
+    ##
+    # Gets the number of primal-dual iterations.
+    # \date       2017-08-05 18:59:39+0100
+    #
+    # \param      self  The object
+    #
+    # \return     Number of primal-dual iterations, integer value.
+    #
+    def get_iterations(self):
+        return self._iterations
+
+    ##
     # Prints the statistics of the performed optimization
     # \date       2017-07-21 00:01:10+0100
     #
@@ -117,6 +203,12 @@ class PrimalDualSolver(Solver):
     def print_statistics(self, fmt="%.3e"):
         pass
 
+    ##
+    # Execute solver
+    # \date       2017-08-05 19:10:29+0100
+    #
+    # \param      self  The object
+    #
     def _run(self):
 
         # Monitor output

@@ -1,6 +1,6 @@
 ##
 # \file ADMMLinearSolverParameterStudy.py
-# \brief
+# \brief Class to run parameter study for ADMMLinearSolver
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
 # \date       Aug 2017
@@ -21,7 +21,7 @@ class ADMMLinearSolverParameterStudy(SolverParameterStudy):
                  dir_output,
                  name="ADMM",
                  parameters={
-                     "alpha": np.arange(0.1, 0.5, 0.1),
+                     "alpha": np.arange(0.01, 0.05, 0.01),
                      "rho": np.arange(0.1, 1.5, 0.5),
                      # "data_loss": ["linear", "arctan"],
                      # "data_loss_scale": [1., 1.2],
@@ -37,8 +37,24 @@ class ADMMLinearSolverParameterStudy(SolverParameterStudy):
 
     def _get_fileheader(self):
 
+        # keys referring to the information to be printed in the file
+        keys = ["alpha",
+                "rho",
+                "iterations",
+                "minimizer",
+                "iter_max",
+                "x_scale",
+                "data_loss",
+                "data_loss_scale",
+                "dimension",
+                ]
+
         header = "## " + self._name
-        # header += ", iter_max = %d" % (self._solver.get_iter_max())
+        for key in keys:
+            # Only write information to header which stays constant in study
+            if key not in self._parameters.keys():
+                header += ", %s=%s" \
+                    % (key, eval("str(self._solver.get_" + key + "())"))
         header += " (%s)" % (ph.get_time_stamp())
         header += "\n"
         return header

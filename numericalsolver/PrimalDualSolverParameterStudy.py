@@ -1,6 +1,6 @@
 ##
-# \file TikhonovLinearSolverParameterStudy.py
-# \brief Class to run parameter study for TikhonovLinearSolver
+# \file PrimalDualSolverParameterStudy.py
+# \brief Class to run parameter study for PrimalDualSolver
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
 # \date       Aug 2017
@@ -10,25 +10,24 @@ import numpy as np
 
 import pythonhelper.PythonHelper as ph
 from numericalsolver.SolverParameterStudy import SolverParameterStudy
-import numericalsolver.TikhonovLinearSolver as tk
+import numericalsolver.PrimalDualSolver as pd
 
 
-class TikhonovLinearSolverParameterStudy(SolverParameterStudy):
+class PrimalDualSolverParameterStudy(SolverParameterStudy):
 
     def __init__(self,
                  solver,
                  monitor,
                  dir_output,
-                 name="Tikhonov",
+                 name="PrimalDual",
                  parameters={
-                     "alpha": np.arange(0.02, 0.5, 0.05),
-                     "data_loss": ["linear", "arctan"],
-                     # "data_loss_scale": [1., 1.2],
+                     "alpha": np.arange(0.01, 0.05, 0.01),
+                     "alg_type": ["ALG2", "ALG2_AHMOD", "ALG3"],
                  },
                  ):
 
-        if not isinstance(solver, tk.TikhonovLinearSolver):
-            raise TypeError("solver must be of type 'TikhonovLinearSolver'")
+        if not isinstance(solver, pd.PrimalDualSolver):
+            raise TypeError("solver must be of type 'PrimalDualSolver'")
 
         super(self.__class__, self).__init__(
             solver=solver, parameters=parameters, monitor=monitor,
@@ -38,11 +37,9 @@ class TikhonovLinearSolverParameterStudy(SolverParameterStudy):
 
         # keys referring to the information to be printed in the file
         keys = ["alpha",
-                "minimizer",
-                "iter_max",
+                "iterations",
                 "x_scale",
-                "data_loss",
-                "data_loss_scale",
+                "L2"
                 ]
 
         header = "## " + self._name

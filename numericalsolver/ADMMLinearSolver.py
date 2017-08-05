@@ -91,15 +91,14 @@ class ADMMLinearSolver(LinearSolver):
                  verbose=0):
 
         super(self.__class__, self).__init__(
-            A=A, A_adj=A_adj, b=b, x0=x0, alpha=alpha, data_loss=data_loss,
+            A=A, A_adj=A_adj, b=b, x0=x0, alpha=alpha, iter_max=iter_max,
+            minimizer=minimizer, data_loss=data_loss,
             data_loss_scale=data_loss_scale, x_scale=x_scale, verbose=verbose)
 
         self._B = B
         self._B_adj = B_adj
         self._b_reg = b_reg / self._x_scale
         self._dimension = dimension
-        self._iter_max = iter_max
-        self._minimizer = minimizer
         self._rho = float(rho)
         self._iterations = iterations
 
@@ -125,6 +124,44 @@ class ADMMLinearSolver(LinearSolver):
     def get_rho(self):
         return self._rho
 
+    ##
+    # Gets the dimension of space.
+    # \date       2017-08-05 18:42:33+0100
+    #
+    # \param      self  The object
+    #
+    # \return     The dimension of space as int.
+    #
+    def get_dimension(self):
+        return self._dimension
+
+    ##
+    # Sets the number of ADMM iterations.
+    # \date       2017-08-05 18:59:12+0100
+    #
+    # \param      self        The object
+    # \param      iterations  Number of ADMM iterations, integer value
+    #
+    def set_iterations(self, iterations):
+        self._iterations = iterations
+
+    ##
+    # Gets the number of ADMM iterations.
+    # \date       2017-08-05 18:59:39+0100
+    #
+    # \param      self  The object
+    #
+    # \return     Number of ADMM iterations, integer value.
+    #
+    def get_iterations(self):
+        return self._iterations
+
+    ##
+    # Execute solver
+    # \date       2017-08-05 19:00:53+0100
+    #
+    # \param      self  The object
+    #
     def _run(self):
 
         # Monitor output
@@ -216,28 +253,6 @@ class ADMMLinearSolver(LinearSolver):
         return v
 
     ##
-    # Gets the soft threshold.
-    #
-    # The soft threshold is defined as
-    # \f[ S_\ell(t) =  \max(|t|-\ell,0)\,\text{sgn}(t) = \begin{cases}
-    # t-\ell,& \text{if } t>\ell \\ 0,& \text{if } |t|\le\ell \\ t+\ell,&
-    # \text{if } t<\ell \end{cases}
-    # \f]
-    # \date       2017-07-21 00:37:13+0100
-    #
-    # \param      self  The object
-    # \param      ell   threshold as scalar > 0
-    # \param      t     array containing the values to be thresholded
-    #
-    # \return     The soft threshold.
-    #
-    def _get_soft_threshold(self, ell, t):
-        return np.maximum(np.abs(t) - ell, 0) * np.sign(t)
-
-    def _get_cost_regularization_term(self, x):
-        return prior_meas.total_variation(x, self._B, self._dimension)
-
-    ##
     # Gets the split of (n, ...) numpy into d (n/d, ...) numpy arrays with d
     # being the dimension of space
     #
@@ -273,3 +288,25 @@ class ADMMLinearSolver(LinearSolver):
             tmp += x_split[i]**2
 
         return tmp
+
+    ##
+    # Gets the soft threshold.
+    #
+    # The soft threshold is defined as
+    # \f[ S_\ell(t) =  \max(|t|-\ell,0)\,\text{sgn}(t) = \begin{cases}
+    # t-\ell,& \text{if } t>\ell \\ 0,& \text{if } |t|\le\ell \\ t+\ell,&
+    # \text{if } t<\ell \end{cases}
+    # \f]
+    # \date       2017-07-21 00:37:13+0100
+    #
+    # \param      self  The object
+    # \param      ell   threshold as scalar > 0
+    # \param      t     array containing the values to be thresholded
+    #
+    # \return     The soft threshold.
+    #
+    def _get_soft_threshold(self, ell, t):
+        return np.maximum(np.abs(t) - ell, 0) * np.sign(t)
+
+    def _get_cost_regularization_term(self, x):
+        return prior_meas.total_variation(x, self._B, self._dimension)
