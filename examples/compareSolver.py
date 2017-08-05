@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ##
-# \file foo.py
+# \file compareSolver.py
 # \brief      Playground file
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
@@ -38,7 +38,7 @@ dimension = 2
 # dimension = 3
 
 solver_TK = 1
-solver_ADMM = 1
+solver_ADMM = 0
 solver_PrimalDual = 0
 
 verbose = 0
@@ -108,7 +108,6 @@ b = blurred_noisy_nda.flatten()
 x0 = blurred_noisy_nda.flatten()
 
 x_scale = np.max(original_nda)
-# x_scale = 1
 
 I_1D = lambda x: x.flatten()
 I_adj_1D = lambda x: x.flatten()
@@ -178,12 +177,12 @@ tv = lambda x: prior_meas.total_variation(x, D_1D, dimension)
 monitors = []
 measures_dic = {
     "SSD": ssd,
-    "RMSE": rmse,
-    "PSNR": psnr,
+    # "RMSE": rmse,
+    # "PSNR": psnr,
     # "SSIM": ssim,
-    "NCC": ncc,
+    # "NCC": ncc,
     # "MI": mi,
-    "NMI": nmi,
+    # "NMI": nmi,
     "TK1": tk1,
     "TV": tv,
 }
@@ -217,25 +216,6 @@ if solver_TK:
         recon_sitk.CopyInformation(original_sitk)
         data_sitk.append(recon_sitk)
 
-directory = "/tmp/ParameterStudy"
-name = "Tikhonov"
-tikhonov_parameter_study = tkparam.TikhonovParameterStudy(
-    solver, monitor_tk, dir_output=directory, name=name, alphas=[0.01, 0.05],
-    # data_losses=["linear"],
-    data_loss_scales=[2, 3, 4],
-    )
-tikhonov_parameter_study.run()
-
-parameter_study_reader = psreader.ParameterStudyReader(
-    directory=directory, name=name)
-parameter_study_reader.read_study()
-# print parameter_study_reader.get_measures()
-# print parameter_study_reader.get_parameters()
-# print parameter_study_reader.get_line_to_parameter_labels()
-
-foo = parameter_study_reader.get_results("NMI")
-print foo
-ph.exit()
 
 # if solver_TK:
 #     minimizer = "L-BFGS-B"

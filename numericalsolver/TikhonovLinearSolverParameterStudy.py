@@ -1,36 +1,34 @@
 ##
-# \file ParameterStudy.py
+# \file TikhonovLinearSolverParameterStudy.py
 # \brief
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
 # \date       Aug 2017
 #
 
+import numpy as np
 
 import pythonhelper.PythonHelper as ph
-from numericalsolver.ParameterStudy import ParameterStudy
+from numericalsolver.SolverParameterStudy import SolverParameterStudy
 import numericalsolver.TikhonovLinearSolver as tk
 
 
-class TikhonovParameterStudy(ParameterStudy):
+class TikhonovLinearSolverParameterStudy(SolverParameterStudy):
 
     def __init__(self,
                  solver,
                  monitor,
                  dir_output,
                  name="Tikhonov",
-                 alphas=[None],
-                 data_losses=[None],
-                 data_loss_scales=[None]):
+                 parameters={
+                     "alpha": np.arange(0.02, 0.5, 0.05),
+                     # "data_loss": ["linear", "arctan"],
+                     # "data_loss_scale": [1., 1.2],
+                 },
+                 ):
 
         if not isinstance(solver, tk.TikhonovLinearSolver):
             raise TypeError("solver must be of type 'TikhonovLinearSolver'")
-
-        parameters = {
-            "alpha": alphas,
-            "data_loss": data_losses,
-            "data_loss_scale": data_loss_scales,
-        }
 
         super(self.__class__, self).__init__(
             solver=solver, parameters=parameters, monitor=monitor,

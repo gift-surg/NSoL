@@ -23,7 +23,7 @@ class Monitor(object):
     # \param      self  The object
     # \param      name  Name for the solver to monitor, string
     #
-    def __init__(self, name):
+    def __init__(self, name="Monitor"):
         self._name = name
         self._x_list = []
         self._measures = []
@@ -40,6 +40,16 @@ class Monitor(object):
     #
     def add_x(self, x):
         self._x_list.append(x)
+
+    ##
+    # Sets the name.
+    # \date       2017-08-05 02:58:36+0100
+    #
+    # \param      self  The object
+    # \param      name  Name for solver to monitor, string
+    #
+    def set_name(self, name):
+        self._name = name
 
     ##
     # Clear list of data arrays

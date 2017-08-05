@@ -103,6 +103,28 @@ class ADMMLinearSolver(LinearSolver):
         self._rho = float(rho)
         self._iterations = iterations
 
+    ##
+    # Sets the regularization parameter for augmented Lagrangian.
+    # \date       2017-08-05 04:08:03+0100
+    #
+    # \param      self  The object
+    # \param      rho   regularization  parameter of augmented Lagrangian term;
+    #                   scalar > 0
+    #
+    def set_rho(self, rho):
+        self._rho = rho
+
+    ##
+    # Gets the regularization parameter for augmented Lagrangian.
+    # \date       2017-08-05 04:08:42+0100
+    #
+    # \param      self  The object
+    #
+    # \return     scalar > 0
+    #
+    def get_rho(self):
+        return self._rho
+
     def _run(self):
 
         # Monitor output

@@ -13,12 +13,12 @@ import natsort
 
 import pythonhelper.PythonHelper as ph
 
-from numericalsolver.ParameterStudyBase import ParameterStudyBase
+from numericalsolver.ParameterStudy import ParameterStudy
 from numericalsolver.definitions import REGEX_FILENAMES
 from numericalsolver.definitions import FILENAME_EXTENSION
 
 
-class ParameterStudyReader(ParameterStudyBase):
+class ReaderParameterStudy(ParameterStudy):
 
     def __init__(self, directory, name=None):
         self._directory = directory
