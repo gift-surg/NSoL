@@ -140,7 +140,8 @@ class TestLossFunctions(unittest.TestCase):
 
         # for loss in ["linear", "soft_l1", "cauchy", "arctan"]:
         for loss in ["linear", "cauchy", "arctan"]:
-            for f_scale in [1., 1.1, 1.2]:
+            # for f_scale in [1., 1.1, 1.2]:
+            for f_scale in [1.]:
                 losses.append(lf.get_loss[loss](
                     f2=residual2, f_scale=f_scale))
                 grad_losses.append(lf.get_gradient_loss[loss](
@@ -154,12 +155,13 @@ class TestLossFunctions(unittest.TestCase):
         # jacobians.append(lf.gradient_soft_l1(residual2)*residual)
         # labels.append("soft_l1")
 
-        # for gamma in (1, 1.345, 5, 10, 15):
-        #     losses.append(lf.huber(residual2, gamma=gamma))
-        #     grad_losses.append(lf.gradient_huber(residual2, gamma=gamma))
-        #     jacobians.append(lf.gradient_huber(
-        #         residual2, gamma=gamma)*residual)
-            # labels.append("huber(" + str(gamma) + ")")
+        # for gamma in [1, 1.345, 5, 10, 15]:
+        for gamma in [1.345]:
+            losses.append(lf.huber(residual2, gamma=gamma))
+            grad_losses.append(lf.gradient_huber(residual2, gamma=gamma))
+            jacobians.append(lf.gradient_huber(
+                residual2, gamma=gamma)*residual)
+            labels.append("huber(" + str(gamma) + ")")
 
         ph.show_curves(losses, x=residual, labels=labels,
                        title="losses rho(x^2)")

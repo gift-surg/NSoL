@@ -61,6 +61,17 @@ class SolverParameterStudy(ParameterStudy):
         # Get computational time in seconds
         self._computational_time = ph.stop_timing(time_start)
 
+    ##
+    # Gets the parameters specified for parameter study.
+    # \date       2017-08-05 23:35:09+0100
+    #
+    # \param      self  The object
+    #
+    # \return     The parameters as dictionary.
+    #
+    def get_parameters(self):
+        return self._parameters
+
     def _run(self):
 
         dic_parameter = {}

@@ -67,14 +67,18 @@ class ProximalOperators(object):
     # See Chambolle2011, p.135
     # \date       2017-07-21 01:52:01+0100
     #
-    # \param      x     numpy array
-    # \param      tau   step size; scalar >= 0
-    # \param      x0    observed; numpy array
+    # \param      x        numpy array
+    # \param      tau      step size; scalar >= 0
+    # \param      x0       observed; numpy array
+    # \param      x_scale  Characteristic scale of each variable. Setting
+    #                      x_scale is equivalent to reformulating the problem
+    #                      in scaled variables ``xs = x / x_scale``
     #
     # \return     prox_{\tau g}(x) as numpy array
     #
     @staticmethod
-    def prox_ell1_denoising(x, tau, x0):
+    def prox_ell1_denoising(x, tau, x0, x_scale=1.):
+        x0 = x0 / float(x_scale)
         return x0 + np.maximum(np.abs(x-x0) - tau, 0) * np.sign(x-x0)
 
     ##
@@ -85,14 +89,18 @@ class ProximalOperators(object):
     # \tau*x0) / (1 + \tau*x0). See Chambolle2011, p.133
     # \date       2017-07-21 01:52:01+0100
     #
-    # \param      x     numpy array
-    # \param      tau   step size; scalar >= 0
-    # \param      x0    observed; numpy array
+    # \param      x        numpy array
+    # \param      tau      step size; scalar >= 0
+    # \param      x0       observed; numpy array
+    # \param      x_scale  Characteristic scale of each variable. Setting
+    #                      x_scale is equivalent to reformulating the problem
+    #                      in scaled variables ``xs = x / x_scale``
     #
     # \return     prox_{\tau g}(x) as numpy array
     #
     @staticmethod
-    def prox_ell2_denoising(x, tau, x0):
+    def prox_ell2_denoising(x, tau, x0, x_scale=1.):
+        x0 = x0 / float(x_scale)
         return (x + tau * x0) / (1. + tau)
 
     # #########################################################################

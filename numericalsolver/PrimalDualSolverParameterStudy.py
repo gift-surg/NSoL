@@ -21,7 +21,7 @@ class PrimalDualSolverParameterStudy(SolverParameterStudy):
                  dir_output,
                  name="PrimalDual",
                  parameters={
-                     "alpha": np.arange(0.01, 0.05, 0.01),
+                     "alpha": np.arange(0.01, 0.05, 0.005),
                      "alg_type": ["ALG2", "ALG2_AHMOD", "ALG3"],
                  },
                  ):

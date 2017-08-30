@@ -141,7 +141,7 @@ class Solver(object):
         # Execute solver
         self._run()
 
-        # Get computational time in seconds
+        # Get computational time
         self._computational_time = ph.stop_timing(time_start)
 
         if self._verbose:

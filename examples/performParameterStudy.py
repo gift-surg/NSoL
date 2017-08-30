@@ -32,6 +32,7 @@ from numericalsolver.SimilarityMeasures import SimilarityMeasures as sim_meas
 from numericalsolver.PriorMeasures import PriorMeasures as prior_meas
 
 from numericalsolver.definitions import DIR_TEST
+from numericalsolver.definitions import DIR_ROOT
 
 
 np.random.seed(seed=1)
@@ -50,7 +51,7 @@ max_intensity_normalization = 10
 flag_blurring = 1
 flag_noise = 1
 noise_level = 0.05
-directory = "/tmp/ParameterStudy"
+directory = os.path.join(DIR_ROOT, "results", "ParameterStudy")
 
 iter_max = 10
 alpha = 0.01  # Denoising (S&P) 0.6; default: 0.01
