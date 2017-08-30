@@ -26,7 +26,7 @@ import numericalsolver.PrimalDualSolverParameterStudy as pdparam
 import numericalsolver.ReaderParameterStudy as readerps
 import numericalsolver.ADMMLinearSolver as admm
 import numericalsolver.PrimalDualSolver as pd
-import numericalsolver.Monitor as monitor
+import numericalsolver.Observer as observer
 from numericalsolver.ProximalOperators import ProximalOperators as prox
 from numericalsolver.SimilarityMeasures import SimilarityMeasures as sim_meas
 from numericalsolver.PriorMeasures import PriorMeasures as prior_meas
@@ -159,7 +159,7 @@ nmi = lambda x: sim_meas.normalized_mutual_information(x, x_ref)
 tk1 = lambda x: prior_meas.first_order_tikhonov(x, D_1D)
 tv = lambda x: prior_meas.total_variation(x, D_1D, dimension)
 
-monitors = []
+observers = []
 measures_dic = {
     "SSD": ssd,
     "RMSE": rmse,
@@ -172,8 +172,8 @@ measures_dic = {
     "TV": tv,
 }
 
-monitor_tk = monitor.Monitor()
-monitor_tk.set_measures(measures_dic)
+observer_tk = observer.Observer()
+observer_tk.set_measures(measures_dic)
 
 solver_tk = tk.TikhonovLinearSolver(
     A=A_1D, A_adj=A_adj_1D,
@@ -187,8 +187,8 @@ solver_tk = tk.TikhonovLinearSolver(
     minimizer="L-BFGS-B",
 )
 
-monitor_admm = monitor.Monitor()
-monitor_admm.set_measures(measures_dic)
+observer_admm = observer.Observer()
+observer_admm.set_measures(measures_dic)
 
 solver_admm = admm.ADMMLinearSolver(
     A=A_1D, A_adj=A_adj_1D,
@@ -204,8 +204,8 @@ solver_admm = admm.ADMMLinearSolver(
     verbose=verbose,
 )
 
-monitor_pd = monitor.Monitor()
-monitor_pd.set_measures(measures_dic)
+observer_pd = observer.Observer()
+observer_pd.set_measures(measures_dic)
 
 solver_pd = pd.PrimalDualSolver(
     prox_f=prox_f,
@@ -225,7 +225,7 @@ solver_pd = pd.PrimalDualSolver(
 if solver_TK:
     name_tk = "Tikhonov"
     tikhonov_parameter_study = tkparam.TikhonovLinearSolverParameterStudy(
-        solver_tk, monitor_tk,
+        solver_tk, observer_tk,
         dir_output=directory,
         name=name_tk,
     )
@@ -234,7 +234,7 @@ if solver_TK:
 if solver_ADMM:
     name_admm = "ADMM"
     admm_parameter_study = admmparam.ADMMLinearSolverParameterStudy(
-        solver_admm, monitor_admm,
+        solver_admm, observer_admm,
         dir_output=directory,
         name=name_admm,
     )
@@ -243,7 +243,7 @@ if solver_ADMM:
 if solver_PrimalDual:
     name_pd = "PrimalDual"
     pd_parameter_study = pdparam.PrimalDualSolverParameterStudy(
-        solver_pd, monitor_pd,
+        solver_pd, observer_pd,
         dir_output=directory,
         name=name_pd,
     )

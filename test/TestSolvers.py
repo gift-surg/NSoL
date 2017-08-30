@@ -20,7 +20,7 @@ import numericalsolver.Noise as Noise
 import numericalsolver.TikhonovLinearSolver as tk
 import numericalsolver.ADMMLinearSolver as admm
 import numericalsolver.PrimalDualSolver as pd
-import numericalsolver.Monitor as monitor
+import numericalsolver.Observer as observer
 from numericalsolver.ProximalOperators import ProximalOperators as prox
 from numericalsolver.SimilarityMeasures import SimilarityMeasures as sim_meas
 

@@ -25,7 +25,7 @@ class SolverParameterStudy(ParameterStudy):
     def __init__(self,
                  solver,
                  parameters,
-                 monitor,
+                 observer,
                  dir_output,
                  name):
 
@@ -33,7 +33,7 @@ class SolverParameterStudy(ParameterStudy):
 
         self._solver = solver
         self._parameters = parameters
-        self._monitor = monitor
+        self._observer = observer
 
     ##
     # Run parameter study and write results to specified files
@@ -43,10 +43,10 @@ class SolverParameterStudy(ParameterStudy):
     #
     def run(self):
 
-        # Reset monitor and attach to solver in case this has not happened
-        self._monitor.set_name(self._name)
-        self._monitor.clear_x_list()
-        self._solver.set_monitor(self._monitor)
+        # Reset observer and attach to solver in case this has not happened
+        self._observer.set_name(self._name)
+        self._observer.clear_x_list()
+        self._solver.set_observer(self._observer)
 
 
         # Create files where output is written to
@@ -101,10 +101,10 @@ class SolverParameterStudy(ParameterStudy):
             self._solver.run()
 
             # Compute similarity measures for solver estimate iterations
-            self._monitor.compute_measures()
+            self._observer.compute_measures()
 
             # Write all measure results to file for all iterations
-            measures = self._monitor.get_measures()
+            measures = self._observer.get_measures()
             for measure in measures:
 
                 # Write measure results as line to the measure's file
@@ -113,10 +113,10 @@ class SolverParameterStudy(ParameterStudy):
 
             # Write required computational time
             self._add_to_file_computational_time(
-                self._monitor.get_computational_time())
+                self._observer.get_computational_time())
 
-            # Clear monitor for next parameter selection
-            self._monitor.clear_x_list()
+            # Clear observer for next parameter selection
+            self._observer.clear_x_list()
 
     ##
     # Creates file where all parameters configurations are stored.
@@ -142,7 +142,7 @@ class SolverParameterStudy(ParameterStudy):
     #
     def _create_files_measures(self):
 
-        measures = self._monitor.get_measures()
+        measures = self._observer.get_measures()
         for measure in measures.keys():
 
             # Build header

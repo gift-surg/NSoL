@@ -103,8 +103,8 @@ class TikhonovLinearSolver(LinearSolver):
                 "lsq_linear solver cannot be used with non-linear data loss")
 
         # Monitor output
-        if self._monitor is not None:
-            self._monitor.add_x(self.get_x())
+        if self._observer is not None:
+            self._observer.add_x(self.get_x())
 
         # Get augmented linear system
         A, b = self._get_augmented_linear_system(self._alpha)
@@ -195,8 +195,8 @@ class TikhonovLinearSolver(LinearSolver):
                 options={'maxiter': self._iter_max, 'disp': self._verbose}).x
 
         # Monitor output
-        if self._monitor is not None:
-            self._monitor.add_x(self.get_x())
+        if self._observer is not None:
+            self._observer.add_x(self.get_x())
 
     def _get_augmented_linear_system(self, alpha):
 

@@ -1,6 +1,6 @@
 ##
-# \file Monitor.py
-# \brief      Class to monitor the iterations of numerical solvers
+# \file Observer.py
+# \brief      Observer class to monitor the iterations of numerical solvers
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
 # \date       July 2017
@@ -14,7 +14,7 @@ import numpy as np
 # Class to monitor the iterations of numerical solvers
 # \date       2017-07-23 01:48:54+0100
 #
-class Monitor(object):
+class Observer(object):
 
     ##
     # Store name of solver to be monitored
@@ -23,7 +23,7 @@ class Monitor(object):
     # \param      self  The object
     # \param      name  Name for the solver to monitor, string
     #
-    def __init__(self, name="Monitor"):
+    def __init__(self, name="Observer"):
         self._name = name
         self._x_list = []
         self._measures = []

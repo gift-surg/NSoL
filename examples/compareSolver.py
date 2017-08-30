@@ -19,11 +19,9 @@ import pythonhelper.SimpleITKHelper as sitkh
 import numericalsolver.LinearOperators as LinearOperators
 import numericalsolver.Noise as Noise
 import numericalsolver.TikhonovLinearSolver as tk
-import numericalsolver.TikhonovParameterStudy as tkparam
-import numericalsolver.ParameterStudyReader as psreader
 import numericalsolver.ADMMLinearSolver as admm
 import numericalsolver.PrimalDualSolver as pd
-import numericalsolver.Monitor as monitor
+import numericalsolver.Observer as observer
 from numericalsolver.ProximalOperators import ProximalOperators as prox
 from numericalsolver.SimilarityMeasures import SimilarityMeasures as sim_meas
 from numericalsolver.PriorMeasures import PriorMeasures as prior_meas
@@ -123,7 +121,10 @@ if flag_blurring:
         x=x, tau=tau,
         A=A_1D, A_adj=A_adj_1D, b=b, x0=x0, x_scale=x_scale)
 else:
-    prox_f = lambda x, tau: prox.prox_ell1_denoising(x, tau, x0=b)
+    # prox_f = lambda x, tau: prox.prox_ell2_denoising(
+    #     x, tau, x0=b, x_scale=x_scale)
+    prox_f = lambda x, tau: prox.prox_ell1_denoising(
+        x, tau, x0=b, x_scale=x_scale)
 
 
 if not flag_blurring:
@@ -174,7 +175,7 @@ nmi = lambda x: sim_meas.normalized_mutual_information(x, x_ref)
 tk1 = lambda x: prior_meas.first_order_tikhonov(x, D_1D)
 tv = lambda x: prior_meas.total_variation(x, D_1D, dimension)
 
-monitors = []
+observers = []
 measures_dic = {
     "SSD": ssd,
     # "RMSE": rmse,
@@ -191,9 +192,9 @@ measures_dic = {
 if solver_TK:
     name = "TK"
     minimizer = "L-BFGS-B"
-    monitor_tk = monitor.Monitor(name)
-    monitor_tk.set_measures(measures_dic)
-    monitors.append(monitor_tk)
+    observer_tk = observer.Observer(name)
+    observer_tk.set_measures(measures_dic)
+    observers.append(observer_tk)
     solver = tk.TikhonovLinearSolver(
         A=A_1D, A_adj=A_adj_1D,
         B=D_1D, B_adj=D_adj_1D,
@@ -205,7 +206,7 @@ if solver_TK:
         verbose=verbose,
         x_scale=x_scale,
     )
-    solver.set_monitor(monitor_tk)
+    solver.set_observer(observer_tk)
     solver.run()
     recon_nda = solver.get_x().reshape(*X_shape)
     data_nda.append(recon_nda)
@@ -223,9 +224,9 @@ if solver_TK:
 #     for data_loss_scale in [1]:
 #         for data_loss in ["arctan", "cauchy"]:
 #             name = "TK-loss" + data_loss + "_scale" + str(data_loss_scale)
-#             monitor_tk = monitor.Monitor(name)
-#             monitor_tk.set_measures(measures_dic)
-#             monitors.append(monitor_tk)
+#             observer_tk = observer.Observer(name)
+#             observer_tk.set_measures(measures_dic)
+#             observers.append(observer_tk)
 #             solver = tk.TikhonovLinearSolver(
 #                 A=A_1D, A_adj=A_adj_1D,
 #                 B=D_1D, B_adj=D_adj_1D,
@@ -238,7 +239,7 @@ if solver_TK:
 #                 iter_max=iter_max,
 #                 verbose=verbose,
 #             )
-#             solver.set_monitor(monitor_tk)
+#             solver.set_observer(observer_tk)
 #             solver.run()
 #             recon_nda = solver.get_x().reshape(*X_shape)
 #             data_nda.append(recon_nda)
@@ -246,9 +247,9 @@ if solver_TK:
 
 # if solver_TK:
 #     name = "TK_least_squares"
-#     monitor_tk = monitor.Monitor(name)
-#     monitor_tk.set_measures(measures_dic)
-#     monitors.append(monitor_tk)
+#     observer_tk = observer.Observer(name)
+#     observer_tk.set_measures(measures_dic)
+#     observers.append(observer_tk)
 #     solver = tk.TikhonovLinearSolver(
 #         A=A_1D, A_adj=A_adj_1D,
 #         B=D_1D, B_adj=D_adj_1D,
@@ -260,7 +261,7 @@ if solver_TK:
 #         # data_loss="huber",
 #         minimizer="least_squares",
 #     )
-#     solver.set_monitor(monitor_tk)
+#     solver.set_observer(observer_tk)
 #     solver.run()
 #     recon_nda = solver.get_x().reshape(*X_shape)
 #     data_nda.append(recon_nda)
@@ -273,9 +274,9 @@ if solver_TK:
 
 # if solver_TK:
 #     name = "TK_lsq_linear"
-#     monitor_tk = monitor.Monitor(name)
-#     monitor_tk.set_measures(measures_dic)
-#     monitors.append(monitor_tk)
+#     observer_tk = observer.Observer(name)
+#     observer_tk.set_measures(measures_dic)
+#     observers.append(observer_tk)
 #     solver = tk.TikhonovLinearSolver(
 #         A=A_1D, A_adj=A_adj_1D,
 #         B=D_1D, B_adj=D_adj_1D,
@@ -286,7 +287,7 @@ if solver_TK:
 #         verbose=verbose,
 #         minimizer="lsq_linear",
 #     )
-#     solver.set_monitor(monitor_tk)
+#     solver.set_observer(observer_tk)
 #     solver.run()
 #     recon_nda = solver.get_x().reshape(*X_shape)
 #     data_nda.append(recon_nda)
@@ -300,9 +301,9 @@ if solver_TK:
 # if solver_TK:
 #     data_loss = "linear"
 #     name = "TK-loss" + data_loss
-#     monitor_tk = monitor.Monitor(name)
-#     monitor_tk.set_measures(measures_dic)
-#     monitors.append(monitor_tk)
+#     observer_tk = observer.Observer(name)
+#     observer_tk.set_measures(measures_dic)
+#     observers.append(observer_tk)
 #     solver = tk.TikhonovLinearSolver(
 #         A=A_1D, A_adj=A_adj_1D,
 #         B=D_1D, B_adj=D_adj_1D,
@@ -314,7 +315,7 @@ if solver_TK:
 #         iter_max=iter_max,
 #         verbose=verbose,
 #     )
-#     solver.set_monitor(monitor_tk)
+#     solver.set_observer(observer_tk)
 #     solver.run()
 #     recon_nda = solver.get_x().reshape(*X_shape)
 #     data_nda.append(recon_nda)
@@ -329,9 +330,9 @@ if solver_TK:
 #     data_loss = "arctan"
 #     minimizer = "CG"
 #     name = "TK-loss" + data_loss
-#     monitor_tk = monitor.Monitor(name)
-#     monitor_tk.set_measures(measures_dic)
-#     monitors.append(monitor_tk)
+#     observer_tk = observer.Observer(name)
+#     observer_tk.set_measures(measures_dic)
+#     observers.append(observer_tk)
 #     solver = tk.TikhonovLinearSolver(
 #         A=A_1D, A_adj=A_adj_1D,
 #         B=D_1D, B_adj=D_adj_1D,
@@ -343,7 +344,7 @@ if solver_TK:
 #         iter_max=iter_max,
 #         verbose=verbose,
 #     )
-#     solver.set_monitor(monitor_tk)
+#     solver.set_observer(observer_tk)
 #     solver.run()
 #     recon_nda = solver.get_x().reshape(*X_shape)
 #     data_nda.append(recon_nda)
@@ -357,9 +358,9 @@ if solver_TK:
 # ------------------------------------ADMM------------------------------------
 if solver_ADMM:
     name = "ADMM-TV"
-    monitor_admm = monitor.Monitor(name)
-    monitor_admm.set_measures(measures_dic)
-    monitors.append(monitor_admm)
+    observer_admm = observer.Observer(name)
+    observer_admm.set_measures(measures_dic)
+    observers.append(observer_admm)
     solver = admm.ADMMLinearSolver(
         A=A_1D, A_adj=A_adj_1D,
         b=b,
@@ -373,7 +374,7 @@ if solver_ADMM:
         x_scale=x_scale,
         verbose=verbose,
     )
-    solver.set_monitor(monitor_admm)
+    solver.set_observer(observer_admm)
     solver.run()
     recon_nda = solver.get_x().reshape(*X_shape)
     data_nda.append(recon_nda)
@@ -387,9 +388,9 @@ if solver_ADMM:
 # if solver_ADMM:
 #     data_loss = "soft_l1"
 #     name = "ADMM-TV-" + data_loss
-#     monitor_admm = monitor.Monitor(name)
-#     monitor_admm.set_measures(measures_dic)
-#     monitors.append(monitor_admm)
+#     observer_admm = observer.Observer(name)
+#     observer_admm.set_measures(measures_dic)
+#     observers.append(observer_admm)
 #     solver = admm.ADMMLinearSolver(
 #         A=A_1D, A_adj=A_adj_1D,
 #         b=b,
@@ -404,7 +405,7 @@ if solver_ADMM:
 #         minimizer="TNC",
 #         verbose=verbose,
 #     )
-#     solver.set_monitor(monitor_admm)
+#     solver.set_observer(observer_admm)
 #     solver.run()
 #     recon_nda = solver.get_x().reshape(*X_shape)
 #     data_nda.append(recon_nda)
@@ -419,9 +420,9 @@ if solver_ADMM:
 # ---------------------------------Primal Dual---------------------------------
 if solver_PrimalDual:
     name = "PrimalDual-TV-ALG2"
-    monitor_pd = monitor.Monitor(name)
-    monitor_pd.set_measures(measures_dic)
-    monitors.append(monitor_pd)
+    observer_pd = observer.Observer(name)
+    observer_pd.set_measures(measures_dic)
+    observers.append(observer_pd)
     solver = pd.PrimalDualSolver(
         prox_f=prox_f,
         prox_g_conj=prox.prox_tv_conj,
@@ -435,7 +436,7 @@ if solver_PrimalDual:
         verbose=verbose,
         x_scale=x_scale,
     )
-    solver.set_monitor(monitor_pd)
+    solver.set_observer(observer_pd)
     solver.run()
     recon_nda = solver.get_x().reshape(*X_shape)
     data_nda.append(recon_nda)
@@ -448,9 +449,9 @@ if solver_PrimalDual:
 
 # if solver_PrimalDual:
 #     name = "PrimalDual-TV-ALG2_AHMOD"
-#     monitor_pd = monitor.Monitor(name)
-#     monitor_pd.set_measures(measures_dic)
-#     monitors.append(monitor_pd)
+#     observer_pd = observer.Observer(name)
+#     observer_pd.set_measures(measures_dic)
+#     observers.append(observer_pd)
 #     solver = pd.PrimalDualSolver(
 #         prox_f=prox_f,
 #         prox_g_conj=prox.prox_tv_conj,
@@ -463,7 +464,7 @@ if solver_PrimalDual:
 #         alg_type="ALG2_AHMOD",
 #         verbose=verbose,
 #     )
-#     solver.set_monitor(monitor_pd)
+#     solver.set_observer(observer_pd)
 #     solver.run()
 #     recon_nda = solver.get_x().reshape(*X_shape)
 #     data_nda.append(recon_nda)
@@ -476,9 +477,9 @@ if solver_PrimalDual:
 
 # if solver_PrimalDual:
 #     name = "PrimalDual-TV-ALG3"
-#     monitor_pd = monitor.Monitor(name)
-#     monitor_pd.set_measures(measures_dic)
-#     monitors.append(monitor_pd)
+#     observer_pd = observer.Observer(name)
+#     observer_pd.set_measures(measures_dic)
+#     observers.append(observer_pd)
 #     solver = pd.PrimalDualSolver(
 #         prox_f=prox_f,
 #         prox_g_conj=prox.prox_tv_conj,
@@ -491,7 +492,7 @@ if solver_PrimalDual:
 #         alg_type="ALG3",
 #         verbose=verbose,
 #     )
-#     solver.set_monitor(monitor_pd)
+#     solver.set_observer(observer_pd)
 #     solver.run()
 #     recon_nda = solver.get_x().reshape(*X_shape)
 #     data_nda.append(recon_nda)
@@ -504,9 +505,9 @@ if solver_PrimalDual:
 
 # if solver_PrimalDual:
 #     name = "PrimalDual-Huber-ALG2"
-#     monitor_pd = monitor.Monitor(name)
-#     monitor_pd.set_measures(measures_dic)
-#     monitors.append(monitor_pd)
+#     observer_pd = observer.Observer(name)
+#     observer_pd.set_measures(measures_dic)
+#     observers.append(observer_pd)
 #     solver = pd.PrimalDualSolver(
 #         prox_f=prox_f,
 #         prox_g_conj=prox.prox_huber_conj,
@@ -519,7 +520,7 @@ if solver_PrimalDual:
 #         alg_type="ALG2",
 #         verbose=verbose,
 #     )
-#     solver.set_monitor(monitor_pd)
+#     solver.set_observer(observer_pd)
 #     solver.run()
 #     recon_nda = solver.get_x().reshape(*X_shape)
 #     data_nda.append(recon_nda)
@@ -532,9 +533,9 @@ if solver_PrimalDual:
 
 # if solver_PrimalDual:
 #     name = "PrimalDual-Huber-ALG2_AHMOD"
-#     monitor_pd = monitor.Monitor(name)
-#     monitor_pd.set_measures(measures_dic)
-#     monitors.append(monitor_pd)
+#     observer_pd = observer.Observer(name)
+#     observer_pd.set_measures(measures_dic)
+#     observers.append(observer_pd)
 #     solver = pd.PrimalDualSolver(
 #         prox_f=prox_f,
 #         prox_g_conj=prox.prox_huber_conj,
@@ -547,7 +548,7 @@ if solver_PrimalDual:
 #         alg_type="ALG2_AHMOD",
 #         verbose=verbose,
 #     )
-#     solver.set_monitor(monitor_pd)
+#     solver.set_observer(observer_pd)
 #     solver.run()
 #     recon_nda = solver.get_x().reshape(*X_shape)
 #     data_nda.append(recon_nda)
@@ -560,9 +561,9 @@ if solver_PrimalDual:
 
 # if solver_PrimalDual:
 #     name = "PrimalDual-Huber-ALG3"
-#     monitor_pd = monitor.Monitor(name)
-#     monitor_pd.set_measures(measures_dic)
-#     monitors.append(monitor_pd)
+#     observer_pd = observer.Observer(name)
+#     observer_pd.set_measures(measures_dic)
+#     observers.append(observer_pd)
 #     solver = pd.PrimalDualSolver(
 #         prox_f=prox_f,
 #         prox_g_conj=prox.prox_huber_conj,
@@ -575,7 +576,7 @@ if solver_PrimalDual:
 #         alg_type="ALG3",
 #         verbose=verbose,
 #     )
-#     solver.set_monitor(monitor_pd)
+#     solver.set_observer(observer_pd)
 #     solver.run()
 #     recon_nda = solver.get_x().reshape(*X_shape)
 #     data_nda.append(recon_nda)
@@ -599,19 +600,19 @@ elif dimension == 2:
 elif dimension == 3:
     sitkh.show_sitk_image(data_sitk, label=data_labels)
 
-for m in range(0, len(monitors)):
-    monitors[m].compute_measures()
+for m in range(0, len(observers)):
+    observers[m].compute_measures()
     print("Computational time %s: %s" %
-          (monitors[m].get_name(), monitors[m].get_computational_time()))
+          (observers[m].get_name(), observers[m].get_computational_time()))
 
 for k in measures_dic.keys():
     title = k
     x = []
     y = []
     legend = []
-    for m in range(0, len(monitors)):
-        y.append(monitors[m].get_measures()[title])
-        legend.append(monitors[m].get_name())
+    for m in range(0, len(observers)):
+        y.append(observers[m].get_measures()[title])
+        legend.append(observers[m].get_name())
         x.append(range(0, len(y[-1])))
     ph.show_curves(y, x=x, xlabel="iteration", labels=legend, title=title,
                    linestyle=linestyles, markers=ph.MARKERS, markevery=1)

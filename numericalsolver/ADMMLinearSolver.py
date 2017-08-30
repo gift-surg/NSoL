@@ -165,8 +165,8 @@ class ADMMLinearSolver(LinearSolver):
     def _run(self):
 
         # Monitor output
-        if self._monitor is not None:
-            self._monitor.add_x(self.get_x())
+        if self._observer is not None:
+            self._observer.add_x(self.get_x())
 
         v = self._B(self._x0) - self._b_reg
         w = np.zeros_like(v)
@@ -183,8 +183,8 @@ class ADMMLinearSolver(LinearSolver):
             self._x, v, w = self._perform_ADMM_iteration(self._x, v, w)
 
             # Monitor output
-            if self._monitor is not None:
-                self._monitor.add_x(self.get_x())
+            if self._observer is not None:
+                self._observer.add_x(self.get_x())
 
             # shape = (256, 256)
 

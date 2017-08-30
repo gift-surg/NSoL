@@ -212,8 +212,8 @@ class PrimalDualSolver(Solver):
     def _run(self):
 
         # Monitor output
-        if self._monitor is not None:
-            self._monitor.add_x(self.get_x())
+        if self._observer is not None:
+            self._observer.add_x(self.get_x())
 
         # regularization parameter lambda as used in Chambolle2011
         lmbda = 1. / self._alpha
@@ -254,8 +254,8 @@ class PrimalDualSolver(Solver):
             x_n = x_np1
 
             # Monitor output
-            if self._monitor is not None:
-                self._monitor.add_x(self.get_x())
+            if self._observer is not None:
+                self._observer.add_x(self.get_x())
 
         self._x = x_n
 

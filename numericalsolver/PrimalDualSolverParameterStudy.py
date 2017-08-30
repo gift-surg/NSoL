@@ -17,7 +17,7 @@ class PrimalDualSolverParameterStudy(SolverParameterStudy):
 
     def __init__(self,
                  solver,
-                 monitor,
+                 observer,
                  dir_output,
                  name="PrimalDual",
                  parameters={
@@ -30,7 +30,7 @@ class PrimalDualSolverParameterStudy(SolverParameterStudy):
             raise TypeError("solver must be of type 'PrimalDualSolver'")
 
         super(self.__class__, self).__init__(
-            solver=solver, parameters=parameters, monitor=monitor,
+            solver=solver, parameters=parameters, observer=observer,
             dir_output=dir_output, name=name)
 
     def _get_fileheader(self):

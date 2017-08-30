@@ -39,7 +39,7 @@ class Solver(object):
         self._x = np.array(self._x0)
         self._verbose = verbose
         self._computational_time = datetime.timedelta(seconds=0)
-        self._monitor = None
+        self._observer = None
 
     ##
     # Sets the characteristic scale for each variable.
@@ -119,14 +119,14 @@ class Solver(object):
         return self._computational_time
 
     ##
-    # Sets the monitor to analyse performance
+    # Sets the observer to monitor performance
     # \date       2017-08-05 18:31:18+0100
     #
     # \param      self     The object
-    # \param      monitor  The monitor as Monitor object
+    # \param      observer  The observer as Observer object
     #
-    def set_monitor(self, monitor):
-        self._monitor = monitor
+    def set_observer(self, observer):
+        self._observer = observer
 
     ##
     # Run the numerical solver to obtain the numerical estimate
@@ -148,8 +148,9 @@ class Solver(object):
             ph.print_info("Required computational time: %s" %
                           (self.get_computational_time()))
 
-        if self._monitor is not None:
-            self._monitor.set_computational_time(self.get_computational_time())
+        if self._observer is not None:
+            self._observer.set_computational_time(
+                self.get_computational_time())
 
     @abstractmethod
     def _run(self):
