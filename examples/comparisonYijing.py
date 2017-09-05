@@ -2,10 +2,10 @@
 
 ##
 # \file compareSolver.py
-# \brief      Playground file
+# \brief      Playground file to test solvers for Yijing's application
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
-# \date       July 2017
+# \date       Aug 2017
 #
 
 import os

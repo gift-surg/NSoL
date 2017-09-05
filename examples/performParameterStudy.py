@@ -41,9 +41,9 @@ np.random.seed(seed=1)
 dimension = 2
 # dimension = 3
 
-solver_TK = 0
+solver_TK = 1
 solver_ADMM = 0
-solver_PrimalDual = 1
+solver_PrimalDual = 0
 
 verbose = 0
 flag_normalize = 1
@@ -52,6 +52,7 @@ flag_blurring = 1
 flag_noise = 1
 noise_level = 0.05
 directory = os.path.join(DIR_ROOT, "results", "ParameterStudy")
+directory = os.path.join("/tmp/", "results", "ParameterStudy")
 
 iter_max = 10
 alpha = 0.01  # Denoising (S&P) 0.6; default: 0.01
@@ -229,7 +230,7 @@ if solver_TK:
         dir_output=directory,
         name=name_tk,
     )
-    # tikhonov_parameter_study.run()
+    tikhonov_parameter_study.run()
 
 if solver_ADMM:
     name_admm = "ADMM"
@@ -248,7 +249,7 @@ if solver_PrimalDual:
         name=name_pd,
     )
     # pd_parameter_study.run()
-
+ph.exit()
 # --------------------------------Read Studies--------------------------------
 if solver_TK:
     parameter_study_reader = readerps.ReaderParameterStudy(

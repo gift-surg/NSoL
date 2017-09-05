@@ -131,44 +131,49 @@ class TestLossFunctions(unittest.TestCase):
         steps = 100 * M
         residual = np.linspace(-M, M, steps)
 
-        residual2 = residual**2
+        residual2 = np.array(residual**2)
 
         losses = []
         grad_losses = []
         jacobians = []
         labels = []
 
-        # for loss in ["linear", "soft_l1", "cauchy", "arctan"]:
-        for loss in ["linear", "cauchy", "arctan"]:
-            # for f_scale in [1., 1.1, 1.2]:
-            for f_scale in [1.]:
-                losses.append(lf.get_loss[loss](
-                    f2=residual2, f_scale=f_scale))
-                grad_losses.append(lf.get_gradient_loss[loss](
-                    f2=residual2, f_scale=f_scale))
-                jacobians.append(lf.get_gradient_loss[loss](
-                    f2=residual2, f_scale=f_scale)*residual)
-                labels.append(loss+"_scale"+str(f_scale))
+        for loss in ["linear", "soft_l1", "cauchy", "arctan"]:
+            for i, f_scale in enumerate([1., 1.5]):
+                if loss == "linear" and i > 0:
+                    continue
+                print loss, f_scale
+                label = loss
+                if loss != "linear":
+                    label += "_scale"+str(f_scale)
+                losses.append(np.array(lf.get_loss[loss](
+                    f2=residual2, f_scale=f_scale)))
+                grad_losses.append(np.array(lf.get_gradient_loss[loss](
+                    f2=residual2, f_scale=f_scale)))
+                jacobians.append(np.array(lf.get_gradient_loss[loss](
+                    f2=residual2, f_scale=f_scale)*residual))
+                labels.append(label)
 
         # losses.append(lf.soft_l1(residual2))
         # grad_losses.append(lf.gradient_soft_l1(residual2))
         # jacobians.append(lf.gradient_soft_l1(residual2)*residual)
         # labels.append("soft_l1")
 
-        # for gamma in [1, 1.345, 5, 10, 15]:
-        for gamma in [1.345]:
-            losses.append(lf.huber(residual2, gamma=gamma))
-            grad_losses.append(lf.gradient_huber(residual2, gamma=gamma))
-            jacobians.append(lf.gradient_huber(
-                residual2, gamma=gamma)*residual)
+        for gamma in [1, 1.5]:
+            losses.append(np.array(lf.huber(residual2, gamma=gamma)))
+            grad_losses.append(
+                np.array(lf.gradient_huber(residual2, gamma=gamma)))
+            jacobians.append(np.array(lf.gradient_huber(
+                residual2, gamma=gamma)*residual))
             labels.append("huber(" + str(gamma) + ")")
 
-        ph.show_curves(losses, x=residual, labels=labels,
-                       title="losses rho(x^2)")
-        ph.show_curves(grad_losses, x=residual, labels=labels,
-                       title="gradient losses rho'(x^2)")
-        ph.show_curves(jacobians, x=residual, labels=labels,
-                       title="jacobian rho'(x^2)*x")
+        x = residual
+        ph.show_curves(losses, x=x, labels=labels, xlabel="x",
+                       title="Cost rho(x^2)")
+        ph.show_curves(grad_losses, x=x, labels=labels, xlabel="x",
+                       title="Gradient Loss rho'(x^2)")
+        ph.show_curves(jacobians, x=x, labels=labels, xlabel="x",
+                       title="Gradient Cost rho'(x^2)*x")
 
     # --------------------Conversion from residual to cost--------------------
 

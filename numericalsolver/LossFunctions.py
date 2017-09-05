@@ -110,7 +110,7 @@ class LossFunctions(object):
     @staticmethod
     def soft_l1(f2, f_scale=1.):
         f_scale2 = float(f_scale * f_scale)
-        f2 /= f_scale2
+        f2 = f2 / f_scale2
         return 2. * (np.sqrt(1. + f2) - 1.) * f_scale2
 
     ##
@@ -129,7 +129,7 @@ class LossFunctions(object):
     @staticmethod
     def gradient_soft_l1(f2, f_scale=1.):
         f_scale2 = float(f_scale * f_scale)
-        f2 /= f_scale2
+        f2 = f2 / f_scale2
         return 1. / np.sqrt(1. + f2)
 
     ##
@@ -150,7 +150,7 @@ class LossFunctions(object):
         gamma = float(gamma)
         gamma2 = gamma * gamma
         f_scale2 = float(f_scale * f_scale)
-        f2 /= f_scale2
+        f2 = f2 / f_scale2
         return np.where(f2 < gamma2,
                         f2,
                         2.*gamma*np.sqrt(f2)-gamma2) * f_scale2
@@ -172,7 +172,7 @@ class LossFunctions(object):
         gamma = float(gamma)
         gamma2 = gamma * gamma
         f_scale2 = float(f_scale * f_scale)
-        f2 /= f_scale2
+        f2 = f2 / f_scale2
         return np.where(f2 < gamma2, 1., gamma/np.sqrt(f2))
 
     ##
@@ -190,7 +190,7 @@ class LossFunctions(object):
     @staticmethod
     def cauchy(f2, f_scale=1.):
         f_scale2 = float(f_scale * f_scale)
-        f2 /= f_scale2
+        f2 = f2 / f_scale2
         return np.log1p(f2) * f_scale2
 
     ##
@@ -208,7 +208,7 @@ class LossFunctions(object):
     @staticmethod
     def gradient_cauchy(f2, f_scale=1.):
         f_scale2 = float(f_scale * f_scale)
-        f2 /= f_scale2
+        f2 = f2 / f_scale2
         return 1. / (1. + f2)
 
     ##
@@ -226,7 +226,7 @@ class LossFunctions(object):
     @staticmethod
     def arctan(f2, f_scale=1.):
         f_scale2 = float(f_scale * f_scale)
-        f2 /= f_scale2
+        f2 = f2 / f_scale2
         return np.arctan(f2) * f_scale2
 
     ##
@@ -244,7 +244,7 @@ class LossFunctions(object):
     @staticmethod
     def gradient_arctan(f2, f_scale=1.):
         f_scale2 = float(f_scale * f_scale)
-        f2 /= f_scale2
+        f2 = f2 / f_scale2
         return 1. / (1. + f2**2)
 
     # Dictionary for all loss functions
