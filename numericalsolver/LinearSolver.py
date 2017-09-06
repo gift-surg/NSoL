@@ -89,6 +89,28 @@ class LinearSolver(Solver):
         self._iter_max = iter_max
 
     ##
+    # Gets the linear operator A
+    # \date       2017-09-06 16:29:11+0100
+    #
+    # \param      self  The object
+    #
+    # \return     Forward operator as function: 1D -> 1D
+    #
+    def get_A(self):
+        return self._A
+
+    ##
+    # Gets the right hand-side b of linear system Ax = b
+    # \date       2017-09-06 16:37:32+0100
+    #
+    # \param      self  The object
+    #
+    # \return     Right hand-side as 1D array
+    #
+    def get_b(self):
+        return np.array(self._b) * self._x_scale
+
+    ##
     # Sets the regularization parameter alpha.
     # \date       2017-08-04 18:54:24+0100
     #

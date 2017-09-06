@@ -13,12 +13,11 @@ from abc import ABCMeta, abstractmethod
 
 import pythonhelper.PythonHelper as ph
 
+
 ##
 # Abstract class to define a numerical solver
 # \date       2017-07-20 23:17:11+0100
 #
-
-
 class Solver(object):
     __metaclass__ = ABCMeta
 
@@ -84,6 +83,17 @@ class Solver(object):
     #
     def get_verbose(self):
         return self._verbose
+
+    ##
+    # Sets the initial value.
+    # \date       2017-09-06 17:32:06+0100
+    #
+    # \param      self  The object
+    # \param      x0    Initial value as 1D numpy array
+    #
+    def set_x0(self, x0):
+        self._x0 = np.array(x0, dtype=np.float64) / self._x_scale
+        self._x = np.array(self._x0)
 
     ##
     # Gets the initial value.

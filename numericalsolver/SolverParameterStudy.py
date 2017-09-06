@@ -48,7 +48,6 @@ class SolverParameterStudy(ParameterStudy):
         self._observer.clear_x_list()
         self._solver.set_observer(self._observer)
 
-
         # Create files where output is written to
         self._create_file_parameters()
         self._create_files_measures()
@@ -117,6 +116,9 @@ class SolverParameterStudy(ParameterStudy):
 
             # Clear observer for next parameter selection
             self._observer.clear_x_list()
+
+            # Reset solver to initial value
+            self._solver.set_x0(self._solver.get_x0())
 
     ##
     # Creates file where all parameters configurations are stored.

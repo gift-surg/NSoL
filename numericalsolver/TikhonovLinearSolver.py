@@ -92,6 +92,17 @@ class TikhonovLinearSolver(LinearSolver):
         self._b_reg = b_reg / self._x_scale
         self._bounds = bounds
 
+    ##
+    # Gets the linear operator B
+    # \date       2017-09-06 16:29:11+0100
+    #
+    # \param      self  The object
+    #
+    # \return     Forward operator as function: 1D -> 1D
+    #
+    def get_B(self):
+        return self._B
+
     def _run(self):
 
         if self._minimizer == "lsmr" and self._data_loss != "linear":

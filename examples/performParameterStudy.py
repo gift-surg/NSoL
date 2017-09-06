@@ -268,6 +268,7 @@ if solver_TK:
     print parameters_to_line_dic
     print line_to_parameter_labels_dic
 
+    # Get lines in result files associated to 'alpha'
     p = {k: (parameters_dic[k] if k == 'alpha' else parameters_dic[
              k][0]) for k in parameters_dic.keys()}
     lines = parameter_study_reader.get_lines_to_parameters(p)
