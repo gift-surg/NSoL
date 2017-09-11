@@ -229,3 +229,15 @@ class SimilarityMeasures(object):
         dice /= np.sum(x) + np.sum(x_ref)
 
         return dice
+
+    # Dictionary for all similarity measures
+    similarity_measures = {
+        "SSD": sum_of_squared_differences.__func__,
+        "MSE": mean_squared_error.__func__,
+        "RMSE": root_mean_square_error.__func__,
+        "PSNR": peak_signal_to_noise_ratio.__func__,
+        "SSIM": structural_similarity.__func__,
+        "NCC": normalized_cross_correlation.__func__,
+        "MI": mutual_information.__func__,
+        "NMI": normalized_mutual_information.__func__,
+    }

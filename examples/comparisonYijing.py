@@ -23,6 +23,7 @@ import numericalsolver.TikhonovLinearSolver as tk
 import numericalsolver.ADMMLinearSolver as admm
 import numericalsolver.PrimalDualSolver as pd
 import numericalsolver.Observer as observer
+import numericalsolver.DataReader as dr
 from numericalsolver.ProximalOperators import ProximalOperators as prox
 from numericalsolver.SimilarityMeasures import SimilarityMeasures as sim_meas
 from numericalsolver.PriorMeasures import PriorMeasures as prior_meas
@@ -47,12 +48,14 @@ ADMM_iterations = 50
 PD_iterations = 500
 
 filename = "/Users/mebner/Dropbox/Yijing Data set/040117-HumanJM02Mes.mat"
-dic = scipy.io.loadmat(filename)
-observed_nda = np.array(dic["Mescpv"])
+data_reader = dr.DataReader(filename)
+data_reader.read_data()
+observed_nda = data_reader.get_data()
 
 filename_de = "/Users/mebner/Dropbox/Yijing Data set/040117-HumanJM02DeMes.mat"
-dic = scipy.io.loadmat(filename_de)
-observed_de_nda = np.array(dic["DeMescpv"])
+data_reader = dr.DataReader(filename_de)
+data_reader.read_data()
+observed_de_nda = data_reader.get_data()
 
 linear_operators = eval("LinearOperators.LinearOperators%dD()" % (dimension))
 
@@ -98,9 +101,9 @@ data_labels.append("observed")
 data_nda.append(observed_de_nda)
 data_labels.append("TVL1_Yijing")
 
-# ph.show_arrays(data_nda, title=data_labels, fig_number=None,
-#                cmap="jet", use_same_scaling=True)
-
+ph.show_arrays(data_nda, title=data_labels, fig_number=None,
+               cmap="jet", use_same_scaling=True)
+ph.exit()
 x_ref = observed_de_nda.flatten()
 
 # -----------------------------Similarity Measures-----------------------------

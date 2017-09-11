@@ -10,3 +10,5 @@ EPS = 1e-10
 
 REGEX_FILENAMES = "[A-Za-z0-9+-_]+"
 FILENAME_EXTENSION = "txt"
+
+ALLOWED_INPUT_FILE_EXTENSIONS = ["mat", "png", "nii", "nii.gz"]
