@@ -24,14 +24,20 @@ class PrimalDualSolverParameterStudy(SolverParameterStudy):
                      "alpha": np.arange(0.01, 0.05, 0.005),
                      "alg_type": ["ALG2", "ALG2_AHMOD", "ALG3"],
                  },
+                 reconstruction_info_dic={},
                  ):
 
         if not isinstance(solver, pd.PrimalDualSolver):
             raise TypeError("solver must be of type 'PrimalDualSolver'")
 
         super(self.__class__, self).__init__(
-            solver=solver, parameters=parameters, observer=observer,
-            dir_output=dir_output, name=name)
+            solver=solver,
+            parameters=parameters,
+            observer=observer,
+            dir_output=dir_output,
+            name=name,
+            reconstruction_info_dic=reconstruction_info_dic,
+        )
 
     def _get_fileheader(self):
 

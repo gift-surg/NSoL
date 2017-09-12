@@ -27,6 +27,9 @@ class ParameterStudy(object):
         self._directory = directory
         self._name = name
 
+    def get_parameter_study_name(self):
+        return self._name
+
     ##
     # Gets the path to file where the parameter configurations are stored.
     # \date       2017-08-05 18:45:57+0100
@@ -71,3 +74,18 @@ class ParameterStudy(object):
                                              specifier="_computational_time"):
         return os.path.join(self._directory,
                             self._name + specifier + "." + FILENAME_EXTENSION)
+
+    ##
+    # Gets the path to file where reconstructions after n iterations are stored
+    # \date       2017-08-05 18:48:13+0100
+    #
+    # \param      self       The object
+    # \param      specifier  Specifier of reconstruction file (for easier
+    #                        reading later)
+    #
+    # \return     The path to file holding reconstructions.
+    #
+    def _get_path_to_file_reconstructions(self,
+                                          specifier="_reconstructions"):
+        return os.path.join(self._directory,
+                            self._name + specifier + ".npz")

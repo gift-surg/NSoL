@@ -32,35 +32,44 @@ import numericalsolver.InputArgparser as InputArgparser
 if __name__ == '__main__':
 
     input_parser = InputArgparser.InputArgparser(
-        description="Run denoising algorithms",
+        description="Run TVL1/TVL2/HuberL1/HuberL2 denoising",
         prog="python " + os.path.basename(__file__),
     )
     input_parser.add_observation(required=True)
     input_parser.add_reference(required=False)
     input_parser.add_result(required=False)
-    input_parser.add_reconstruction_type(default="TVL1")
+    input_parser.add_reconstruction_type(default="TVL2")
     input_parser.add_measures(default=["PSNR", "RMSE", "SSIM", "NCC", "NMI"])
-    input_parser.add_tv_solver(default="PD")
     input_parser.add_iterations(default=50)
+    input_parser.add_solver(default="PD")
     input_parser.add_rho(default=0.1)
-    input_parser.add_alpha(default=1/0.7)
+    input_parser.add_alpha(default=0.03)
     input_parser.add_dir_output_figures(default=None)
     input_parser.add_verbose(default=0)
     args = input_parser.parse_args()
     input_parser.print_arguments(args)
 
+    observers = [None] * len(args.alpha)
+    recons = [None] * len(args.alpha)
+    data_nda = []
+    data_labels = []
+
+    if args.result is not None and len(args.alpha) > 1:
+        raise ValueError("Result can only be written for one alpha")
+
     # --------------------------------Read Data--------------------------------
     data_reader = dr.DataReader(args.observation)
     data_reader.read_data()
     observed_nda = data_reader.get_data()
+    data_nda.append(observed_nda)
+    data_labels.append("observed:\n%s" % os.path.basename(args.observation))
 
     if args.reference is not None:
         data_reader = dr.DataReader(args.reference)
         data_reader.read_data()
         reference_nda = data_reader.get_data()
-
         data_nda.append(reference_nda)
-        data_labels.append("reference")
+        data_labels.append("reference:\n%s" % os.path.basename(args.reference))
         x_ref = reference_nda.flatten()
 
     # ------------------------------Set Up Solver------------------------------
@@ -104,54 +113,71 @@ if __name__ == '__main__':
         raise ValueError("Denoising '%s' type not known" %
                          args.reconstruction_type)
 
-    solver = pd.PrimalDualSolver(
-        prox_f=prox_f,
-        prox_g_conj=prox_g_conj,
-        B=D_1D,
-        B_conj=D_adj_1D,
-        L2=8,
-        x0=x0,
-        alpha=args.alpha,
-        iterations=args.iterations,
-        # alg_type=alg_type,
-        x_scale=x_scale,
-        verbose=args.verbose,
-    )
+    for i, alpha in enumerate(args.alpha):
+        title_prefix = args.reconstruction_type + \
+            " (" + r"$\alpha=%g$)" % alpha
 
-    # ---------------------------Similarity Measures---------------------------
-    if args.reference is not None:
-        measures_dic = {
-            m: lambda x, m=m:
-            SimilarityMeasures.similarity_measures[m](x, x_ref)
-            for m in args.measures}
-        observer = Observer.Observer()
-        observer.set_measures(measures_dic)
-    else:
-        observer = None
-    solver.set_observer(observer)
+        if args.solver == "PD":
+            solver = pd.PrimalDualSolver(
+                prox_f=prox_f,
+                prox_g_conj=prox_g_conj,
+                B=D_1D,
+                B_conj=D_adj_1D,
+                L2=8,
+                x0=x0,
+                alpha=alpha,
+                iterations=args.iterations,
+                # alg_type=alg_type,
+                x_scale=x_scale,
+                verbose=args.verbose,
+            )
 
-    # ---------------------------Run Reconstruction---------------------------
-    solver.run()
-    recon_nda = solver.get_x().reshape(*X_shape)
-    print("Computational time %s: %s" %
-          (args.reconstruction_type, solver.get_computational_time()))
+        # ADMM only for TVL2
+        # elif args.solver == "ADMM":
+        #     solver = admm.ADMMLinearSolver(
+        #         A=lambda x: x.flatten(), A_adj=lambda x: x.flatten(),
+        #         b=b,
+        #         B=D_1D, B_adj=D_adj_1D,
+        #         x0=x0,
+        #         alpha=alpha,
+        #         rho=args.rho,
+        #         iterations=args.iterations,
+        #         dimension=dimension,
+        #         # iter_max=iter_max,
+        #         x_scale=x_scale,
+        #         verbose=args.verbose,
+        #     )
+        else:
+            raise ValueError("Solver '%s' not known" % args.solver)
 
-    if args.result is not None:
-        data_writer = dw.DataWriter(recon_nda, args.result)
-        data_writer.write_data()
+        # ---------------------------Similarity Measures-----------------------
+        if args.reference is not None:
+            measures_dic = {
+                m: lambda x, m=m:
+                SimilarityMeasures.similarity_measures[m](x, x_ref)
+                for m in args.measures}
+            observers[i] = Observer.Observer()
+            observers[i].set_measures(measures_dic)
+        else:
+            observers[i] = None
+        solver.set_observer(observers[i])
+
+        # ---------------------------Run Reconstruction------------------------
+        solver.run()
+        recons[i] = np.array(solver.get_x().reshape(*X_shape))
+        print("Computational time %s: %s" %
+              (args.reconstruction_type, solver.get_computational_time()))
+
+        data_nda.append(recons[i])
+        data_labels.append(title_prefix)
+
+        if args.result is not None:
+            data_writer = dw.DataWriter(recons[i], args.result)
+            data_writer.write_data()
 
     # ----------------------------Visualize Results----------------------------
-    title_prefix = args.reconstruction_type + \
-        " (" + r"$\alpha=%g$)" % args.alpha
-    filename_prefix = \
-        ("_").join([args.reconstruction_type, "alpha%g" % args.alpha])
 
-    data_nda = []
-    data_nda.append(observed_nda)
-    data_nda.append(recon_nda)
-    data_labels = []
-    data_labels.append("observed")
-    data_labels.append(title_prefix)
+    filename_prefix = args.reconstruction_type
 
     ph.show_arrays(
         data_nda,
@@ -160,32 +186,36 @@ if __name__ == '__main__':
         cmap="jet",
         use_same_scaling=True,
         directory=args.dir_output_figures,
-        filename=filename_prefix+"_comparison.pdf",
+        filename=args.reconstruction_type+"_comparison.pdf",
         save_figure=0 if args.dir_output_figures is None else 1,
+        fontsize=8,
     )
 
     if args.reference is not None:
         linestyles = ["-", ":", "-", "-."] * 10
-        observer.compute_measures()
 
-        for k in measures_dic.keys():
-            title = title_prefix
-            x = []
-            y = []
-            legend = []
-            y.append(observer.get_measures()[k])
-            legend.append(k)
+        for ob in observers:
+            ob.compute_measures()
+
+    for k in measures_dic.keys():
+        x = []
+        y = []
+        legend = []
+        for i, alpha in enumerate(args.alpha):
+            title = args.reconstruction_type + ": %s" % k
+            y.append(observers[i].get_measures()[k])
+            legend.append(r"$\alpha=%g$" % alpha)
             x.append(range(0, len(y[-1])))
-            ph.show_curves(
-                y=y,
-                x=x,
-                xlabel="iteration",
-                labels=legend,
-                title=title,
-                linestyle=linestyles,
-                markers=ph.MARKERS,
-                markevery=1,
-                directory=args.dir_output_figures,
-                filename=filename_prefix+"_"+k+".pdf",
-                save_figure=0 if args.dir_output_figures is None else 1,
-            )
+        ph.show_curves(
+            y=y,
+            x=x,
+            xlabel="iteration",
+            labels=legend,
+            title=title,
+            linestyle=linestyles,
+            markers=ph.MARKERS,
+            markevery=10,
+            directory=args.dir_output_figures,
+            filename=filename_prefix+"_"+k+".pdf",
+            save_figure=0 if args.dir_output_figures is None else 1,
+        )

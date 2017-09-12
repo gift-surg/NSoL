@@ -1,11 +1,12 @@
 #!/usr/bin/python
 
 ##
-# \file compareSolver.py
-# \brief      Playground file to test solvers for Yijing's application
+# \file runDenoisingStudy.py
+# \brief      Run parameter study for denoising problem. Result can be
+#             visualized by showParameterStudy.py
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
-# \date       Aug 2017
+# \date       Sept 2017
 #
 
 import os
@@ -43,7 +44,7 @@ if __name__ == '__main__':
     input_parser.add_study_name()
     input_parser.add_reconstruction_type(default="TVL1")
     input_parser.add_measures(default=["PSNR", "RMSE", "SSIM", "NCC", "NMI"])
-    input_parser.add_tv_solver(default="PD")
+    # input_parser.add_solver(default="PD")
     input_parser.add_iterations(default=200)
     input_parser.add_rho(default=0.1)
     input_parser.add_verbose(default=0)
@@ -132,18 +133,20 @@ if __name__ == '__main__':
             for m in args.measures}
 
         if args.reconstruction_type == "TVL1":
-            measures_dic["Reg_TV"] = lambda x: np.sum(np.square(D_1D(x)))
-            measures_dic["Data_L1"] = lambda x: np.sum(np.abs(x - x_ref))
+            measures_dic["Reg"] = lambda x: np.sum(np.square(D_1D(x)))
+            measures_dic["Data"] = lambda x: np.sum(np.abs(x - x_ref))
 
         elif args.reconstruction_type == "TVL2":
-            measures_dic["Reg_TV"] = lambda x: np.sum(np.square(D_1D(x)))
-            measures_dic["Data_L2"] = lambda x: np.sum(np.square(x - x_ref))
+            measures_dic["Reg"] = lambda x: np.sum(np.square(D_1D(x)))
+            measures_dic["Data"] = lambda x: np.sum(np.square(x - x_ref))
 
         elif args.reconstruction_type == "HuberL1":
-            measures_dic["Data_L1"] = lambda x: np.sum(np.abs(x - x_ref))
+            measures_dic["Data"] = lambda x: np.sum(np.abs(x - x_ref))
+            measures_dic["Reg"] = lambda x: np.zeros_like(x)  # TODO
 
         elif args.reconstruction_type == "HuberL2":
-            measures_dic["Data_L2"] = lambda x: np.sum(np.square(x - x_ref))
+            measures_dic["Data"] = lambda x: np.sum(np.square(x - x_ref))
+            measures_dic["Reg"] = lambda x: np.zeros_like(x)  # TODO
 
     observer = Observer.Observer()
     observer.set_measures(measures_dic)
@@ -168,6 +171,9 @@ if __name__ == '__main__':
         dir_output=args.dir_output,
         parameters=parameters,
         name=name,
+        reconstruction_info_dic={
+            "shape": X_shape,
+        }
     )
 
     # Run parameter study

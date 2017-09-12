@@ -8,6 +8,9 @@
 
 import os
 import itertools
+import numpy as np
+import SimpleITK as sitk
+import matplotlib.pyplot as plt
 from abc import ABCMeta, abstractmethod
 
 import pythonhelper.PythonHelper as ph
@@ -27,13 +30,16 @@ class SolverParameterStudy(ParameterStudy):
                  parameters,
                  observer,
                  dir_output,
-                 name):
+                 name,
+                 reconstruction_info_dic,
+                 ):
 
         ParameterStudy.__init__(self, directory=dir_output, name=name)
 
         self._solver = solver
         self._parameters = parameters
         self._observer = observer
+        self._reconstruction_info_dic = reconstruction_info_dic
 
     ##
     # Run parameter study and write results to specified files
@@ -74,6 +80,7 @@ class SolverParameterStudy(ParameterStudy):
     def _run(self):
 
         dic_parameter = {}
+        dic_x = {k: v for k, v in self._reconstruction_info_dic.iteritems()}
 
         # Create list from itertools. Then total number of iterations known
         iterations = list(itertools.product(*self._parameters.values()))
@@ -89,12 +96,9 @@ class SolverParameterStudy(ParameterStudy):
                 map(eval("self._solver.set_" + key), [vals[j]])
 
                 # Store current parameter values and print it on the screen
-                dic_parameter[key] = \
-                    eval("str(self._solver.get_" + key + "())")
+                dic_parameter[key] = eval(
+                    "str(self._solver.get_" + key + "())")
                 ph.print_info(key + " = %s" % (dic_parameter[key]))
-
-            # Write current parameter values to file
-            self._add_to_file_parameters(dic_parameter)
 
             # Execute solver
             self._solver.run()
@@ -114,11 +118,51 @@ class SolverParameterStudy(ParameterStudy):
             self._add_to_file_computational_time(
                 self._observer.get_computational_time())
 
+            # Write current parameter values to file
+            self._add_to_file_parameters(dic_parameter)
+
+            # Write last iteration of reconstruction to file
+            # Data array is associated to line in parameters file
+            var = str(i)
+            dic_x[var] = np.array(self._observer.get_x_list()[-1])
+
             # Clear observer for next parameter selection
             self._observer.clear_x_list()
 
             # Reset solver to initial value
             self._solver.set_x0(self._solver.get_x0())
+
+        self._write_to_file_reconstructions(dic_x)
+
+    # def _save_to_image(self, nda, vals, colorbar=True):
+
+    #     # Build filename
+    #     title = self._name + "_"
+    #     title += ("_").join(["%s%s" % (k, v)
+    #                          for k, v in zip(self._parameters.keys(), vals)])
+    #     title = title.replace(".", "p")
+
+    #     if nda.ndim == 3:
+    #         filename = os.path.join(self._directory, title + ".nii.gz")
+    #         image_sitk = sitk.GetImageFromArray(nda)
+    #         sitk.WriteImage(image_sitk, title)
+
+    #     else:
+    #         fig = plt.figure(1)
+    #         fig.clf()
+    #         im = plt.imshow(nda)
+    #         plt.axis('off')
+    #         plt.title(title)
+    #         if colorbar:
+    #             # add_axes([left, bottom, width, height])
+    #             cax = fig.add_axes([0.92, 0.05, 0.01, 0.9])
+    #             fig.colorbar(im, cax=cax)
+    #         plt.show(block=False)
+
+    #         filename = os.path.join(self._directory, title + ".pdf")
+    #         fig.savefig(filename)
+
+    #     ph.print_info("Array written to '%s'" % filename)
 
     ##
     # Creates file where all parameters configurations are stored.
@@ -208,6 +252,17 @@ class SolverParameterStudy(ParameterStudy):
         text += "\n"
         ph.write_to_file(
             self._get_path_to_file_computational_time(), text, "a")
+
+    ##
+    # Adds obtained results for all iterations to the reconstruction's file
+    # \date       2017-08-05 19:19:51+0100
+    #
+    # \param      self     The object
+    # \param      measure  ID of measure which was evaluated
+    # \param      nda      Numpy data array as (1 x N) data array
+    #
+    def _write_to_file_reconstructions(self, dic):
+        np.savez_compressed(self._get_path_to_file_reconstructions(), **dic)
 
     ##
     # Get solver-specific header for all files to be written

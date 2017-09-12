@@ -35,6 +35,7 @@ class DataWriter(object):
         }
 
     def write_data(self):
+        ph.create_directory(os.path.dirname(self._path_to_file))
         self._write_data[self._file_type]()
 
     def _write_data_png(self):
@@ -46,4 +47,4 @@ class DataWriter(object):
     def _write_data_mat(self):
         dic = {"nda": self._nda}
         scipy.io.savemat(self._path_to_file, dic)
-        ph.print_info("File '%s' successfully written" %(self._path_to_file))
+        ph.print_info("File written to '%s'" % (self._path_to_file))

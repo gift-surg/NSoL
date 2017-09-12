@@ -54,6 +54,17 @@ class ReaderParameterStudy(ParameterStudy):
         self._parameters_dic = self._get_parameters()
 
     ##
+    # Gets the reconstructions.
+    # \date       2017-09-12 14:09:51+0100
+    #
+    # \param      self  The object
+    #
+    # \return     All reconstructions and associated information as dictionary.
+    #
+    def get_reconstructions(self):
+        return np.load(self._get_path_to_file_reconstructions())
+
+    ##
     # Gets the names of all evaluated measures belonging to selected study.
     # \date       2017-08-05 19:53:46+0100
     #
@@ -271,6 +282,8 @@ class ReaderParameterStudy(ParameterStudy):
 
             line = parameters_to_line_dic[tuple(key)]
             lines[i] = line
+
+        lines = sorted(lines)
 
         return lines
 

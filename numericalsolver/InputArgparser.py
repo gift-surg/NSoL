@@ -63,6 +63,16 @@ class InputArgparser(object):
     ):
         self._add_argument(dict(locals()))
 
+    def add_dir_input(
+        self,
+        option_string="--dir-input",
+        type=str,
+        help="Input directory.",
+        default=None,
+        required=False,
+    ):
+        self._add_argument(dict(locals()))
+
     def add_result(
         self,
         option_string="--result",
@@ -181,6 +191,7 @@ class InputArgparser(object):
     def add_alpha(
         self,
         option_string="--alpha",
+        nargs="+",
         type=float,
         help="Regularization parameter alpha to solve the Super-Resolution "
         "Reconstruction problem: SRR = argmin_x "
@@ -233,11 +244,11 @@ class InputArgparser(object):
     ):
         self._add_argument(dict(locals()))
 
-    def add_tv_solver(
+    def add_solver(
         self,
-        option_string="--tv-solver",
+        option_string="--solver",
         type=str,
-        help="Type of TV solver. Either 'ADMM' or 'PD' to choose between "
+        help="Type of solver. Either 'ADMM' or 'PD' to choose between "
         "Alternating Direction Method of Multipliers (ADMM) or "
         "Primal-Dual (PD) approach, respectively.",
         default="PD",
