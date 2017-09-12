@@ -42,14 +42,14 @@ if __name__ == '__main__':
     input_parser.add_reference(required=False)
     input_parser.add_dir_output(required=True)
     input_parser.add_study_name()
-    input_parser.add_reconstruction_type(default="TVL1")
+    input_parser.add_reconstruction_type(default="TVL2")
     input_parser.add_measures(default=["PSNR", "RMSE", "SSIM", "NCC", "NMI"])
     # input_parser.add_solver(default="PD")
     input_parser.add_iterations(default=200)
     input_parser.add_rho(default=0.1)
     input_parser.add_verbose(default=0)
 
-    input_parser.add_alpha_range(default=[0.01, 5, 0.01])
+    input_parser.add_alpha_range(default=[0.01, 0.05, 0.005])
     input_parser.add_data_losses(
         # default=["linear", "arctan"]
     )

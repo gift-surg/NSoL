@@ -14,10 +14,12 @@ import inspect
 
 from numericalsolver.SimilarityMeasures import SimilarityMeasures as \
     SimilarityMeasures
+from numericalsolver.LossFunctions import LossFunctions as \
+    LossFunctions
 from numericalsolver.definitions import ALLOWED_INPUT_FILE_EXTENSIONS
 
 # Allowed input file types
-INPUT_FILE_TYPES = "(" + (", or ").join(ALLOWED_INPUT_FILE_EXTENSIONS) + ")"
+INPUT_FILE_TYPES = "(" + (", ").join(ALLOWED_INPUT_FILE_EXTENSIONS) + ")"
 
 
 ##
@@ -77,7 +79,7 @@ class InputArgparser(object):
         self,
         option_string="--result",
         type=str,
-        help="Path to denoised result %s." % (INPUT_FILE_TYPES),
+        help="Specify path for obtained result %s." % (INPUT_FILE_TYPES),
         required=True,
     ):
         self._add_argument(dict(locals()))
@@ -119,7 +121,8 @@ class InputArgparser(object):
         self,
         option_string="--reference",
         type=str,
-        help="Path to reference reconstruction %s." % (INPUT_FILE_TYPES),
+        help="Path to reference %s. Similarity measures are "
+        "computed only if reference is given." % (INPUT_FILE_TYPES),
         required=False,
     ):
         self._add_argument(dict(locals()))
@@ -129,8 +132,9 @@ class InputArgparser(object):
         option_string="--alpha-range",
         nargs="+",
         type=float,
-        help="Specify regularization parameters by providing 'First Last Step'"
-        " information.",
+        help="Specify regularization parameter array by providing "
+        "'First Last Step' information. Array is generated according to "
+        "np.arange(First, Last, Step).",
         default=None,
         required=False,
     ):
@@ -140,8 +144,8 @@ class InputArgparser(object):
         self,
         option_string="--data-losses",
         nargs="+",
-        help="Specify data losses  'First Last Step'"
-        " information.",
+        help="Specify data losses to be used %s. " % ("(" + (", ").join(
+            LossFunctions.get_loss.keys()) + ")"),
         default=None,
         required=False,
     ):
@@ -152,8 +156,9 @@ class InputArgparser(object):
         option_string="--data-loss-scale-range",
         nargs="+",
         type=float,
-        help="Specify data loss scales by providing 'First Last Step'"
-        " information.",
+        help="Specify data loss scales by providing 'First Last Step' "
+        "information. Array is generated according to "
+        "np.arange(First, Last, Step).",
         default=None,
         required=False,
     ):
@@ -163,7 +168,7 @@ class InputArgparser(object):
         self,
         option_string="--study-name",
         type=str,
-        help="Name of parameter study (no white spaces).",
+        help="Name of parameter study without white spaces.",
         default=None,
         required=False,
     ):
@@ -183,7 +188,7 @@ class InputArgparser(object):
         self,
         option_string="--dir-output-figures",
         type=str,
-        help="If given, created figures are saved to directory.",
+        help="If given, created figures are saved to this directory.",
         default=None,
     ):
         self._add_argument(dict(locals()))
@@ -193,9 +198,9 @@ class InputArgparser(object):
         option_string="--alpha",
         nargs="+",
         type=float,
-        help="Regularization parameter alpha to solve the Super-Resolution "
-        "Reconstruction problem: SRR = argmin_x "
-        "[0.5 * sum_k ||y_k - A_k x||^2 + alpha * R(x)].",
+        help="Regularization parameter alpha to solve minimization problem "
+        "min_x [f(x) + alpha g(x)] with f denoting the data and g the "
+        "regularization term, respectively.",
         default=0.03,
     ):
         self._add_argument(dict(locals()))
