@@ -17,15 +17,18 @@ from numericalsolver.SimilarityMeasures import SimilarityMeasures as \
 from numericalsolver.LossFunctions import LossFunctions as \
     LossFunctions
 from numericalsolver.definitions import ALLOWED_INPUT_FILE_EXTENSIONS
+from numericalsolver.definitions import ALLOWED_NOISE_TYPES
 
 # Allowed input file types
 INPUT_FILE_TYPES = "(" + (", ").join(ALLOWED_INPUT_FILE_EXTENSIONS) + ")"
-
+NOISE_TYPES = "(" + (", ").join(ALLOWED_NOISE_TYPES) + ", or none)"
 
 ##
 # Class holding a collection of possible arguments to parse for scripts
 # \date       2017-08-07 01:26:11+0100
 #
+
+
 class InputArgparser(object):
 
     def __init__(self,
@@ -61,6 +64,15 @@ class InputArgparser(object):
         option_string="--observation",
         type=str,
         help="Path to observation %s." % (INPUT_FILE_TYPES),
+        required=True,
+    ):
+        self._add_argument(dict(locals()))
+
+    def add_filename(
+        self,
+        option_string="--filename",
+        type=str,
+        help="Path to filename %s." % (INPUT_FILE_TYPES),
         required=True,
     ):
         self._add_argument(dict(locals()))
@@ -104,15 +116,6 @@ class InputArgparser(object):
         "reconstruction %s. " % ("(" + (", ").join(
             SimilarityMeasures.similarity_measures.keys()) + ")"),
         default=None,
-        required=False,
-    ):
-        self._add_argument(dict(locals()))
-
-    def add_initial_value(
-        self,
-        option_string="--initial-value",
-        type=str,
-        help="Path to (optional) initial value %s." % (INPUT_FILE_TYPES),
         required=False,
     ):
         self._add_argument(dict(locals()))
@@ -202,6 +205,36 @@ class InputArgparser(object):
         "min_x [f(x) + alpha g(x)] with f denoting the data and g the "
         "regularization term, respectively.",
         default=0.03,
+    ):
+        self._add_argument(dict(locals()))
+
+    def add_blur(
+        self,
+        option_string="--blur",
+        type=float,
+        nargs="+",
+        help="Specify for Gaussian blurring a single standard deviation "
+        "(isotropic blurring) or the standard deviation in each spatial "
+        "direction (elliptic blurring)",
+        default=0,
+    ):
+        self._add_argument(dict(locals()))
+
+    def add_noise(
+        self,
+        option_string="--noise",
+        type=str,
+        help="Specify type of noise to be applied %s." % NOISE_TYPES,
+        default=None,
+    ):
+        self._add_argument(dict(locals()))
+
+    def add_noise_level(
+        self,
+        option_string="--noise-level",
+        type=float,
+        help="Specify noise level to be applied.",
+        default=None,
     ):
         self._add_argument(dict(locals()))
 

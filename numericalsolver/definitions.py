@@ -12,3 +12,4 @@ REGEX_FILENAMES = "[A-Za-z0-9+-_]+"
 FILENAME_EXTENSION = "txt"
 
 ALLOWED_INPUT_FILE_EXTENSIONS = ["mat", "png", "nii", "nii.gz"]
+ALLOWED_NOISE_TYPES = ["gaussian", "poisson", "s&p", "uniform"]

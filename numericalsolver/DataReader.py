@@ -32,10 +32,11 @@ class DataReader(object):
         self._read_data = {
             "png": self._read_data_png,
             "mat": self._read_data_mat,
-            # "nii": self._read_data_nii,
+            "nii": self._read_data_nii,
         }
 
         self._nda = None
+        self._image_sitk = None
 
     def read_data(self):
         if not ph.file_exists(self._path_to_file):
@@ -45,6 +46,9 @@ class DataReader(object):
 
     def get_data(self):
         return np.array(self._nda, dtype=np.float64)
+
+    def get_image_sitk(self):
+        return self._image_sitk
 
     def _read_data_png(self):
         self._nda = ph.read_image(self._path_to_file)
@@ -58,3 +62,7 @@ class DataReader(object):
                           (self._path_to_file))
 
         self._nda = ndas[0]
+
+    def _read_data_nii(self):
+        self._image_sitk = sitk.ReadImage(self._path_to_file)
+        self._nda = sitk.GetArrayFromImage(self._image_sitk)

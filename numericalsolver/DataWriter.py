@@ -20,9 +20,20 @@ import pythonhelper.SimpleITKHelper as sitkh
 
 class DataWriter(object):
 
-    def __init__(self, nda, path_to_file):
+    ##
+    # Store relevant reader information
+    # \date       2017-09-13 12:00:29+0100
+    #
+    # \param      self          The object
+    # \param      nda           numpy data array
+    # \param      path_to_file  Path to write image
+    # \param      image_sitk    sitk.Image object for (optional) nii header in
+    #                           case of writing to nii/nii.gz file
+    #
+    def __init__(self, nda, path_to_file, image_sitk=None):
         self._nda = nda
         self._path_to_file = path_to_file
+        self._image_sitk = image_sitk
 
         # Get filename extension
         self._file_type = os.path.basename(self._path_to_file).split(".")[1]
@@ -31,7 +42,7 @@ class DataWriter(object):
             "txt": self._write_data_txt,
             "png": self._write_data_png,
             "mat": self._write_data_mat,
-            # "nii": self._write_data_nii,
+            "nii": self._write_data_nii,
         }
 
     def write_data(self):
@@ -48,3 +59,11 @@ class DataWriter(object):
         dic = {"nda": self._nda}
         scipy.io.savemat(self._path_to_file, dic)
         ph.print_info("File written to '%s'" % (self._path_to_file))
+
+    def _write_data_nii(self):
+        image_sitk = sitk.GetImageFromArray(self._nda)
+
+        if self._image_sitk is not None:
+            image_sitk.CopyInformation(self._image_sitk)
+
+        sitk.WriteImage(image_sitk, self._path_to_file)

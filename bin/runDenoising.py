@@ -172,7 +172,8 @@ if __name__ == '__main__':
         data_labels.append(title_prefix)
 
         if args.result is not None:
-            data_writer = dw.DataWriter(recons[i], args.result)
+            data_writer = dw.DataWriter(
+                recons[i], args.result, data_reader.get_image_sitk())
             data_writer.write_data()
 
     # ----------------------------Visualize Results----------------------------
