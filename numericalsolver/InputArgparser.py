@@ -263,6 +263,19 @@ class InputArgparser(object):
     ):
         self._add_argument(dict(locals()))
 
+    def add_minimizer(
+        self,
+        option_string="--minimizer",
+        type=str,
+        help="Choice of minimizer used for the inverse problem associated to "
+        "the f(x) + alpha g(x). Possible choices are 'lsmr' or any solver in "
+        "scipy.optimize.minimize like 'L-BFGS-B'. Note, in case of a chosen "
+        "non-linear data loss only non-linear solvers like 'L-BFGS-B' are "
+        "viable.",
+        default="lsmr",
+    ):
+        self._add_argument(dict(locals()))
+
     def add_rho(
         self,
         option_string="--rho",

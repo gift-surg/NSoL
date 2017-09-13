@@ -11,6 +11,7 @@
 import numpy as np
 
 from numericalsolver.SimilarityMeasures import SimilarityMeasures as sim_meas
+from numericalsolver.LossFunctions import LossFunctions as loss_fun
 
 
 class PriorMeasures(object):
@@ -35,3 +36,18 @@ class PriorMeasures(object):
             sum_Dx_i_squared += Dx_split[i]**2
 
         return np.sum(np.sqrt(sum_Dx_i_squared))
+
+    @staticmethod
+    def huber(x, D, dimension, gamma=0.05):
+        Dx_split = np.array_split(D(x), dimension)
+
+        # Dx_i ** 2
+        sum_Dx_i_squared = Dx_split[0]**2
+
+        # Compute sum_k x_k^2
+        for i in range(1, len(Dx_split)):
+            sum_Dx_i_squared += Dx_split[i]**2
+
+        Dx_gamma = loss_fun.huber(sum_Dx_i_squared, gamma=gamma) / (2.*gamma)
+
+        return np.sum(Dx_gamma)

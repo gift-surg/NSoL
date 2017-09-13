@@ -126,8 +126,8 @@ class ProximalOperators(object):
     ##
     # Proximal operator for conjugate of Huber functional.
     #
-    # With g(x) = | ||\nabla x||_2 |_\alpha the conjugate operator reads
-    # g'(p) = \delta_P(p) + alpha/2 ||p||_2^2
+    # With g(x) = | ||\nabla x||_2 |_\gamma the conjugate operator reads
+    # g'(p) = \delta_P(p) + gamma/2 ||p||_2^2
     # See Chambolle2011. p.136
     # \date       2017-07-23 18:03:56+0100
     #
@@ -138,6 +138,6 @@ class ProximalOperators(object):
     # \return     prox_{\sigma g'}(x) as numpy array
     #
     @staticmethod
-    def prox_huber_conj(x, sigma, alpha=0.05):
-        x /= (1. + sigma * alpha)
+    def prox_huber_conj(x, sigma, gamma=0.05):
+        x /= (1. + sigma * gamma)
         return x / np.maximum(1, np.abs(x))

@@ -29,7 +29,7 @@ import numericalsolver.ADMMLinearSolverParameterStudy as admmparam
 from numericalsolver.SimilarityMeasures import SimilarityMeasures as \
     SimilarityMeasures
 from numericalsolver.ProximalOperators import ProximalOperators as prox
-from numericalsolver.PriorMeasures import PriorMeasures as prior_meas
+from numericalsolver.PriorMeasures import PriorMeasures as PriorMeasures
 import numericalsolver.InputArgparser as InputArgparser
 
 if __name__ == '__main__':
@@ -133,20 +133,28 @@ if __name__ == '__main__':
             for m in args.measures}
 
         if args.reconstruction_type == "TVL1":
-            measures_dic["Reg"] = lambda x: np.sum(np.square(D_1D(x)))
+            measures_dic["Reg"] = \
+                lambda x: PriorMeasures.total_variation(x, D_1D, dimension)
             measures_dic["Data"] = lambda x: np.sum(np.abs(x - x_ref))
 
         elif args.reconstruction_type == "TVL2":
-            measures_dic["Reg"] = lambda x: np.sum(np.square(D_1D(x)))
-            measures_dic["Data"] = lambda x: np.sum(np.square(x - x_ref))
+            measures_dic["Reg"] = \
+                lambda x: PriorMeasures.total_variation(x, D_1D, dimension)
+            measures_dic["Data"] = \
+                lambda x: SimilarityMeasures.sum_of_squared_differences(
+                    x, x_ref)
 
         elif args.reconstruction_type == "HuberL1":
+            measures_dic["Reg"] = \
+                lambda x: PriorMeasures.huber(x, D_1D, dimension)
             measures_dic["Data"] = lambda x: np.sum(np.abs(x - x_ref))
-            measures_dic["Reg"] = lambda x: np.zeros_like(x)  # TODO
 
         elif args.reconstruction_type == "HuberL2":
-            measures_dic["Data"] = lambda x: np.sum(np.square(x - x_ref))
-            measures_dic["Reg"] = lambda x: np.zeros_like(x)  # TODO
+            measures_dic["Reg"] = \
+                lambda x: PriorMeasures.huber(x, D_1D, dimension)
+            measures_dic["Data"] = \
+                lambda x: SimilarityMeasures.sum_of_squared_differences(
+                    x, x_ref)
 
     observer = Observer.Observer()
     observer.set_measures(measures_dic)
