@@ -43,7 +43,7 @@ if __name__ == '__main__':
     input_parser.add_iterations(default=50)
     input_parser.add_solver(default="PD")
     input_parser.add_rho(default=0.1)
-    input_parser.add_alpha(default=0.03)
+    input_parser.add_alpha(default=[0.03])
     input_parser.add_dir_output_figures(default=None)
     input_parser.add_verbose(default=0)
     args = input_parser.parse_args()

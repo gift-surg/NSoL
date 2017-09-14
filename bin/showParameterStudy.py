@@ -25,8 +25,8 @@ def show_L_curve(parameter_study_reader, lines, dir_output=None):
     name = parameter_study_reader.get_parameter_study_name()
 
     # Get labels
-    line_to_parameter_labels_dic = parameter_study_reader.\
-        get_line_to_parameter_labels()
+    line_to_parameter_labels_dic = \
+        parameter_study_reader.get_line_to_parameter_labels()
     labels = [line_to_parameter_labels_dic[i] for i in lines]
 
     # Get arrays to plot
@@ -59,8 +59,8 @@ def show_measures(parameter_study_reader, lines, dir_output=None):
     name = parameter_study_reader.get_parameter_study_name()
 
     # Get labels
-    line_to_parameter_labels_dic = parameter_study_reader.\
-        get_line_to_parameter_labels()
+    line_to_parameter_labels_dic = \
+        parameter_study_reader.get_line_to_parameter_labels()
     labels = [line_to_parameter_labels_dic[i] for i in lines]
 
     # Plot
@@ -91,8 +91,8 @@ def show_reconstructions(parameter_study_reader,
     name = parameter_study_reader.get_parameter_study_name()
 
     # Get labels
-    line_to_parameter_labels_dic = parameter_study_reader.\
-        get_line_to_parameter_labels()
+    line_to_parameter_labels_dic = \
+        parameter_study_reader.get_line_to_parameter_labels()
     labels = [line_to_parameter_labels_dic[i] for i in lines]
 
     reconstructions_dic = parameter_study_reader.get_reconstructions()
@@ -150,8 +150,8 @@ if __name__ == '__main__':
 
     parameters_dic = parameter_study_reader.get_parameters()
     parameters_to_line_dic = parameter_study_reader.get_parameters_to_line()
-    line_to_parameter_labels_dic = parameter_study_reader.\
-        get_line_to_parameter_labels()
+    line_to_parameter_labels_dic = \
+        parameter_study_reader.get_line_to_parameter_labels()
 
     # ---------------------- Get lines to varying alpha ----------------------
     # Get dictionary with single varying key
@@ -161,7 +161,11 @@ if __name__ == '__main__':
     # Get lines in result files associated to varying 'alpha'
     lines = parameter_study_reader.get_lines_to_parameters(p)
 
-    show_reconstructions(parameter_study_reader, lines,
-                         args.dir_output_figures, colormap=args.colormap)
+    try:
+        show_reconstructions(parameter_study_reader, lines,
+                             args.dir_output_figures, colormap=args.colormap)
+    except:
+        print("Visualization of Reconstructions skipped (data not available)")
+
     show_L_curve(parameter_study_reader, lines, args.dir_output_figures)
     show_measures(parameter_study_reader, lines, args.dir_output_figures)

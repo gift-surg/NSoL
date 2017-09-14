@@ -228,12 +228,12 @@ class PrimalDualSolver(Solver):
 
         for i in range(0, self._iterations):
 
-            if self._verbose:
-                ph.print_title("Primal-Dual iteration %d/%d" %
-                               (i+1, self._iterations))
-            else:
-                ph.print_info("Primal-Dual iteration %d/%d" %
-                              (i+1, self._iterations))
+            # if self._verbose:
+            #     ph.print_title("Primal-Dual iteration %d/%d" %
+            #                    (i+1, self._iterations))
+            # else:
+            ph.print_info("Primal-Dual iteration %d/%d" %
+                          (i+1, self._iterations))
 
             # Update dual variable
             p_n = self._prox_g_conj(

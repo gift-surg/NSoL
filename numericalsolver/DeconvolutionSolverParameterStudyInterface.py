@@ -167,7 +167,7 @@ class DeconvolutionSolverStudyInterface(object):
             indices = np.where(self._x_ref_mask > 0)
         # Evaluate on entire array
         else:
-            indices = np.where(x_ref != np.inf)
+            indices = np.where(self._x_ref != np.inf)
 
         # Add all selected measures and append reg./prior and data costs
         if self._x_ref is not None:

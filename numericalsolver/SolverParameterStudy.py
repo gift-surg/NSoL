@@ -266,6 +266,8 @@ class SolverParameterStudy(ParameterStudy):
     #
     def _write_to_file_reconstructions(self, dic):
         np.savez_compressed(self._get_path_to_file_reconstructions(), **dic)
+        ph.print_info("File '%s' written" %
+                      (self._get_path_to_file_reconstructions()))
 
     ##
     # Get solver-specific header for all files to be written
