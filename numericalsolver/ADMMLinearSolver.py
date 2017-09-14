@@ -33,15 +33,15 @@ class ADMMLinearSolver(LinearSolver):
     # \date       2017-07-21 00:24:24+0100
     #
     # \param      self             The object
-    # \param      A                Function associated to linear operator A:
+    # \param      A                Function associated with linear operator A:
     #                              X->Y; x->A(x) with x being a 1D numpy array
-    # \param      A_adj            Function associated to adjoint linear
+    # \param      A_adj            Function associated with adjoint linear
     #                              operator A^*: Y->X; y->A^*(y)
     # \param      b                Right hand-side of linear system Ax = b as
     #                              1D numpy array
-    # \param      B                Function associated to linear operator B:
+    # \param      B                Function associated with linear operator B:
     #                              x->B(x) with x and B(x) 1D numpy arrays
-    # \param      B_adj            Function associated to adjoint linear
+    # \param      B_adj            Function associated with adjoint linear
     #                              operator B^*
     # \param      x0               Initial value as 1D numpy array
     # \param      dimension        Dimension of space as integer indicating

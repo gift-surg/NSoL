@@ -27,8 +27,6 @@ from numericalsolver.definitions import ALLOWED_NOISE_TYPES
 
 if __name__ == '__main__':
 
-    np.random.seed(seed=1)
-
     input_parser = InputArgparser.InputArgparser(
         description="Tool to smooth data and add noise to it",
         prog="python " + os.path.basename(__file__),
@@ -36,8 +34,8 @@ if __name__ == '__main__':
     input_parser.add_filename(required=True)
     input_parser.add_result(required=True)
     input_parser.add_noise(default="gaussian")
-    input_parser.add_noise_level(default=0.01)
-    input_parser.add_blur(default=1.5)
+    input_parser.add_noise_level(default=0.05)
+    input_parser.add_blur(default=[1])
     args = input_parser.parse_args()
     input_parser.print_arguments(args)
 
@@ -47,7 +45,7 @@ if __name__ == '__main__':
     nda = data_reader.get_data()
 
     # --------------------------------Blur Data--------------------------------
-    if args.blur > 0:
+    if args.blur[0] > 0:
         sigma = np.atleast_1d(args.blur)
         if sigma.ndim != nda.ndim:
             try:
@@ -62,7 +60,7 @@ if __name__ == '__main__':
         nda = A(nda)
 
     # --------------------------------Add Noise--------------------------------
-    noise = Noise.Noise(nda)
+    noise = Noise.Noise(nda, seed=1)
 
     if args.noise == "gaussian":
         noise.add_gaussian_noise(noise_level=args.noise_level, sigma=1)

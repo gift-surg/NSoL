@@ -15,6 +15,19 @@ import numpy as np
 class SimilarityMeasures(object):
 
     ##
+    # Compute sum of absolute differences (symmetric)
+    # \date       2017-08-04 10:09:05+0100
+    #
+    # \param      x      numpy data array
+    # \param      x_ref  reference numpy data array
+    #
+    # \return     sum of absolute differences as scalar value >= 0
+    #
+    @staticmethod
+    def sum_of_absolute_differences(x, x_ref):
+        return np.sum(np.abs(x - x_ref))
+
+    ##
     # Compute sum of squared differences (symmetric)
     # \date       2017-08-04 10:09:05+0100
     #

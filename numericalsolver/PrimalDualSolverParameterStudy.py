@@ -15,6 +15,23 @@ import numericalsolver.PrimalDualSolver as pd
 
 class PrimalDualSolverParameterStudy(SolverParameterStudy):
 
+    ##
+    # Store information for parameter study
+    # \date       2017-09-13 23:16:59+0100
+    #
+    # \param      self                 The object
+    # \param      solver               Solver object
+    # \param      observer             Observer object
+    # \param      dir_output           Output directory to write study results
+    # \param      name                 Name of study, string (no white spaces)
+    # \param      parameters           Dictionary holding information on
+    #                                  varying parameter to sweep through
+    #                                  during parameter study
+    # \param      reconstruction_info  Dictionary holding information useful
+    #                                  for later reconstruction, e.g. image
+    #                                  space or sitk.Image to include image
+    #                                  header information
+    #
     def __init__(self,
                  solver,
                  observer,
@@ -24,7 +41,7 @@ class PrimalDualSolverParameterStudy(SolverParameterStudy):
                      "alpha": np.arange(0.01, 0.05, 0.005),
                      "alg_type": ["ALG2", "ALG2_AHMOD", "ALG3"],
                  },
-                 reconstruction_info_dic={},
+                 reconstruction_info={},
                  ):
 
         if not isinstance(solver, pd.PrimalDualSolver):
@@ -36,7 +53,7 @@ class PrimalDualSolverParameterStudy(SolverParameterStudy):
             observer=observer,
             dir_output=dir_output,
             name=name,
-            reconstruction_info_dic=reconstruction_info_dic,
+            reconstruction_info=reconstruction_info,
         )
 
     def _get_fileheader(self):

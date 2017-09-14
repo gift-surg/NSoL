@@ -15,6 +15,23 @@ import numericalsolver.ADMMLinearSolver as admm
 
 class ADMMLinearSolverParameterStudy(SolverParameterStudy):
 
+    ##
+    # Store information for parameter study
+    # \date       2017-09-13 23:16:59+0100
+    #
+    # \param      self                 The object
+    # \param      solver               Solver object
+    # \param      observer             Observer object
+    # \param      dir_output           Output directory to write study results
+    # \param      name                 Name of study, string (no white spaces)
+    # \param      parameters           Dictionary holding information on
+    #                                  varying parameter to sweep through
+    #                                  during parameter study
+    # \param      reconstruction_info  Dictionary holding information useful
+    #                                  for later reconstruction, e.g. image
+    #                                  space or sitk.Image to include image
+    #                                  header information
+    #
     def __init__(self,
                  solver,
                  observer,
@@ -26,14 +43,20 @@ class ADMMLinearSolverParameterStudy(SolverParameterStudy):
                      # "data_loss": ["linear", "arctan"],
                      # "data_loss_scale": [1., 1.2],
                  },
+                 reconstruction_info={},
                  ):
 
         if not isinstance(solver, admm.ADMMLinearSolver):
             raise TypeError("solver must be of type 'ADMMLinearSolver'")
 
         super(self.__class__, self).__init__(
-            solver=solver, parameters=parameters, observer=observer,
-            dir_output=dir_output, name=name)
+            solver=solver,
+            parameters=parameters,
+            observer=observer,
+            dir_output=dir_output,
+            name=name,
+            reconstruction_info=reconstruction_info,
+        )
 
     def _get_fileheader(self):
 

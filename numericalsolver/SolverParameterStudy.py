@@ -31,7 +31,7 @@ class SolverParameterStudy(ParameterStudy):
                  observer,
                  dir_output,
                  name,
-                 reconstruction_info_dic,
+                 reconstruction_info,
                  ):
 
         ParameterStudy.__init__(self, directory=dir_output, name=name)
@@ -39,7 +39,7 @@ class SolverParameterStudy(ParameterStudy):
         self._solver = solver
         self._parameters = parameters
         self._observer = observer
-        self._reconstruction_info_dic = reconstruction_info_dic
+        self._reconstruction_info = reconstruction_info
 
     ##
     # Run parameter study and write results to specified files
@@ -66,6 +66,9 @@ class SolverParameterStudy(ParameterStudy):
         # Get computational time in seconds
         self._computational_time = ph.stop_timing(time_start)
 
+    def get_computational_time(self):
+        return self._computational_time
+
     ##
     # Gets the parameters specified for parameter study.
     # \date       2017-08-05 23:35:09+0100
@@ -80,7 +83,7 @@ class SolverParameterStudy(ParameterStudy):
     def _run(self):
 
         dic_parameter = {}
-        dic_x = {k: v for k, v in self._reconstruction_info_dic.iteritems()}
+        dic_x = {k: v for k, v in self._reconstruction_info.iteritems()}
 
         # Create list from itertools. Then total number of iterations known
         iterations = list(itertools.product(*self._parameters.values()))

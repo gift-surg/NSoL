@@ -18,17 +18,11 @@ import pythonhelper.PythonHelper as ph
 import pythonhelper.SimpleITKHelper as sitkh
 
 import numericalsolver.LinearOperators as LinearOperators
-import numericalsolver.TikhonovLinearSolver as tk
-import numericalsolver.ADMMLinearSolver as admm
-import numericalsolver.PrimalDualSolver as pd
-import numericalsolver.Observer as Observer
 import numericalsolver.DataReader as dr
 import numericalsolver.DataWriter as dw
-from numericalsolver.SimilarityMeasures import SimilarityMeasures as \
-    SimilarityMeasures
-from numericalsolver.ProximalOperators import ProximalOperators as prox
-from numericalsolver.PriorMeasures import PriorMeasures as prior_meas
+import numericalsolver.Observer as Observer
 import numericalsolver.InputArgparser as InputArgparser
+import numericalsolver.DeconvolutionSolverParameterStudyInterface as interface
 
 if __name__ == '__main__':
 
@@ -46,6 +40,8 @@ if __name__ == '__main__':
     input_parser.add_solver(default="PD")
     input_parser.add_rho(default=0.1)
     input_parser.add_alpha(default=[0.01])
+    input_parser.add_data_loss(default="linear")
+    input_parser.add_data_loss_scale(default=1)
     input_parser.add_iter_max(default=10)
     input_parser.add_minimizer(default="lsmr")
     input_parser.add_dir_output_figures(default=None)
@@ -75,6 +71,8 @@ if __name__ == '__main__':
         data_nda.append(reference_nda)
         data_labels.append("reference:\n%s" % os.path.basename(args.reference))
         x_ref = reference_nda.flatten()
+    else:
+        x_ref = None
 
     if args.blur > 0:
         sigma = np.atleast_1d(args.blur)
@@ -115,89 +113,48 @@ if __name__ == '__main__':
     D_1D = lambda x: grad(x.reshape(*X_shape)).flatten()
     D_adj_1D = lambda x: grad_adj(x.reshape(*Z_shape)).flatten()
 
-    if args.reconstruction_type in ["TK0L2", "TK1L2"]:
-        if args.reconstruction_type == "TK0L2":
-            D_1D = lambda x: x.flatten()
-            D_adj_1D = lambda x: x.flatten()
+    solver_interface = interface.DeconvolutionSolverStudyInterface(
+        A=A_1D,
+        A_adj=A_adj_1D,
+        D=D_1D,
+        D_adj=D_adj_1D,
+        b=b,
+        x0=x0,
+        alpha=args.alpha[0],
+        x_scale=x_scale,
+        data_loss=args.data_loss,
+        data_loss_scale=args.data_loss_scale,
+        iter_max=args.iter_max,
+        iterations=args.iterations,
+        minimizer=args.minimizer,
+        measures=args.measures,
+        dimension=dimension,
+        reconstruction_type=args.reconstruction_type,
+        rho=args.rho,
+        x_ref=x_ref,
+        tv_solver=args.solver,
+        verbose=args.verbose,
+    )
+    solver_interface.set_up_solver()
+    solver_interface.set_up_measures()
 
-        solver = tk.TikhonovLinearSolver(
-            A=A_1D, A_adj=A_adj_1D,
-            B=D_1D, B_adj=D_adj_1D,
-            b=b,
-            x0=x0,
-            x_scale=x_scale,
-            iter_max=args.iter_max,
-            minimizer=args.minimizer,
-            verbose=args.verbose,
-        )
+    solver = solver_interface.get_solver()
+    measures_dic = solver_interface.get_measures()
 
-    else:
-        if args.reconstruction_type == "TVL2":
-            prox_g_conj = prox.prox_tv_conj
-
-        elif args.reconstruction_type == "HuberL2":
-            prox_g_conj = prox.prox_huber_conj
-
-        else:
-            raise ValueError("Deconvolution type '%s' not known" %
-                             args.reconstruction_type)
-
-        prox_f = lambda x, tau: prox.prox_linear_least_squares(
-            x=x, tau=tau, iter_max=args.iter_max,
-            A=A_1D, A_adj=A_adj_1D, b=b, x0=x0, x_scale=x_scale)
-
-        if args.solver == "PD":
-            solver = pd.PrimalDualSolver(
-                prox_f=prox_f,
-                prox_g_conj=prox_g_conj,
-                B=D_1D,
-                B_conj=D_adj_1D,
-                L2=8,
-                x0=x0,
-                iterations=args.iterations,
-                # alg_type=alg_type,
-                x_scale=x_scale,
-                verbose=args.verbose,
-            )
-        elif args.solver == "ADMM":
-            if args.reconstruction_type != "TVL2":
-                raise ValueError("ADMM only works for TVL2")
-            solver = admm.ADMMLinearSolver(
-                A=lambda x: x.flatten(), A_adj=lambda x: x.flatten(),
-                b=b,
-                B=D_1D, B_adj=D_adj_1D,
-                x0=x0,
-                rho=args.rho,
-                iterations=args.iterations,
-                dimension=dimension,
-                iter_max=args.iter_max,
-                x_scale=x_scale,
-                verbose=args.verbose,
-            )
-        else:
-            raise ValueError("Solver '%s' not known" % args.solver)
-
+    # -----------------------------Run Reconstruction--------------------------
     for i, alpha in enumerate(args.alpha):
+        ph.print_subtitle("Iteration %d/%d" % (i+1, len(args.alpha)))
         title_prefix = args.reconstruction_type + \
             " (" + r"$\alpha=%g$)" % alpha
         solver.set_alpha(alpha)
 
-        # ---------------------------Similarity Measures-----------------------
-        if args.reference is not None:
-            measures_dic = {
-                m: lambda x, m=m:
-                SimilarityMeasures.similarity_measures[m](x, x_ref)
-                for m in args.measures}
-            observers[i] = Observer.Observer()
-            observers[i].set_measures(measures_dic)
-        else:
-            observers[i] = None
+        observers[i] = Observer.Observer()
+        observers[i].set_measures(measures_dic)
         solver.set_observer(observers[i])
 
-        # ---------------------------Run Reconstruction------------------------
         solver.run()
         recons[i] = np.array(solver.get_x().reshape(*X_shape))
-        print("Computational time %s: %s" %
+        print("\nComputational time %s: %s" %
               (args.reconstruction_type, solver.get_computational_time()))
 
         data_nda.append(recons[i])
@@ -209,7 +166,6 @@ if __name__ == '__main__':
             data_writer.write_data()
 
     # ----------------------------Visualize Results----------------------------
-
     filename_prefix = args.reconstruction_type
 
     ph.show_arrays(
@@ -225,31 +181,31 @@ if __name__ == '__main__':
         fontsize=8,
     )
 
-    if args.reference is not None:
-        linestyles = ["-", ":", "-", "-."] * 10
+    # if args.reference is not None:
+    linestyles = ["-", ":", "-", "-."] * 10
 
-        for ob in observers:
-            ob.compute_measures()
+    for ob in observers:
+        ob.compute_measures()
 
-        for k in measures_dic.keys():
-            x = []
-            y = []
-            legend = []
-            for i, alpha in enumerate(args.alpha):
-                title = args.reconstruction_type + ": %s" % k
-                y.append(observers[i].get_measures()[k])
-                legend.append(r"$\alpha=%g$" % alpha)
-                x.append(range(0, len(y[-1])))
-            ph.show_curves(
-                y=y,
-                x=x,
-                xlabel="iteration",
-                labels=legend,
-                title=title,
-                linestyle=linestyles,
-                markers=ph.MARKERS,
-                markevery=10,
-                directory=args.dir_output_figures,
-                filename=filename_prefix+"_"+k+".pdf",
-                save_figure=0 if args.dir_output_figures is None else 1,
-            )
+    for k in measures_dic.keys():
+        x = []
+        y = []
+        legend = []
+        for i, alpha in enumerate(args.alpha):
+            title = args.reconstruction_type + ": %s" % k
+            y.append(observers[i].get_measures()[k])
+            legend.append(r"$\alpha=%g$" % alpha)
+            x.append(range(0, len(y[-1])))
+        ph.show_curves(
+            y=y,
+            x=x,
+            xlabel="iteration",
+            labels=legend,
+            title=title,
+            linestyle=linestyles,
+            markers=ph.MARKERS,
+            markevery=10,
+            directory=args.dir_output_figures,
+            filename=filename_prefix+"_"+k+".pdf",
+            save_figure=0 if args.dir_output_figures is None else 1,
+        )

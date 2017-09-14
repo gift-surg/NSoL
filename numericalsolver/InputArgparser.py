@@ -137,7 +137,7 @@ class InputArgparser(object):
         type=float,
         help="Specify regularization parameter array by providing "
         "'First Last Step' information. Array is generated according to "
-        "np.arange(First, Last, Step).",
+        "np.linspace(First, Last, Step).",
         default=None,
         required=False,
     ):
@@ -161,7 +161,7 @@ class InputArgparser(object):
         type=float,
         help="Specify data loss scales by providing 'First Last Step' "
         "information. Array is generated according to "
-        "np.arange(First, Last, Step).",
+        "np.linspace(First, Last, Step).",
         default=None,
         required=False,
     ):
@@ -238,19 +238,13 @@ class InputArgparser(object):
     ):
         self._add_argument(dict(locals()))
 
-    def add_reg_type(
+    def add_colormap(
         self,
-        option_string="--reg-type",
+        option_string="--colormap",
         type=str,
-        help="Type of regularization for SR algorithm. Either "
-        "'TK0', 'TK1' or 'TV' for zeroth/first order Tikhonov "
-        " or total variation regularization, respectively."
-        "I.e. "
-        "R(x) = ||x||_2^2 for 'TK0', "
-        "R(x) = ||Dx||_2^2 for 'TK1', "
-        "or "
-        "R(x) = ||Dx||_1 for 'TV'. ",
-        default="TK1",
+        help="Specify colormap type to be applied for visualization. "
+        "E.g. 'Greys_r', 'jet'",
+        default=None,
     ):
         self._add_argument(dict(locals()))
 

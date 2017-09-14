@@ -21,7 +21,8 @@ class Noise(object):
     # \date       2017-07-22 23:40:02+0100
     #
     # \param      self  The object
-    # \param      data   Data as numpy array
+    # \param      data  Data as numpy array
+    # \param      seed  The seed
     #
     def __init__(self, data, seed=None):
         np.random.seed(seed=seed)

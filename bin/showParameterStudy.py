@@ -47,6 +47,7 @@ def show_L_curve(parameter_study_reader, lines, dir_output=None):
                    markers=ph.MARKERS*100,
                    markevery=1,
                    y_axis_style="loglog",
+                   # y_axis_style="semilogy",
                    filename=name+"_L-curve.pdf",
                    directory=dir_output,
                    save_figure=0 if dir_output is None else 1,
@@ -81,7 +82,11 @@ def show_measures(parameter_study_reader, lines, dir_output=None):
                        )
 
 
-def show_reconstructions(parameter_study_reader, lines, dir_output=None):
+def show_reconstructions(parameter_study_reader,
+                         lines,
+                         dir_output=None,
+                         colormap="Greys_r",
+                         ):
     name = parameter_study_reader.get_parameter_study_name()
 
     # Get labels
@@ -97,8 +102,7 @@ def show_reconstructions(parameter_study_reader, lines, dir_output=None):
         ph.show_arrays(data_nda,
                        title=labels,
                        fig_number=None,
-                       # cmap="jet",
-                       cmap="Greys_r",
+                       cmap=colormap,
                        use_same_scaling=True,
                        # fontsize=8,
                        directory=dir_output,
@@ -119,6 +123,7 @@ if __name__ == '__main__':
         required=True)
     input_parser.add_study_name(required=True)
     input_parser.add_dir_output_figures()
+    input_parser.add_colormap(default="Greys_r")
 
     args = input_parser.parse_args()
     input_parser.print_arguments(args)
@@ -140,6 +145,7 @@ if __name__ == '__main__':
     # Get lines in result files associated to varying 'alpha'
     lines = parameter_study_reader.get_lines_to_parameters(p)
 
-    show_reconstructions(parameter_study_reader, lines, args.dir_output_figures)
+    show_reconstructions(parameter_study_reader, lines,
+                         args.dir_output_figures, colormap=args.colormap)
     show_L_curve(parameter_study_reader, lines, args.dir_output_figures)
     show_measures(parameter_study_reader, lines, args.dir_output_figures)
