@@ -103,6 +103,20 @@ class TikhonovLinearSolver(LinearSolver):
     def get_B(self):
         return self._B
 
+    ##
+    # Gets the adjoint linear operator B
+    # \date       2017-09-06 16:29:11+0100
+    #
+    # \param      self  The object
+    #
+    # \return     Forward operator as function: 1D -> 1D
+    #
+    def get_B_adj(self):
+        return self._B_adj
+
+    def get_b_reg(self):
+        return self._b_reg * self._x_scale
+
     def _run(self):
 
         if self._minimizer == "lsmr" and self._data_loss != "linear":

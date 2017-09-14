@@ -22,7 +22,8 @@ import numericalsolver.DataReader as dr
 import numericalsolver.DataWriter as dw
 import numericalsolver.Observer as Observer
 import numericalsolver.InputArgparser as InputArgparser
-import numericalsolver.DeconvolutionSolverParameterStudyInterface as interface
+import numericalsolver.DeconvolutionSolverParameterStudyInterface as \
+    deconv_interface
 
 if __name__ == '__main__':
 
@@ -125,11 +126,11 @@ if __name__ == '__main__':
     else:
         name = args.study_name
 
-    reconstruction_info_dic = {
+    reconstruction_info = {
         "shape": X_shape,
     }
 
-    parameter_study_interface = interface.DeconvolutionParameterStudyInterface(
+    parameter_study_interface = deconv_interface.DeconvolutionParameterStudyInterface(
         A=A_1D,
         A_adj=A_adj_1D,
         D=D_1D,
@@ -150,7 +151,7 @@ if __name__ == '__main__':
         dir_output=args.dir_output,
         parameters=parameters,
         name=name,
-        reconstruction_info=reconstruction_info_dic,
+        reconstruction_info=reconstruction_info,
         x_ref=x_ref,
         tv_solver=args.solver,
         verbose=args.verbose,

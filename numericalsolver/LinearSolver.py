@@ -100,6 +100,17 @@ class LinearSolver(Solver):
         return self._A
 
     ##
+    # Gets the adjoint linear operator A
+    # \date       2017-09-06 16:29:11+0100
+    #
+    # \param      self  The object
+    #
+    # \return     Adjoint forward operator as function: 1D -> 1D
+    #
+    def get_A_adj(self):
+        return self._A_adj
+
+    ##
     # Gets the right hand-side b of linear system Ax = b
     # \date       2017-09-06 16:37:32+0100
     #

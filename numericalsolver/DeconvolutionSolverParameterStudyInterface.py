@@ -114,6 +114,7 @@ class DeconvolutionSolverStudyInterface(object):
                  dimension,
                  rho=0.5,
                  x_ref=None,
+                 x_ref_mask=None,
                  data_loss="linear",
                  data_loss_scale=1,
                  tv_solver="PD",
@@ -136,6 +137,7 @@ class DeconvolutionSolverStudyInterface(object):
         self._measures = measures
         self._reconstruction_type = reconstruction_type
         self._x_ref = x_ref
+        self._x_ref_mask = x_ref_mask
         self._dimension = dimension
         self._tv_solver = tv_solver
         self._rho = rho
@@ -160,11 +162,19 @@ class DeconvolutionSolverStudyInterface(object):
 
     def set_up_measures(self):
 
+        # Reduce evaluation to mask
+        if self._x_ref_mask is not None:
+            indices = np.where(self._x_ref_mask > 0)
+        # Evaluate on entire array
+        else:
+            indices = np.where(x_ref != np.inf)
+
         # Add all selected measures and append reg./prior and data costs
         if self._x_ref is not None:
             measures_dic = {
                 m: lambda x, m=m:
-                SimilarityMeasures.similarity_measures[m](x, self._x_ref)
+                SimilarityMeasures.similarity_measures[m](
+                    x[indices], self._x_ref[indices])
                 for m in self._measures}
         else:
             measures_dic = {}
@@ -399,6 +409,7 @@ class DeconvolutionParameterStudyInterface(DeconvolutionSolverStudyInterface):
                  reconstruction_info,
                  rho=0.5,
                  x_ref=None,
+                 x_ref_mask=None,
                  data_loss="linear",
                  data_loss_scale=1,
                  tv_solver="PD",
@@ -423,6 +434,7 @@ class DeconvolutionParameterStudyInterface(DeconvolutionSolverStudyInterface):
             reconstruction_type=reconstruction_type,
             rho=rho,
             x_ref=x_ref,
+            x_ref_mask=x_ref_mask,
             dimension=dimension,
             tv_solver=tv_solver,
             verbose=verbose,

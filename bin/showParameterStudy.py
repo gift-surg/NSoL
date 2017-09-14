@@ -16,6 +16,7 @@ import sys
 import os
 
 import pythonhelper.PythonHelper as ph
+import pythonhelper.SimpleITKHelper as sitkh
 import numericalsolver.ReaderParameterStudy as ReaderParameterStudy
 import numericalsolver.InputArgparser as InputArgparser
 
@@ -109,6 +110,21 @@ def show_reconstructions(parameter_study_reader,
                        filename=name+"_reconstructions.pdf",
                        save_figure=0 if dir_output is None else 1,
                        )
+
+    elif len(reconstructions_dic["shape"]) == 3:
+        origin = reconstructions_dic["origin"]
+        spacing = reconstructions_dic["spacing"]
+        direction = reconstructions_dic["direction"]
+        recons_sitk = []
+
+        for nda in data_nda:
+            recon_sitk = sitk.GetImageFromArray(nda)
+            recon_sitk.SetSpacing(spacing)
+            recon_sitk.SetOrigin(origin)
+            recon_sitk.SetDirection(direction)
+            recons_sitk.append(recon_sitk)
+        labels = [l.replace(".", "p") for l in labels]
+        sitkh.show_sitk_image(recons_sitk, label=labels)
 
 if __name__ == '__main__':
 
