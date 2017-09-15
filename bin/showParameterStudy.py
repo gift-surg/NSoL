@@ -95,21 +95,30 @@ def show_reconstructions(parameter_study_reader,
         parameter_study_reader.get_line_to_parameter_labels()
     labels = [line_to_parameter_labels_dic[i] for i in lines]
 
-    reconstructions_dic = parameter_study_reader.get_reconstructions()
+    try:
+        reconstructions_dic = parameter_study_reader.get_reconstructions()
+    except IOError as e:
+        print("Error: '%s'. Visualization skipped" % e)
+        return
+
     data_nda = [reconstructions_dic[str(ell)].reshape(
         reconstructions_dic["shape"]) for ell in lines]
 
     if len(reconstructions_dic["shape"]) == 2:
-        ph.show_arrays(data_nda,
-                       title=labels,
-                       fig_number=None,
-                       cmap=colormap,
-                       use_same_scaling=True,
-                       # fontsize=8,
-                       directory=dir_output,
-                       filename=name+"_reconstructions.pdf",
-                       save_figure=0 if dir_output is None else 1,
-                       )
+        try:
+            ph.show_arrays(data_nda,
+                           title=labels,
+                           fig_number=None,
+                           cmap=colormap,
+                           use_same_scaling=True,
+                           # fontsize=8,
+                           directory=dir_output,
+                           filename=name+"_reconstructions.pdf",
+                           save_figure=0 if dir_output is None else 1,
+                           )
+        except RuntimeError as e:
+            print("Error '%s': Visualization skipped" % e)
+            return
 
     elif len(reconstructions_dic["shape"]) == 3:
         origin = reconstructions_dic["origin"]
@@ -161,11 +170,7 @@ if __name__ == '__main__':
     # Get lines in result files associated to varying 'alpha'
     lines = parameter_study_reader.get_lines_to_parameters(p)
 
-    try:
-        show_reconstructions(parameter_study_reader, lines,
-                             args.dir_output_figures, colormap=args.colormap)
-    except:
-        print("Visualization of Reconstructions skipped (data not available)")
-
     show_L_curve(parameter_study_reader, lines, args.dir_output_figures)
     show_measures(parameter_study_reader, lines, args.dir_output_figures)
+    show_reconstructions(parameter_study_reader, lines,
+                         args.dir_output_figures, colormap=args.colormap)

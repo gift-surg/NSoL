@@ -62,6 +62,9 @@ class ReaderParameterStudy(ParameterStudy):
     # \return     All reconstructions and associated information as dictionary.
     #
     def get_reconstructions(self):
+        if not ph.file_exists(self._get_path_to_file_reconstructions()):
+            raise IOError("File '%s' not available" %
+                          self._get_path_to_file_reconstructions())
         return np.load(self._get_path_to_file_reconstructions())
 
     ##
