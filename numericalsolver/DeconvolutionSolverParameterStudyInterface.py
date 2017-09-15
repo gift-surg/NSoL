@@ -283,7 +283,6 @@ class DeconvolutionSolverStudyInterface(object):
             A=self._A,
             A_adj=self._A_adj,
             b=self._b,
-            alpha=self._alpha,
             x0=self._x0,
             iter_max=self._iter_max,
             x_scale=self._x_scale)
