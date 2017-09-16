@@ -107,7 +107,9 @@ class SolverParameterStudy(ParameterStudy):
             self._solver.run()
 
             # Compute similarity measures for solver estimate iterations
+            ph.print_info("Compute measures ... ", newline=False)
             self._observer.compute_measures()
+            print("done")
 
             # Write all measure results to file for all iterations
             measures = self._observer.get_measures()

@@ -98,7 +98,7 @@ def show_reconstructions(parameter_study_reader,
     try:
         reconstructions_dic = parameter_study_reader.get_reconstructions()
     except IOError as e:
-        print("Error: '%s'. Visualization skipped" % e)
+        print("Error: '%s'. Visualization skipped." % e)
         return
 
     data_nda = [reconstructions_dic[str(ell)].reshape(
@@ -116,8 +116,8 @@ def show_reconstructions(parameter_study_reader,
                            filename=name+"_reconstructions.pdf",
                            save_figure=0 if dir_output is None else 1,
                            )
-        except RuntimeError as e:
-            print("Error '%s': Visualization skipped" % e)
+        except ValueError as e:
+            print("Error '%s'. Visualization skipped." % e)
             return
 
     elif len(reconstructions_dic["shape"]) == 3:
