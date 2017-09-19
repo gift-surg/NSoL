@@ -113,6 +113,7 @@ class DeconvolutionSolverStudyInterface(object):
                  measures,
                  reconstruction_type,
                  dimension,
+                 L2=8,
                  rho=0.5,
                  x_ref=None,
                  x_ref_mask=None,
@@ -141,6 +142,7 @@ class DeconvolutionSolverStudyInterface(object):
         self._x_ref_mask = x_ref_mask
         self._dimension = dimension
         self._tv_solver = tv_solver
+        self._L2 = L2
         self._rho = rho
         self._verbose = verbose
 
@@ -248,7 +250,7 @@ class DeconvolutionSolverStudyInterface(object):
                 prox_g_conj=prox.prox_tv_conj,
                 B=self._D,
                 B_conj=self._D_adj,
-                L2=8,
+                L2=self._L2,
                 alpha=self._alpha,
                 x0=self._x0,
                 iterations=self._iterations,
@@ -292,7 +294,7 @@ class DeconvolutionSolverStudyInterface(object):
             prox_g_conj=prox.prox_huber_conj,
             B=self._D,
             B_conj=self._D_adj,
-            L2=8,
+            L2=self._L2,
             alpha=self._alpha,
             x0=self._x0,
             iterations=self._iterations,
