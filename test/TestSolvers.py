@@ -3,7 +3,7 @@
 #  \brief  Class containing unit tests for numerical solvers
 #
 #  \author Michael Ebner (michael.ebner.14@ucl.ac.uk)
-#  \date May 2016
+#  \date May 2017
 
 
 # Import libraries

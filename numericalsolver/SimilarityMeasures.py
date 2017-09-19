@@ -2,7 +2,6 @@
 # \file SimilarityMeasures.py
 # \brief      Collection of similarity (and dissimilarity) functions
 #
-# \todo proper unit testing of these functions to be done yet
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
 # \date       July 2017
 #
@@ -25,6 +24,8 @@ class SimilarityMeasures(object):
     #
     @staticmethod
     def sum_of_absolute_differences(x, x_ref):
+        if x.shape != x_ref.shape:
+            raise ValueError("Input data shapes do not match")
         return np.sum(np.abs(x - x_ref))
 
     ##
@@ -38,6 +39,8 @@ class SimilarityMeasures(object):
     #
     @staticmethod
     def sum_of_squared_differences(x, x_ref):
+        if x.shape != x_ref.shape:
+            raise ValueError("Input data shapes do not match")
         return np.sum(np.square(x - x_ref))
 
     ##
@@ -51,7 +54,9 @@ class SimilarityMeasures(object):
     #
     @staticmethod
     def mean_squared_error(x, x_ref):
-        return SimilarityMeasures.sum_of_squared_differences(x, x_ref) / x.size
+        mse = SimilarityMeasures.sum_of_squared_differences(x, x_ref)
+        mse /= float(x.size)
+        return mse
 
     ##
     # Compute root mean square error (symmetric)
@@ -95,7 +100,7 @@ class SimilarityMeasures(object):
             raise ValueError("Input data shapes do not match")
 
         ncc = np.sum((x - x.mean()) * (x_ref - x_ref.mean()))
-        ncc /= x.size * x.std(ddof=1) * x_ref.std(ddof=1)
+        ncc /= float(x.size * x.std(ddof=1) * x_ref.std(ddof=1))
 
         return ncc
 

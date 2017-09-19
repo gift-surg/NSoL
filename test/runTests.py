@@ -16,7 +16,8 @@ import os
 
 # Import modules for unit testing
 # from TestKernels import *
-from TestLossFunctions import *
+# from TestLossFunctions import *
+from TestSimilarityMeasures import *
 # from TestSolvers import *
 
 if __name__ == '__main__':
