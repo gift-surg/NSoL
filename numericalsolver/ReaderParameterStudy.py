@@ -229,7 +229,7 @@ class ReaderParameterStudy(ParameterStudy):
 
             try:
                 tmp = [float(t) for t in tmp]
-                # tmp = np.array(tmp)
+                tmp.sort()
 
             except:
                 pass

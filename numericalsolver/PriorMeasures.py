@@ -18,11 +18,11 @@ class PriorMeasures(object):
 
     @staticmethod
     def zeroth_order_tikhonov(x):
-        return sim_meas.sum_of_squared_differences(x, 0)
+        return 0.5 * sim_meas.sum_of_squared_differences(x, 0)
 
     @staticmethod
     def first_order_tikhonov(x, D):
-        return sim_meas.sum_of_squared_differences(D(x), 0)
+        return 0.5 * sim_meas.sum_of_squared_differences(D(x), 0)
 
     @staticmethod
     def total_variation(x, D, dimension):

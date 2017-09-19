@@ -131,13 +131,16 @@ class SolverParameterStudy(ParameterStudy):
             var = str(i)
             dic_x[var] = np.array(self._observer.get_x_list()[-1])
 
+            # Write results of all obtained arrays at each iteration
+            # (Previous results will be overwritten at each iteration)
+            self._write_to_file_reconstructions(dic_x)
+
             # Clear observer for next parameter selection
             self._observer.clear_x_list()
 
             # Reset solver to initial value
             self._solver.set_x0(self._solver.get_x0())
 
-        self._write_to_file_reconstructions(dic_x)
 
     # def _save_to_image(self, nda, vals, colorbar=True):
 

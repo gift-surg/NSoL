@@ -49,7 +49,7 @@ if __name__ == '__main__':
     input_parser.add_verbose(default=0)
 
     # Range for parameter sweeps
-    input_parser.add_alpha_range(default=[0.0001, 0.01, 10])
+    input_parser.add_alpha_range(default=[0.0001, 0.05, 10])
     input_parser.add_data_losses(
         # default=["linear", "arctan"]
     )

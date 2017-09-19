@@ -35,6 +35,7 @@ from numericalsolver.SimilarityMeasures import SimilarityMeasures as \
     SimilarityMeasures
 from numericalsolver.ProximalOperators import ProximalOperators as prox
 from numericalsolver.PriorMeasures import PriorMeasures as prior_meas
+from numericalsolver.LossFunctions import LossFunctions as loss_fun
 
 
 ##
@@ -305,29 +306,37 @@ class DeconvolutionSolverStudyInterface(object):
         measures_dic["Reg"] = \
             lambda x: prior_meas.zeroth_order_tikhonov(x)
         measures_dic["Data"] = \
-            lambda x: SimilarityMeasures.sum_of_squared_differences(
-                self._A(x), self._b)
+            lambda x: loss_fun.get_ell2_cost_from_residual(
+                self._A(x)-self._b,
+                loss=self._data_loss,
+                f_scale=self._data_loss_scale)
 
     def _append_reg_and_data_costs_TK1L2(self, measures_dic):
         measures_dic["Reg"] = \
             lambda x: prior_meas.first_order_tikhonov(x, self._D)
         measures_dic["Data"] = \
-            lambda x: SimilarityMeasures.sum_of_squared_differences(
-                self._A(x), self._b)
+            lambda x: loss_fun.get_ell2_cost_from_residual(
+                self._A(x)-self._b,
+                loss=self._data_loss,
+                f_scale=self._data_loss_scale)
 
     def _append_reg_and_data_costs_TVL2(self, measures_dic):
         measures_dic["Reg"] = \
             lambda x: prior_meas.total_variation(x, self._D, self._dimension)
         measures_dic["Data"] = \
-            lambda x: SimilarityMeasures.sum_of_squared_differences(
-                self._A(x), self._b)
+            lambda x: loss_fun.get_ell2_cost_from_residual(
+                self._A(x)-self._b,
+                loss=self._data_loss,
+                f_scale=self._data_loss_scale)
 
     def _append_reg_and_data_costs_HuberL2(self, measures_dic):
         measures_dic["Reg"] = \
             lambda x: prior_meas.huber(x, self._D, self._dimension)
         measures_dic["Data"] = \
-            lambda x: SimilarityMeasures.sum_of_squared_differences(
-                self._A(x), self._b)
+            lambda x: loss_fun.get_ell2_cost_from_residual(
+                self._A(x)-self._b,
+                loss=self._data_loss,
+                f_scale=self._data_loss_scale)
 
 
 class DeconvolutionParameterStudyInterface(DeconvolutionSolverStudyInterface):
