@@ -146,6 +146,9 @@ class Solver(object):
     #
     def run(self):
 
+        if self._x0.ndim != 1:
+            raise ValueError("Initial value x0 must be a 1D array")
+
         time_start = ph.start_timing()
 
         # Execute solver

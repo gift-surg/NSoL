@@ -165,15 +165,29 @@ class DeconvolutionSolverStudyInterface(object):
 
     def set_up_measures(self):
 
-        # Reduce evaluation to mask
-        if self._x_ref_mask is not None:
-            indices = np.where(self._x_ref_mask > 0)
-        # Evaluate on entire array
-        else:
-            indices = np.where(self._x_ref != np.inf)
-
         # Add all selected measures and append reg./prior and data costs
         if self._x_ref is not None:
+
+            if not isinstance(self._x_ref, np.ndarray):
+                raise ValueError("Reference x_ref must be of type 1D np.array")
+
+            if self._x_ref.shape != self._x0.shape:
+                raise ValueError(
+                    "Initial value x0 and reference x_ref arrays "
+                    "must be of same shape")
+
+            # Reduce evaluation to mask
+            if self._x_ref_mask is not None:
+                if self._x_ref.shape != self._x_ref_mask.shape:
+                    raise ValueError(
+                        "Reference x_ref and reference mask x_ref_mask arrays "
+                        "must be of same shape")
+                indices = np.where(self._x_ref_mask > 0)
+
+            # Evaluate on entire array
+            else:
+                indices = np.where(self._x_ref != np.inf)
+
             measures_dic = {
                 m: lambda x, m=m:
                 SimilarityMeasures.similarity_measures[m](

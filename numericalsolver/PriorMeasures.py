@@ -10,7 +10,6 @@
 
 import numpy as np
 
-from numericalsolver.SimilarityMeasures import SimilarityMeasures as sim_meas
 from numericalsolver.LossFunctions import LossFunctions as loss_fun
 
 
@@ -18,11 +17,11 @@ class PriorMeasures(object):
 
     @staticmethod
     def zeroth_order_tikhonov(x):
-        return 0.5 * sim_meas.sum_of_squared_differences(x, 0)
+        return 0.5 * np.sum(np.square(x))
 
     @staticmethod
     def first_order_tikhonov(x, D):
-        return 0.5 * sim_meas.sum_of_squared_differences(D(x), 0)
+        return 0.5 * np.sum(np.square(D(x)))
 
     @staticmethod
     def total_variation(x, D, dimension):
