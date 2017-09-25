@@ -9,6 +9,8 @@
 # Import libraries
 import numpy as np
 
+import pythonhelper.PythonHelper as ph
+
 
 ##
 # Class to monitor the iterations of numerical solvers
@@ -108,12 +110,14 @@ class Observer(object):
     # \return     The measures.
     #
     def compute_measures(self):
+        ph.print_info("Compute measures ... ", newline=False)
         N = len(self._x_list)
         res = np.zeros(N)
         for k, name in enumerate(self._measures_names):
             for i in range(0, N):
                 res[i] = self._measures[k](self._x_list[i])
             self._dic_measures[name] = np.array(res)
+        print("done")
 
     ##
     # Gets the list of collected data arrays
