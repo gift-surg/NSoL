@@ -8,9 +8,9 @@
 #
 
 import argparse
+import inspect
 
 import pythonhelper.PythonHelper as ph
-import inspect
 
 from numericalsolver.SimilarityMeasures import SimilarityMeasures as \
     SimilarityMeasures

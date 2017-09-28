@@ -41,8 +41,18 @@ class ProximalOperators(object):
     # \return     prox_g(x, tau) as numpy array
     #
     @staticmethod
-    def prox_linear_least_squares(x, tau, A, A_adj, b, x0, iter_max=10,
-                                  verbose=0, x_scale=1):
+    def prox_linear_least_squares(x,
+                                  tau,
+                                  A,
+                                  A_adj,
+                                  b,
+                                  x0,
+                                  iter_max=10,
+                                  verbose=0,
+                                  data_loss="linear",
+                                  data_loss_scale=1,
+                                  x_scale=1,
+                                  ):
 
         # Identity
         I = lambda x: x.flatten()
@@ -56,7 +66,9 @@ class ProximalOperators(object):
             alpha=1./tau,
             iter_max=iter_max,
             verbose=verbose,
-            x_scale=1,
+            x_scale=x_scale,
+            data_loss=data_loss,
+            data_loss_scale=data_loss_scale,
         )
         tikhonov.run()
         return tikhonov.get_x()

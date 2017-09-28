@@ -258,6 +258,8 @@ class DeconvolutionSolverStudyInterface(object):
                 b=self._b,
                 x0=self._x0,
                 iter_max=self._iter_max,
+                data_loss=self._data_loss,
+                data_loss_scale=self._data_loss_scale,
                 x_scale=self._x_scale)
             solver = pd.PrimalDualSolver(
                 prox_f=prox_f,
