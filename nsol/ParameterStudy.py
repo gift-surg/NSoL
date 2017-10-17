@@ -11,8 +11,8 @@ import os
 import itertools
 from abc import ABCMeta, abstractmethod
 
-import pythonhelper.PythonHelper as ph
-from numericalsolver.definitions import FILENAME_EXTENSION
+import pysitk.PythonHelper as ph
+from nsol.definitions import FILENAME_EXTENSION
 
 
 ##

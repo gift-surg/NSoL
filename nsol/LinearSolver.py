@@ -12,10 +12,10 @@ import sys
 import numpy as np
 from abc import ABCMeta, abstractmethod
 
-import pythonhelper.PythonHelper as ph
+import pysitk.PythonHelper as ph
 
-from numericalsolver.Solver import Solver
-from numericalsolver.LossFunctions import LossFunctions as lf
+from nsol.Solver import Solver
+from nsol.LossFunctions import LossFunctions as lf
 
 
 ##

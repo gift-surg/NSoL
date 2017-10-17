@@ -12,11 +12,11 @@ import os
 import sys
 import numpy as np
 
-import pythonhelper.PythonHelper as ph
+import pysitk.PythonHelper as ph
 
-from numericalsolver.LinearSolver import LinearSolver
-import numericalsolver.TikhonovLinearSolver as tk
-from numericalsolver.PriorMeasures import PriorMeasures as prior_meas
+from nsol.LinearSolver import LinearSolver
+import nsol.TikhonovLinearSolver as tk
+from nsol.PriorMeasures import PriorMeasures as prior_meas
 
 
 ##

@@ -5,7 +5,7 @@
 #
 # Idea is to provide a simple interface so that the solver/parameter study for
 # the deconvolution problem ||Ax - b|| + alpha g(x) can be performed in any
-# additional project outside numericalsolver for the reconstruction methods:
+# additional project outside nsol for the reconstruction methods:
 #   -# TK0L2: least-squares optimization with zeroth-order Tikhonov reg.
 #   -# TK1L2: least-squares optimization with first-order Tikhonov reg.
 #   -# TVL2: least-squares optimization with isotropic total variation reg.
@@ -21,21 +21,21 @@ import scipy.io
 import numpy as np
 import SimpleITK as sitk
 
-import pythonhelper.PythonHelper as ph
-import pythonhelper.SimpleITKHelper as sitkh
+import pysitk.PythonHelper as ph
+import pysitk.SimpleITKHelper as sitkh
 
-import numericalsolver.TikhonovLinearSolver as tk
-import numericalsolver.ADMMLinearSolver as admm
-import numericalsolver.PrimalDualSolver as pd
-import numericalsolver.Observer as Observer
-import numericalsolver.TikhonovLinearSolverParameterStudy as tkparam
-import numericalsolver.PrimalDualSolverParameterStudy as pdparam
-import numericalsolver.ADMMLinearSolverParameterStudy as admmparam
-from numericalsolver.SimilarityMeasures import SimilarityMeasures as \
+import nsol.TikhonovLinearSolver as tk
+import nsol.ADMMLinearSolver as admm
+import nsol.PrimalDualSolver as pd
+import nsol.Observer as Observer
+import nsol.TikhonovLinearSolverParameterStudy as tkparam
+import nsol.PrimalDualSolverParameterStudy as pdparam
+import nsol.ADMMLinearSolverParameterStudy as admmparam
+from nsol.SimilarityMeasures import SimilarityMeasures as \
     SimilarityMeasures
-from numericalsolver.ProximalOperators import ProximalOperators as prox
-from numericalsolver.PriorMeasures import PriorMeasures as prior_meas
-from numericalsolver.LossFunctions import LossFunctions as loss_fun
+from nsol.ProximalOperators import ProximalOperators as prox
+from nsol.PriorMeasures import PriorMeasures as prior_meas
+from nsol.LossFunctions import LossFunctions as loss_fun
 
 
 ##

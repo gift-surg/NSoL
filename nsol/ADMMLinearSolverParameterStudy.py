@@ -8,9 +8,9 @@
 
 import numpy as np
 
-import pythonhelper.PythonHelper as ph
-from numericalsolver.SolverParameterStudy import SolverParameterStudy
-import numericalsolver.ADMMLinearSolver as admm
+import pysitk.PythonHelper as ph
+from nsol.SolverParameterStudy import SolverParameterStudy
+import nsol.ADMMLinearSolver as admm
 
 
 class ADMMLinearSolverParameterStudy(SolverParameterStudy):

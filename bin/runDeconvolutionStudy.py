@@ -14,15 +14,15 @@ import scipy.io
 import numpy as np
 import SimpleITK as sitk
 
-import pythonhelper.PythonHelper as ph
-import pythonhelper.SimpleITKHelper as sitkh
+import pysitk.PythonHelper as ph
+import pysitk.SimpleITKHelper as sitkh
 
-import numericalsolver.LinearOperators as LinearOperators
-import numericalsolver.DataReader as dr
-import numericalsolver.DataWriter as dw
-import numericalsolver.Observer as Observer
-import numericalsolver.InputArgparser as InputArgparser
-import numericalsolver.DeconvolutionSolverParameterStudyInterface as \
+import nsol.LinearOperators as LinearOperators
+import nsol.DataReader as dr
+import nsol.DataWriter as dw
+import nsol.Observer as Observer
+import nsol.InputArgparser as InputArgparser
+import nsol.DeconvolutionSolverParameterStudyInterface as \
     deconv_interface
 
 if __name__ == '__main__':

@@ -15,8 +15,8 @@
 
 import numpy as np
 
-from numericalsolver.Solver import Solver
-import pythonhelper.PythonHelper as ph
+from nsol.Solver import Solver
+import pysitk.PythonHelper as ph
 
 
 ##

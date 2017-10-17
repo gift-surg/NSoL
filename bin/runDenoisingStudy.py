@@ -15,22 +15,22 @@ import scipy.io
 import numpy as np
 import SimpleITK as sitk
 
-import pythonhelper.PythonHelper as ph
-import pythonhelper.SimpleITKHelper as sitkh
+import pysitk.PythonHelper as ph
+import pysitk.SimpleITKHelper as sitkh
 
-import numericalsolver.LinearOperators as LinearOperators
-import numericalsolver.ADMMLinearSolver as admm
-import numericalsolver.PrimalDualSolver as pd
-import numericalsolver.Observer as Observer
-import numericalsolver.DataReader as dr
-import numericalsolver.DataWriter as dw
-import numericalsolver.PrimalDualSolverParameterStudy as pdparam
-import numericalsolver.ADMMLinearSolverParameterStudy as admmparam
-from numericalsolver.SimilarityMeasures import SimilarityMeasures as \
+import nsol.LinearOperators as LinearOperators
+import nsol.ADMMLinearSolver as admm
+import nsol.PrimalDualSolver as pd
+import nsol.Observer as Observer
+import nsol.DataReader as dr
+import nsol.DataWriter as dw
+import nsol.PrimalDualSolverParameterStudy as pdparam
+import nsol.ADMMLinearSolverParameterStudy as admmparam
+from nsol.SimilarityMeasures import SimilarityMeasures as \
     SimilarityMeasures
-from numericalsolver.ProximalOperators import ProximalOperators as prox
-from numericalsolver.PriorMeasures import PriorMeasures as PriorMeasures
-import numericalsolver.InputArgparser as InputArgparser
+from nsol.ProximalOperators import ProximalOperators as prox
+from nsol.PriorMeasures import PriorMeasures as PriorMeasures
+import nsol.InputArgparser as InputArgparser
 
 if __name__ == '__main__':
 

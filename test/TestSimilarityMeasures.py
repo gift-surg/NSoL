@@ -10,10 +10,10 @@ import numpy as np
 import unittest
 import sys
 import matplotlib.pyplot as plt
-import pythonhelper.PythonHelper as ph
+import pysitk.PythonHelper as ph
 
-from numericalsolver.SimilarityMeasures import SimilarityMeasures as sim_meas
-from numericalsolver.definitions import DIR_TEST
+from nsol.SimilarityMeasures import SimilarityMeasures as sim_meas
+from nsol.definitions import DIR_TEST
 
 
 class TestSimilarityMeasures(unittest.TestCase):

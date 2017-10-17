@@ -12,19 +12,19 @@ import numpy as np
 import unittest
 import sys
 import matplotlib.pyplot as plt
-import pythonhelper.PythonHelper as ph
+import pysitk.PythonHelper as ph
 
 # Import modules
-import numericalsolver.LinearOperators as LinearOperators
-import numericalsolver.Noise as Noise
-import numericalsolver.TikhonovLinearSolver as tk
-import numericalsolver.ADMMLinearSolver as admm
-import numericalsolver.PrimalDualSolver as pd
-import numericalsolver.Observer as observer
-from numericalsolver.ProximalOperators import ProximalOperators as prox
-from numericalsolver.SimilarityMeasures import SimilarityMeasures as sim_meas
+import nsol.LinearOperators as LinearOperators
+import nsol.Noise as Noise
+import nsol.TikhonovLinearSolver as tk
+import nsol.ADMMLinearSolver as admm
+import nsol.PrimalDualSolver as pd
+import nsol.Observer as observer
+from nsol.ProximalOperators import ProximalOperators as prox
+from nsol.SimilarityMeasures import SimilarityMeasures as sim_meas
 
-from numericalsolver.definitions import DIR_TEST
+from nsol.definitions import DIR_TEST
 
 
 class TestSolvers(unittest.TestCase):

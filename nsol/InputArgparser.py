@@ -10,14 +10,14 @@
 import argparse
 import inspect
 
-import pythonhelper.PythonHelper as ph
+import pysitk.PythonHelper as ph
 
-from numericalsolver.SimilarityMeasures import SimilarityMeasures as \
+from nsol.SimilarityMeasures import SimilarityMeasures as \
     SimilarityMeasures
-from numericalsolver.LossFunctions import LossFunctions as \
+from nsol.LossFunctions import LossFunctions as \
     LossFunctions
-from numericalsolver.definitions import ALLOWED_INPUT_FILE_EXTENSIONS
-from numericalsolver.definitions import ALLOWED_NOISE_TYPES
+from nsol.definitions import ALLOWED_INPUT_FILE_EXTENSIONS
+from nsol.definitions import ALLOWED_NOISE_TYPES
 
 # Allowed input file types
 INPUT_FILE_TYPES = "(" + (", ").join(ALLOWED_INPUT_FILE_EXTENSIONS) + ")"

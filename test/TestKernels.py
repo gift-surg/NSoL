@@ -9,10 +9,10 @@ import numpy as np
 import scipy
 import unittest
 
-import numericalsolver.Kernels as Kernels
-import numericalsolver.LinearOperators as LinearOperators
+import nsol.Kernels as Kernels
+import nsol.LinearOperators as LinearOperators
 
-from numericalsolver.definitions import DIR_TEST
+from nsol.definitions import DIR_TEST
 
 
 class TestKernels(unittest.TestCase):

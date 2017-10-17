@@ -9,7 +9,7 @@
 # Import libraries
 import numpy as np
 
-import pythonhelper.PythonHelper as ph
+import pysitk.PythonHelper as ph
 
 
 ##

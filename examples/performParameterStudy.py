@@ -14,25 +14,25 @@ import re
 import numpy as np
 import SimpleITK as sitk
 
-import pythonhelper.PythonHelper as ph
-import pythonhelper.SimpleITKHelper as sitkh
+import pysitk.PythonHelper as ph
+import pysitk.SimpleITKHelper as sitkh
 
-import numericalsolver.LinearOperators as LinearOperators
-import numericalsolver.Noise as Noise
-import numericalsolver.TikhonovLinearSolver as tk
-import numericalsolver.TikhonovLinearSolverParameterStudy as tkparam
-import numericalsolver.ADMMLinearSolverParameterStudy as admmparam
-import numericalsolver.PrimalDualSolverParameterStudy as pdparam
-import numericalsolver.ReaderParameterStudy as readerps
-import numericalsolver.ADMMLinearSolver as admm
-import numericalsolver.PrimalDualSolver as pd
-import numericalsolver.Observer as observer
-from numericalsolver.ProximalOperators import ProximalOperators as prox
-from numericalsolver.SimilarityMeasures import SimilarityMeasures as sim_meas
-from numericalsolver.PriorMeasures import PriorMeasures as prior_meas
+import nsol.LinearOperators as LinearOperators
+import nsol.Noise as Noise
+import nsol.TikhonovLinearSolver as tk
+import nsol.TikhonovLinearSolverParameterStudy as tkparam
+import nsol.ADMMLinearSolverParameterStudy as admmparam
+import nsol.PrimalDualSolverParameterStudy as pdparam
+import nsol.ReaderParameterStudy as readerps
+import nsol.ADMMLinearSolver as admm
+import nsol.PrimalDualSolver as pd
+import nsol.Observer as observer
+from nsol.ProximalOperators import ProximalOperators as prox
+from nsol.SimilarityMeasures import SimilarityMeasures as sim_meas
+from nsol.PriorMeasures import PriorMeasures as prior_meas
 
-from numericalsolver.definitions import DIR_TEST
-from numericalsolver.definitions import DIR_ROOT
+from nsol.definitions import DIR_TEST
+from nsol.definitions import DIR_ROOT
 
 
 np.random.seed(seed=1)

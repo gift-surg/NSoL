@@ -1,6 +1,6 @@
 # NumericalSolver 
 
-This software package provides the implementation of a collection of different numerical solvers developed in support of various research-focused toolkits within the [GIFT-Surg](http://www.gift-surg.ac.uk/) project.
+This software package provides the implementation of a collection of different numerical solvers developed in support of various research-focused toolkits within the [GIFT-Surg][giftsurg] project.
 
 Implemented solvers include
 * **Primal-Dual Methods** as described in [[Chambolle and Pock, 2010]](https://link.springer.com/article/10.1007/s10851-010-0251-1)
@@ -129,5 +129,11 @@ The results can be visualized by
 --study-name TVL2-Denoising
 `
 
-## License
-This framework is licensed under the [MIT license ![MIT](https://raw.githubusercontent.com/legacy-icons/license-icons/master/dist/32x32/mit.png)](http://opensource.org/licenses/MIT)
+## Licensing and Copyright
+Copyright (c) 2017, [University College London][ucl].
+This framework available as free open-source software under the [BSD-3-Clause License][bsd]. Other licenses may apply for dependencies.
+
+
+[bsd]: https://opensource.org/licenses/BSD-3-Clause
+[ucl]: http://www.ucl.ac.uk
+[giftsurg]: http://www.gift-surg.ac.uk

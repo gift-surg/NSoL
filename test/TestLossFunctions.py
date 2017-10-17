@@ -11,10 +11,10 @@ import numpy as np
 import unittest
 import sys
 import matplotlib.pyplot as plt
-import pythonhelper.PythonHelper as ph
+import pysitk.PythonHelper as ph
 
 # Import modules
-from numericalsolver.LossFunctions import LossFunctions as lf
+from nsol.LossFunctions import LossFunctions as lf
 
 
 class TestLossFunctions(unittest.TestCase):

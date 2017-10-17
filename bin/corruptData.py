@@ -13,16 +13,16 @@ import sys
 import numpy as np
 import SimpleITK as sitk
 
-import pythonhelper.PythonHelper as ph
-import pythonhelper.SimpleITKHelper as sitkh
+import pysitk.PythonHelper as ph
+import pysitk.SimpleITKHelper as sitkh
 
-import numericalsolver.InputArgparser as InputArgparser
-import numericalsolver.DataReader as dr
-import numericalsolver.DataWriter as dw
-import numericalsolver.LinearOperators as LinearOperators
-import numericalsolver.Noise as Noise
+import nsol.InputArgparser as InputArgparser
+import nsol.DataReader as dr
+import nsol.DataWriter as dw
+import nsol.LinearOperators as LinearOperators
+import nsol.Noise as Noise
 
-from numericalsolver.definitions import ALLOWED_NOISE_TYPES
+from nsol.definitions import ALLOWED_NOISE_TYPES
 
 
 if __name__ == '__main__':

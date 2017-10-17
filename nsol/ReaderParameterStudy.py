@@ -11,11 +11,11 @@ import numpy as np
 import re
 import natsort
 
-import pythonhelper.PythonHelper as ph
+import pysitk.PythonHelper as ph
 
-from numericalsolver.ParameterStudy import ParameterStudy
-from numericalsolver.definitions import REGEX_FILENAMES
-from numericalsolver.definitions import FILENAME_EXTENSION
+from nsol.ParameterStudy import ParameterStudy
+from nsol.definitions import REGEX_FILENAMES
+from nsol.definitions import FILENAME_EXTENSION
 
 
 class ReaderParameterStudy(ParameterStudy):

@@ -16,10 +16,10 @@ import sys
 import os
 from itertools import repeat
 
-import pythonhelper.PythonHelper as ph
-import pythonhelper.SimpleITKHelper as sitkh
-import numericalsolver.ReaderParameterStudy as ReaderParameterStudy
-import numericalsolver.InputArgparser as InputArgparser
+import pysitk.PythonHelper as ph
+import pysitk.SimpleITKHelper as sitkh
+import nsol.ReaderParameterStudy as ReaderParameterStudy
+import nsol.InputArgparser as InputArgparser
 
 
 def show_L_curve(parameter_study_reader, lines, dir_output=None):

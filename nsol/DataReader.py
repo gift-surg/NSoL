@@ -14,11 +14,11 @@ import numpy as np
 import re
 import natsort
 
-import pythonhelper.PythonHelper as ph
-import pythonhelper.SimpleITKHelper as sitkh
+import pysitk.PythonHelper as ph
+import pysitk.SimpleITKHelper as sitkh
 
-# from numericalsolver.definitions import REGEX_FILENAMES
-# from numericalsolver.definitions import ALLOWED_INPUT_FILE_EXTENSIONS
+# from nsol.definitions import REGEX_FILENAMES
+# from nsol.definitions import ALLOWED_INPUT_FILE_EXTENSIONS
 
 
 class DataReader(object):

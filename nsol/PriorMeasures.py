@@ -10,7 +10,7 @@
 
 import numpy as np
 
-from numericalsolver.LossFunctions import LossFunctions as loss_fun
+from nsol.LossFunctions import LossFunctions as loss_fun
 
 
 class PriorMeasures(object):

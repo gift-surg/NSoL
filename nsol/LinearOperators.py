@@ -12,7 +12,7 @@ import numpy as np
 import scipy.ndimage
 from abc import ABCMeta, abstractmethod
 
-import numericalsolver.Kernels as Kernels
+import nsol.Kernels as Kernels
 
 
 class LinearOperators(object):

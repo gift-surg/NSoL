@@ -12,9 +12,9 @@ import sys
 import scipy
 import numpy as np
 
-from numericalsolver.LinearSolver import LinearSolver
-from numericalsolver.definitions import EPS
-from numericalsolver.LossFunctions import LossFunctions as lf
+from nsol.LinearSolver import LinearSolver
+from nsol.definitions import EPS
+from nsol.LossFunctions import LossFunctions as lf
 
 
 ##

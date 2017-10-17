@@ -14,8 +14,8 @@ import numpy as np
 import re
 import natsort
 
-import pythonhelper.PythonHelper as ph
-import pythonhelper.SimpleITKHelper as sitkh
+import pysitk.PythonHelper as ph
+import pysitk.SimpleITKHelper as sitkh
 
 
 class DataWriter(object):

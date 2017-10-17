@@ -11,7 +11,7 @@ import numpy as np
 import datetime
 from abc import ABCMeta, abstractmethod
 
-import pythonhelper.PythonHelper as ph
+import pysitk.PythonHelper as ph
 
 
 ##

@@ -14,46 +14,35 @@
 
 from setuptools import setup
 
-long_description = "This package contains the implementation of several " \
+description = 'Numerical Solver Library to estimate argmin_x [f(x) + alpha g(x)]'
+long_description = "This library contains the implementation of several " \
     "numerical solvers to estimate a solution for " \
     "argmin_x [f(x) + alpha g(x)]. " \
     "Provided solver include Tikhonov, ADMM and Primal-Dual solvers."
 
-setup(name='NumericalSolver',
+setup(name='NSoL',
       version='0.1.dev1',
-      description='Numerical solver to estimate argmin_x [f(x) + alpha g(x)]',
+      description=description,
       long_description=long_description,
-      url='https://cmiclab.cs.ucl.ac.uk/mebner/NumericalSolver',
+      url='https://cmiclab.cs.ucl.ac.uk/gift-surg/NSoL',
       author='Michael Ebner',
       author_email='michael.ebner.14@ucl.ac.uk',
-      license='MIT',
-      packages=['numericalsolver'],
-      install_requires=['pythonhelper'],
+      license='BSD-3-Clause',
+      packages=['nsol'],
+      install_requires=['pysitk'],
       zip_safe=False,
       keywords='development numericalsolver convexoptimisation',
       classifiers=[
-          # How mature is this project? Common values are
-          #   3 - Alpha
-          #   4 - Beta
-          #   5 - Production/Stable
           'Development Status :: 3 - Alpha',
 
-          # Indicate who your project is intended for
           'Intended Audience :: Developers',
           'Topic :: Software Development :: Build Tools',
 
-          # Pick your license as you wish (should match "license" above)
-           'License :: OSI Approved :: MIT License',
+          'License :: OSI Approved :: BSD License',
 
-          # Specify the Python versions you support here. In particular, ensure
-          # that you indicate whether you support Python 2, Python 3 or both.
-          # 'Programming Language :: Python :: 2',
-          # 'Programming Language :: Python :: 2.6',
+          'Programming Language :: Python',
+          'Programming Language :: Python :: 2',
           'Programming Language :: Python :: 2.7',
-          # 'Programming Language :: Python :: 3',
-          # 'Programming Language :: Python :: 3.2',
-          # 'Programming Language :: Python :: 3.3',
-          # 'Programming Language :: Python :: 3.4',
       ],
 
       )
