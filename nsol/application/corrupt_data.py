@@ -29,7 +29,6 @@ if __name__ == '__main__':
 
     input_parser = InputArgparser.InputArgparser(
         description="Tool to smooth data and add noise to it",
-        prog="python " + os.path.basename(__file__),
     )
     input_parser.add_filename(required=True)
     input_parser.add_result(required=True)

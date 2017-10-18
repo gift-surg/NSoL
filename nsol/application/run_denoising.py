@@ -33,7 +33,6 @@ if __name__ == '__main__':
 
     input_parser = InputArgparser.InputArgparser(
         description="Run TVL1/TVL2/HuberL1/HuberL2 denoising",
-        prog="python " + os.path.basename(__file__),
     )
     input_parser.add_observation(required=True)
     input_parser.add_reference(required=False)

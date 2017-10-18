@@ -28,7 +28,6 @@ if __name__ == '__main__':
 
     input_parser = InputArgparser.InputArgparser(
         description="Run TK0L2/TK1L2/TVL2/HuberL2 deconvolution",
-        prog="python " + os.path.basename(__file__),
     )
     input_parser.add_observation(required=True)
     input_parser.add_reference(required=False)

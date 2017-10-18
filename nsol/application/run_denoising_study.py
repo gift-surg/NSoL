@@ -36,7 +36,6 @@ if __name__ == '__main__':
 
     input_parser = InputArgparser.InputArgparser(
         description="Run denoising algorithm study",
-        prog="python " + os.path.basename(__file__),
     )
     input_parser.add_observation(required=True)
     input_parser.add_reference(required=False)

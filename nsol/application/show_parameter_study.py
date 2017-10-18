@@ -194,7 +194,6 @@ if __name__ == '__main__':
     # Read input
     input_parser = InputArgparser.InputArgparser(
         description="Show and analyse stored parameter study.",
-        prog="python " + os.path.basename(__file__),
     )
 
     input_parser.add_dir_input(
