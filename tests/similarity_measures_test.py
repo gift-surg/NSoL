@@ -1,5 +1,5 @@
 ##
-# \file TestSimilarityMeasures.py
+# \file similarity_measures_test.py
 #  \brief  Class containing unit tests for lossFunctions
 #
 #  \author Michael Ebner (michael.ebner.14@ucl.ac.uk)
@@ -16,7 +16,7 @@ from nsol.similarity_measures import SimilarityMeasures as sim_meas
 from nsol.definitions import DIR_TEST
 
 
-class TestSimilarityMeasures(unittest.TestCase):
+class SimilarityMeasuresTest(unittest.TestCase):
 
     def setUp(self):
         self.accuracy = 4

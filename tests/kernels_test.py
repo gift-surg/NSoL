@@ -1,5 +1,5 @@
 ##
-# \file TestKernels.py
+# \file kernels_test.py
 #  \brief  Class containing unit tests for module Kernels
 #
 #  \author Michael Ebner (michael.ebner.14@ucl.ac.uk)
@@ -15,7 +15,7 @@ import nsol.linear_operators as LinearOperators
 from nsol.definitions import DIR_TEST
 
 
-class TestKernels(unittest.TestCase):
+class KernelsTest(unittest.TestCase):
 
     def setUp(self):
 

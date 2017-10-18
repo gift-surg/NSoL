@@ -1,5 +1,5 @@
 ##
-# \file TestLossFunctions.py
+# \file loss_functions_test.py
 #  \brief  Class containing unit tests for LossFunctions
 #
 #  \author Michael Ebner (michael.ebner.14@ucl.ac.uk)
@@ -17,7 +17,7 @@ import pysitk.python_helper as ph
 from nsol.loss_functions import LossFunctions as lf
 
 
-class TestLossFunctions(unittest.TestCase):
+class LossFunctionsTest(unittest.TestCase):
 
     def setUp(self):
 
@@ -47,7 +47,7 @@ class TestLossFunctions(unittest.TestCase):
         soft_l1 = np.zeros_like(self.b)
         soft_l1_grad = np.zeros_like(self.b)
 
-        for i in xrange(0, self.m):
+        for i in range(0, self.m):
             e = self.b[i]
             soft_l1[i] = 2*(np.sqrt(1+e)-1)
             soft_l1_grad[i] = 1./np.sqrt(1+e)
@@ -92,7 +92,7 @@ class TestLossFunctions(unittest.TestCase):
         cauchy = np.zeros_like(self.b)
         cauchy_grad = np.zeros_like(self.b)
 
-        for i in xrange(0, self.m):
+        for i in range(0, self.m):
             e = self.b[i]
             cauchy[i] = np.log(1+e)
             cauchy_grad[i] = 1./(1+e)
@@ -111,7 +111,7 @@ class TestLossFunctions(unittest.TestCase):
         arctan = np.zeros_like(self.b)
         arctan_grad = np.zeros_like(self.b)
 
-        for i in xrange(0, self.m):
+        for i in range(0, self.m):
             e = self.b[i]
             arctan[i] = np.arctan(e)
             arctan_grad[i] = 1. / (1 + e*e)
@@ -142,7 +142,7 @@ class TestLossFunctions(unittest.TestCase):
             for i, f_scale in enumerate([1., 1.5]):
                 if loss == "linear" and i > 0:
                     continue
-                print loss, f_scale
+                # print loss, f_scale
                 label = loss
                 if loss != "linear":
                     label += "_scale"+str(f_scale)

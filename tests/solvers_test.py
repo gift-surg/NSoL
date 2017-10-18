@@ -1,5 +1,5 @@
 ##
-# \file TestSolvers.py
+# \file solvers_test.py
 #  \brief  Class containing unit tests for numerical solvers
 #
 #  \author Michael Ebner (michael.ebner.14@ucl.ac.uk)
@@ -27,7 +27,7 @@ from nsol.similarity_measures import SimilarityMeasures as sim_meas
 from nsol.definitions import DIR_TEST
 
 
-class TestSolvers(unittest.TestCase):
+class SolversTest(unittest.TestCase):
 
     def _get_operators(self, x_gt, A, A_adj, grad, grad_adj):
 
