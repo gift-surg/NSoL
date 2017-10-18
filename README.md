@@ -131,7 +131,7 @@ The results can be visualized by
 
 ## Licensing and Copyright
 Copyright (c) 2017, [University College London][ucl].
-This framework available as free open-source software under the [BSD-3-Clause License][bsd]. Other licenses may apply for dependencies.
+This framework is made available as free open-source software under the [BSD-3-Clause License][bsd]. Other licenses may apply for dependencies.
 
 
 [bsd]: https://opensource.org/licenses/BSD-3-Clause
