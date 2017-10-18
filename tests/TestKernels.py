@@ -9,8 +9,8 @@ import numpy as np
 import scipy
 import unittest
 
-import nsol.Kernels as Kernels
-import nsol.LinearOperators as LinearOperators
+import nsol.kernels as Kernels
+import nsol.linear_operators as LinearOperators
 
 from nsol.definitions import DIR_TEST
 

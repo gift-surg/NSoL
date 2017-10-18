@@ -1,5 +1,5 @@
 ##
-# \file Kernels.py
+# \file kernels.py
 # \brief      Class to create kernels used for blurring and differentiation in
 #             1D, 2D and 3D
 #

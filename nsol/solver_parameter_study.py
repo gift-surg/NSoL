@@ -1,5 +1,5 @@
 ##
-# \file ParameterStudy.py
+# \file parameter_study.py
 # \brief Abstract class to provide basis for solver specific parameter studies
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
@@ -15,7 +15,7 @@ from abc import ABCMeta, abstractmethod
 
 import pysitk.python_helper as ph
 
-from nsol.ParameterStudy import ParameterStudy
+from nsol.parameter_study import ParameterStudy
 
 
 ##

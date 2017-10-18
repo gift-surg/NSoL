@@ -1,5 +1,5 @@
 ##
-# \file LossFunctions.py
+# \file loss_functions.py
 # \brief      Collection of loss functions and mapping from residual to cost
 #
 # The overall cost function is defined as

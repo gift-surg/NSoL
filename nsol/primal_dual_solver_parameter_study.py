@@ -1,6 +1,6 @@
 ##
-# \file ADMMLinearSolverParameterStudy.py
-# \brief Class to run parameter study for ADMMLinearSolver
+# \file primal_dual_solver_parameter_study.py
+# \brief Class to run parameter study for PrimalDualSolver
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
 # \date       Aug 2017
@@ -9,11 +9,11 @@
 import numpy as np
 
 import pysitk.python_helper as ph
-from nsol.SolverParameterStudy import SolverParameterStudy
-import nsol.ADMMLinearSolver as admm
+from nsol.solver_parameter_study import SolverParameterStudy
+import nsol.primal_dual_solver as pd
 
 
-class ADMMLinearSolverParameterStudy(SolverParameterStudy):
+class PrimalDualSolverParameterStudy(SolverParameterStudy):
 
     ##
     # Store information for parameter study
@@ -36,18 +36,16 @@ class ADMMLinearSolverParameterStudy(SolverParameterStudy):
                  solver,
                  observer,
                  dir_output,
-                 name="ADMM",
+                 name="PrimalDual",
                  parameters={
-                     "alpha": np.arange(0.01, 0.05, 0.01),
-                     "rho": np.arange(0.1, 1.5, 0.5),
-                     # "data_loss": ["linear", "arctan"],
-                     # "data_loss_scale": [1., 1.2],
+                     "alpha": np.arange(0.01, 0.05, 0.005),
+                     "alg_type": ["ALG2", "ALG2_AHMOD", "ALG3"],
                  },
                  reconstruction_info={},
                  ):
 
-        if not isinstance(solver, admm.ADMMLinearSolver):
-            raise TypeError("solver must be of type 'ADMMLinearSolver'")
+        if not isinstance(solver, pd.PrimalDualSolver):
+            raise TypeError("solver must be of type 'PrimalDualSolver'")
 
         super(self.__class__, self).__init__(
             solver=solver,
@@ -62,14 +60,9 @@ class ADMMLinearSolverParameterStudy(SolverParameterStudy):
 
         # keys referring to the information to be printed in the file
         keys = ["alpha",
-                "rho",
                 "iterations",
-                "minimizer",
-                "iter_max",
                 "x_scale",
-                "data_loss",
-                "data_loss_scale",
-                "dimension",
+                "L2"
                 ]
 
         header = "## " + self._name

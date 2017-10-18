@@ -15,14 +15,14 @@ import matplotlib.pyplot as plt
 import pysitk.python_helper as ph
 
 # Import modules
-import nsol.LinearOperators as LinearOperators
-import nsol.Noise as Noise
-import nsol.TikhonovLinearSolver as tk
-import nsol.ADMMLinearSolver as admm
-import nsol.PrimalDualSolver as pd
-import nsol.Observer as observer
-from nsol.ProximalOperators import ProximalOperators as prox
-from nsol.SimilarityMeasures import SimilarityMeasures as sim_meas
+import nsol.linear_operators as LinearOperators
+import nsol.noise as Noise
+import nsol.tikhonov_linear_solver as tk
+import nsol.admm_linear_solver as admm
+import nsol.primal_dual_solver as pd
+import nsol.observer as observer
+from nsol.proximal_operators import ProximalOperators as prox
+from nsol.similarity_measures import SimilarityMeasures as sim_meas
 
 from nsol.definitions import DIR_TEST
 

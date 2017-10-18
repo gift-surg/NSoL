@@ -1,5 +1,5 @@
 ##
-# \file Solver.py
+# \file solver.py
 # \brief      Abstract class to define a numerical solver
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)

@@ -1,5 +1,5 @@
 ##
-# \file TikhonovLinearSolver.py
+# \file tikhonov_linear_solver.py
 # \brief      Class to define a numerical solver for solving the linear
 #             least-squares problems with Tikhonov regularization
 #
@@ -12,9 +12,9 @@ import sys
 import scipy
 import numpy as np
 
-from nsol.LinearSolver import LinearSolver
+from nsol.linear_solver import LinearSolver
 from nsol.definitions import EPS
-from nsol.LossFunctions import LossFunctions as lf
+from nsol.loss_functions import LossFunctions as lf
 
 
 ##

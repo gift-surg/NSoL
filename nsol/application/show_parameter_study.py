@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ##
-# \file showParameterStudy.py
+# \file show_parameter_study.py
 # \brief      Script to visualize performed parameter studies.
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
@@ -18,8 +18,8 @@ from itertools import repeat
 
 import pysitk.python_helper as ph
 import pysitk.simple_itk_helper as sitkh
-import nsol.ReaderParameterStudy as ReaderParameterStudy
-import nsol.InputArgparser as InputArgparser
+import nsol.reader_parameter_study as ReaderParameterStudy
+import nsol.input_argparser as InputArgparser
 
 
 def show_L_curve(parameter_study_reader, lines, dir_output=None):

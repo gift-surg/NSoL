@@ -1,5 +1,5 @@
 ##
-# \file Noise.py
+# \file noise.py
 # \brief      Class to add different kinds of noise
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)

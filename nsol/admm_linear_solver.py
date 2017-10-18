@@ -1,5 +1,5 @@
 ##
-# \file ADMMLinearSolver.py
+# \file admm_linear_solver.py
 # \brief      Class to define a numerical solver for solving the linear
 #             least-squares problems with TV regularization via the Alternating
 #             Direction Method of Multipliers (ADMM) method
@@ -14,9 +14,9 @@ import numpy as np
 
 import pysitk.python_helper as ph
 
-from nsol.LinearSolver import LinearSolver
-import nsol.TikhonovLinearSolver as tk
-from nsol.PriorMeasures import PriorMeasures as prior_meas
+from nsol.linear_solver import LinearSolver
+import nsol.tikhonov_linear_solver as tk
+from nsol.prior_measures import PriorMeasures as prior_meas
 
 
 ##

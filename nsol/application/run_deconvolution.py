@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ##
-# \file runDenoising.py
+# \file run_denoising.py
 # \brief      Run TK0L2/TK1L2/TVL2/HuberL2 deconvolution
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
@@ -17,12 +17,12 @@ import SimpleITK as sitk
 import pysitk.python_helper as ph
 import pysitk.simple_itk_helper as sitkh
 
-import nsol.LinearOperators as LinearOperators
-import nsol.DataReader as dr
-import nsol.DataWriter as dw
-import nsol.Observer as Observer
-import nsol.InputArgparser as InputArgparser
-import nsol.DeconvolutionSolverParameterStudyInterface as interface
+import nsol.linear_operators as LinearOperators
+import nsol.data_reader as dr
+import nsol.data_writer as dw
+import nsol.observer as Observer
+import nsol.input_argparser as InputArgparser
+import nsol.deconvolution_solver_parameter_study_interface as interface
 
 if __name__ == '__main__':
 

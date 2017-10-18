@@ -1,7 +1,7 @@
 #!/usr/bin/python
 
 ##
-# \file runDenoising.py
+# \file run_denoising.py
 # \brief      Run TVL1/TVL2/HuberL1/HuberL2 denoising
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
@@ -17,17 +17,17 @@ import SimpleITK as sitk
 import pysitk.python_helper as ph
 import pysitk.simple_itk_helper as sitkh
 
-import nsol.LinearOperators as LinearOperators
-import nsol.ADMMLinearSolver as admm
-import nsol.PrimalDualSolver as pd
-import nsol.Observer as Observer
-import nsol.DataReader as dr
-import nsol.DataWriter as dw
-from nsol.SimilarityMeasures import SimilarityMeasures as \
+import nsol.linear_operators as LinearOperators
+import nsol.admm_linear_solver as admm
+import nsol.primal_dual_solver as pd
+import nsol.observer as Observer
+import nsol.data_reader as dr
+import nsol.data_writer as dw
+from nsol.similarity_measures import SimilarityMeasures as \
     SimilarityMeasures
-from nsol.ProximalOperators import ProximalOperators as prox
-from nsol.PriorMeasures import PriorMeasures as prior_meas
-import nsol.InputArgparser as InputArgparser
+from nsol.proximal_operators import ProximalOperators as prox
+from nsol.prior_measures import PriorMeasures as prior_meas
+import nsol.input_argparser as InputArgparser
 
 if __name__ == '__main__':
 

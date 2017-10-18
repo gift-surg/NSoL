@@ -12,7 +12,7 @@ import sys
 import matplotlib.pyplot as plt
 import pysitk.python_helper as ph
 
-from nsol.SimilarityMeasures import SimilarityMeasures as sim_meas
+from nsol.similarity_measures import SimilarityMeasures as sim_meas
 from nsol.definitions import DIR_TEST
 
 

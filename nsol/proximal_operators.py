@@ -8,7 +8,7 @@
 
 import numpy as np
 
-import nsol.TikhonovLinearSolver as tk
+import nsol.tikhonov_linear_solver as tk
 
 
 class ProximalOperators(object):

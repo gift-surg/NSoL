@@ -16,11 +16,11 @@ import SimpleITK as sitk
 import pysitk.python_helper as ph
 import pysitk.simple_itk_helper as sitkh
 
-import nsol.InputArgparser as InputArgparser
-import nsol.DataReader as dr
-import nsol.DataWriter as dw
-import nsol.LinearOperators as LinearOperators
-import nsol.Noise as Noise
+import nsol.input_argparser as InputArgparser
+import nsol.data_reader as dr
+import nsol.data_writer as dw
+import nsol.linear_operators as LinearOperators
+import nsol.noise as Noise
 
 from nsol.definitions import ALLOWED_NOISE_TYPES
 

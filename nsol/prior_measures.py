@@ -1,5 +1,5 @@
 ##
-# \file PriorMeasures.py
+# \file prior_measures.py
 # \brief      Collection of prior measures, i.e. regularizer costs
 #
 # \todo proper unit testing of these functions to be done yet
@@ -10,7 +10,7 @@
 
 import numpy as np
 
-from nsol.LossFunctions import LossFunctions as loss_fun
+from nsol.loss_functions import LossFunctions as loss_fun
 
 
 class PriorMeasures(object):

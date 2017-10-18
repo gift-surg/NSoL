@@ -1,5 +1,5 @@
 ##
-# \file SimilarityMeasures.py
+# \file similarity_measures.py
 # \brief      Collection of similarity (and dissimilarity) functions
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)

@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import pysitk.python_helper as ph
 
 # Import modules
-from nsol.LossFunctions import LossFunctions as lf
+from nsol.loss_functions import LossFunctions as lf
 
 
 class TestLossFunctions(unittest.TestCase):

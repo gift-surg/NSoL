@@ -12,9 +12,9 @@ import inspect
 
 import pysitk.python_helper as ph
 
-from nsol.SimilarityMeasures import SimilarityMeasures as \
+from nsol.similarity_measures import SimilarityMeasures as \
     SimilarityMeasures
-from nsol.LossFunctions import LossFunctions as \
+from nsol.loss_functions import LossFunctions as \
     LossFunctions
 from nsol.definitions import ALLOWED_INPUT_FILE_EXTENSIONS
 from nsol.definitions import ALLOWED_NOISE_TYPES

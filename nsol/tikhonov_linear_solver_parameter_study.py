@@ -1,6 +1,6 @@
 ##
-# \file PrimalDualSolverParameterStudy.py
-# \brief Class to run parameter study for PrimalDualSolver
+# \file tikhonov_linear_solver_parameter_study.py
+# \brief Class to run parameter study for TikhonovLinearSolver
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
 # \date       Aug 2017
@@ -9,11 +9,11 @@
 import numpy as np
 
 import pysitk.python_helper as ph
-from nsol.SolverParameterStudy import SolverParameterStudy
-import nsol.PrimalDualSolver as pd
+from nsol.solver_parameter_study import SolverParameterStudy
+import nsol.tikhonov_linear_solver as tk
 
 
-class PrimalDualSolverParameterStudy(SolverParameterStudy):
+class TikhonovLinearSolverParameterStudy(SolverParameterStudy):
 
     ##
     # Store information for parameter study
@@ -36,16 +36,17 @@ class PrimalDualSolverParameterStudy(SolverParameterStudy):
                  solver,
                  observer,
                  dir_output,
-                 name="PrimalDual",
+                 name="Tikhonov",
                  parameters={
-                     "alpha": np.arange(0.01, 0.05, 0.005),
-                     "alg_type": ["ALG2", "ALG2_AHMOD", "ALG3"],
+                     "alpha": np.arange(0.02, 0.5, 0.05),
+                     "data_loss": ["linear", "arctan"],
+                     # "data_loss_scale": [1., 1.2],
                  },
-                 reconstruction_info={},
+                 reconstruction_info={}
                  ):
 
-        if not isinstance(solver, pd.PrimalDualSolver):
-            raise TypeError("solver must be of type 'PrimalDualSolver'")
+        if not isinstance(solver, tk.TikhonovLinearSolver):
+            raise TypeError("solver must be of type 'TikhonovLinearSolver'")
 
         super(self.__class__, self).__init__(
             solver=solver,
@@ -60,9 +61,11 @@ class PrimalDualSolverParameterStudy(SolverParameterStudy):
 
         # keys referring to the information to be printed in the file
         keys = ["alpha",
-                "iterations",
+                "minimizer",
+                "iter_max",
                 "x_scale",
-                "L2"
+                "data_loss",
+                "data_loss_scale",
                 ]
 
         header = "## " + self._name

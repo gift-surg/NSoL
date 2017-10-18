@@ -1,5 +1,5 @@
 ##
-# \file LinearSolver.py
+# \file linear_solver.py
 # \brief      Abstract class to define a numerical solver for linear
 #             least-squares problems
 #
@@ -14,8 +14,8 @@ from abc import ABCMeta, abstractmethod
 
 import pysitk.python_helper as ph
 
-from nsol.Solver import Solver
-from nsol.LossFunctions import LossFunctions as lf
+from nsol.solver import Solver
+from nsol.loss_functions import LossFunctions as lf
 
 
 ##

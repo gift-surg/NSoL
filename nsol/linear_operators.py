@@ -1,5 +1,5 @@
 ##
-# \file LinearOperators.py
+# \file linear_operators.py
 # \brief      Class to create linear operators used for blurring and
 #             differentiation in both 2D and 3D
 #
@@ -12,7 +12,7 @@ import numpy as np
 import scipy.ndimage
 from abc import ABCMeta, abstractmethod
 
-import nsol.Kernels as Kernels
+import nsol.kernels as Kernels
 
 
 class LinearOperators(object):

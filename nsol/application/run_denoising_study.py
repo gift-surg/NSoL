@@ -1,9 +1,9 @@
 #!/usr/bin/python
 
 ##
-# \file runDenoisingStudy.py
+# \file run_denoising_study.py
 # \brief      Run parameter study for denoising problem. Result can be
-#             visualized by showParameterStudy.py
+#             visualized by show_parameter_study.py
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
 # \date       Sept 2017
@@ -18,19 +18,19 @@ import SimpleITK as sitk
 import pysitk.python_helper as ph
 import pysitk.simple_itk_helper as sitkh
 
-import nsol.LinearOperators as LinearOperators
-import nsol.ADMMLinearSolver as admm
-import nsol.PrimalDualSolver as pd
-import nsol.Observer as Observer
-import nsol.DataReader as dr
-import nsol.DataWriter as dw
-import nsol.PrimalDualSolverParameterStudy as pdparam
-import nsol.ADMMLinearSolverParameterStudy as admmparam
-from nsol.SimilarityMeasures import SimilarityMeasures as \
+import nsol.linear_operators as LinearOperators
+import nsol.admm_linear_solver as admm
+import nsol.primal_dual_solver as pd
+import nsol.observer as Observer
+import nsol.data_reader as dr
+import nsol.data_writer as dw
+import nsol.primal_dual_solver_parameter_study as pdparam
+import nsol.admm_linear_solver_parameter_study as admmparam
+from nsol.similarity_measures import SimilarityMeasures as \
     SimilarityMeasures
-from nsol.ProximalOperators import ProximalOperators as prox
-from nsol.PriorMeasures import PriorMeasures as PriorMeasures
-import nsol.InputArgparser as InputArgparser
+from nsol.proximal_operators import ProximalOperators as prox
+from nsol.prior_measures import PriorMeasures as PriorMeasures
+import nsol.input_argparser as InputArgparser
 
 if __name__ == '__main__':
 

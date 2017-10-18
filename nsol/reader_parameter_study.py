@@ -13,7 +13,7 @@ import natsort
 
 import pysitk.python_helper as ph
 
-from nsol.ParameterStudy import ParameterStudy
+from nsol.parameter_study import ParameterStudy
 from nsol.definitions import REGEX_FILENAMES
 from nsol.definitions import FILENAME_EXTENSION
 

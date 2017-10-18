@@ -24,18 +24,18 @@ import SimpleITK as sitk
 import pysitk.python_helper as ph
 import pysitk.simple_itk_helper as sitkh
 
-import nsol.TikhonovLinearSolver as tk
-import nsol.ADMMLinearSolver as admm
-import nsol.PrimalDualSolver as pd
-import nsol.Observer as Observer
-import nsol.TikhonovLinearSolverParameterStudy as tkparam
-import nsol.PrimalDualSolverParameterStudy as pdparam
-import nsol.ADMMLinearSolverParameterStudy as admmparam
-from nsol.SimilarityMeasures import SimilarityMeasures as \
+import nsol.tikhonov_linear_solver as tk
+import nsol.admm_linear_solver as admm
+import nsol.primal_dual_solver as pd
+import nsol.observer as Observer
+import nsol.tikhonov_linear_solver_parameter_study as tkparam
+import nsol.primal_dual_solver_parameter_study as pdparam
+import nsol.admm_linear_solver_parameter_study as admmparam
+from nsol.similarity_measures import SimilarityMeasures as \
     SimilarityMeasures
-from nsol.ProximalOperators import ProximalOperators as prox
-from nsol.PriorMeasures import PriorMeasures as prior_meas
-from nsol.LossFunctions import LossFunctions as loss_fun
+from nsol.proximal_operators import ProximalOperators as prox
+from nsol.prior_measures import PriorMeasures as prior_meas
+from nsol.loss_functions import LossFunctions as loss_fun
 
 
 ##

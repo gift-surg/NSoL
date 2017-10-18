@@ -1,5 +1,5 @@
 ##
-# \file Optimize.py
+# \file optimize.py
 # \brief      Class with static functions to wrap the functionality of scipy
 #             optimizers
 #

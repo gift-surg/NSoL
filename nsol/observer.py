@@ -1,5 +1,5 @@
 ##
-# \file Observer.py
+# \file observer.py
 # \brief      Observer class to monitor the iterations of numerical solvers
 #
 # \author     Michael Ebner (michael.ebner.14@ucl.ac.uk)
