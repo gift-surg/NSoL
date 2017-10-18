@@ -4,4 +4,4 @@ matplotlib==2.0.2
 natsort==5.0.3
 numpy==1.13.1
 SimpleITK==1.0.1
--e git+https://cmiclab.cs.ucl.ac.uk/mebner/PythonHelper.git#egg=PythonHelper
+-e git+https://cmiclab.cs.ucl.ac.uk/gift-surg/PySiTK.git#egg=PySiTK
