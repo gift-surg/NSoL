@@ -29,7 +29,8 @@ from nsol.proximal_operators import ProximalOperators as prox
 from nsol.prior_measures import PriorMeasures as prior_meas
 import nsol.input_argparser as InputArgparser
 
-if __name__ == '__main__':
+
+def main():
 
     input_parser = InputArgparser.InputArgparser(
         description="Run TVL1/TVL2/HuberL1/HuberL2 denoising",
@@ -219,3 +220,8 @@ if __name__ == '__main__':
                 filename=filename_prefix+"_"+k+".pdf",
                 save_figure=0 if args.dir_output_figures is None else 1,
             )
+
+    return 0
+
+if __name__ == '__main__':
+    main()

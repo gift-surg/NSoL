@@ -189,7 +189,8 @@ def show_reconstructions(parameter_study_reader,
             labels = [line.replace(".", "p") for line in labels]
             sitkh.show_sitk_image(recons_sitk, label=labels)
 
-if __name__ == '__main__':
+
+def main():
 
     # Read input
     input_parser = InputArgparser.InputArgparser(
@@ -239,3 +240,8 @@ if __name__ == '__main__':
     show_measures(parameter_study_reader, lines, args.dir_output_figures)
     show_reconstructions(parameter_study_reader, lines,
                          args.dir_output_figures, colormap=args.colormap)
+
+    return 0
+
+if __name__ == '__main__':
+    main()

@@ -25,7 +25,8 @@ import nsol.input_argparser as InputArgparser
 import nsol.deconvolution_solver_parameter_study_interface as \
     deconv_interface
 
-if __name__ == '__main__':
+
+def main():
 
     input_parser = InputArgparser.InputArgparser(
         description="Run TK0L2/TK1L2/TVL2/HuberL2 deconvolution",
@@ -132,32 +133,33 @@ if __name__ == '__main__':
         "shape": X_shape,
     }
 
-    parameter_study_interface = deconv_interface.DeconvolutionParameterStudyInterface(
-        A=A_1D,
-        A_adj=A_adj_1D,
-        D=D_1D,
-        D_adj=D_adj_1D,
-        b=b,
-        x0=x0,
-        alpha=args.alpha[0],
-        x_scale=x_scale,
-        data_loss=args.data_loss,
-        data_loss_scale=args.data_loss_scale,
-        iter_max=args.iter_max,
-        iterations=args.iterations,
-        minimizer=args.minimizer,
-        measures=args.measures,
-        dimension=dimension,
-        reconstruction_type=args.reconstruction_type,
-        rho=args.rho,
-        dir_output=args.dir_output,
-        parameters=parameters,
-        name=name,
-        reconstruction_info=reconstruction_info,
-        x_ref=x_ref,
-        tv_solver=args.solver,
-        verbose=args.verbose,
-    )
+    parameter_study_interface = \
+        deconv_interface.DeconvolutionParameterStudyInterface(
+            A=A_1D,
+            A_adj=A_adj_1D,
+            D=D_1D,
+            D_adj=D_adj_1D,
+            b=b,
+            x0=x0,
+            alpha=args.alpha[0],
+            x_scale=x_scale,
+            data_loss=args.data_loss,
+            data_loss_scale=args.data_loss_scale,
+            iter_max=args.iter_max,
+            iterations=args.iterations,
+            minimizer=args.minimizer,
+            measures=args.measures,
+            dimension=dimension,
+            reconstruction_type=args.reconstruction_type,
+            rho=args.rho,
+            dir_output=args.dir_output,
+            parameters=parameters,
+            name=name,
+            reconstruction_info=reconstruction_info,
+            x_ref=x_ref,
+            tv_solver=args.solver,
+            verbose=args.verbose,
+        )
     parameter_study_interface.set_up_parameter_study()
     parameter_study = parameter_study_interface.get_parameter_study()
 
@@ -166,3 +168,8 @@ if __name__ == '__main__':
 
     print("\nComputational time for Deconvolution Parameter Study %s: %s" %
           (name, parameter_study.get_computational_time()))
+
+    return 0
+
+if __name__ == '__main__':
+    main()

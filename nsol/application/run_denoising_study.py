@@ -32,7 +32,8 @@ from nsol.proximal_operators import ProximalOperators as prox
 from nsol.prior_measures import PriorMeasures as PriorMeasures
 import nsol.input_argparser as InputArgparser
 
-if __name__ == '__main__':
+
+def main():
 
     input_parser = InputArgparser.InputArgparser(
         description="Run denoising algorithm study",
@@ -197,3 +198,8 @@ if __name__ == '__main__':
 
     print("\nComputational time for Denoising Parameter Study %s: %s" %
           (name, parameter_study.get_computational_time()))
+
+    return 0
+
+if __name__ == '__main__':
+    main()

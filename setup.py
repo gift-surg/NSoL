@@ -44,5 +44,15 @@ setup(name='NSoL',
           'Programming Language :: Python :: 2',
           'Programming Language :: Python :: 2.7',
       ],
+      entry_points={
+          'console_scripts': [
+              'nsol_corrupt_data = nsol.application.corrupt_data:main',
+              'nsol_run_deconvolution = nsol.application.run_deconvolution:main',
+              'nsol_run_deconvolution_study = nsol.application.run_deconvolution_study:main',
+              'nsol_run_denoising = nsol.application.run_denoising:main',
+              'nsol_run_denoising_study = nsol.application.run_denoising_study:main',
+              'nsol_show_parameter_study = nsol.application.show_parameter_study:main',
+          ],
+      },
 
       )

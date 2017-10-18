@@ -24,7 +24,8 @@ import nsol.observer as Observer
 import nsol.input_argparser as InputArgparser
 import nsol.deconvolution_solver_parameter_study_interface as interface
 
-if __name__ == '__main__':
+
+def main():
 
     input_parser = InputArgparser.InputArgparser(
         description="Run TK0L2/TK1L2/TVL2/HuberL2 deconvolution",
@@ -208,3 +209,8 @@ if __name__ == '__main__':
             filename=filename_prefix+"_"+k+".pdf",
             save_figure=0 if args.dir_output_figures is None else 1,
         )
+
+    return 0
+
+if __name__ == '__main__':
+    main()

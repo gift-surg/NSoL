@@ -25,7 +25,7 @@ import nsol.noise as Noise
 from nsol.definitions import ALLOWED_NOISE_TYPES
 
 
-if __name__ == '__main__':
+def main():
 
     input_parser = InputArgparser.InputArgparser(
         description="Tool to smooth data and add noise to it",
@@ -84,3 +84,8 @@ if __name__ == '__main__':
     # -------------------------------Write Data-------------------------------
     data_writer = dw.DataWriter(nda, args.result, data_reader.get_image_sitk())
     data_writer.write_data()
+
+    return 0
+
+if __name__ == '__main__':
+    main()
