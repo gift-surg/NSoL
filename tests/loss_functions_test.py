@@ -246,7 +246,7 @@ class LossFunctionsTest(unittest.TestCase):
             np.linalg.norm(diff), decimals=self.accuracy), 0)
 
         # Derive analytical cost function; However, unit tests in
-        # TestRegistration.py suggest that all good
+        # registration_test.py suggest that all good
     #     grad_ell2 = lf.gradient_soft_l1(res**2).dot(self.A.transpose().dot(residual))
     #     diff = lf.get_gradient_ell2_cost_from_residual(
     #         f=residual,

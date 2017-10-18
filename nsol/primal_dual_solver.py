@@ -1,5 +1,5 @@
 ##
-# \file PrimalDualSolver.py
+# \file primal_dual_solver.py
 # \brief      Implementation of First-order primal-dual algorithm for convex
 #             problems min_x [f(x) + alpha g(Bx)] with B being a continuous
 #             linear operator.
