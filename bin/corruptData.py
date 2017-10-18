@@ -13,8 +13,8 @@ import sys
 import numpy as np
 import SimpleITK as sitk
 
-import pysitk.PythonHelper as ph
-import pysitk.SimpleITKHelper as sitkh
+import pysitk.python_helper as ph
+import pysitk.simple_itk_helper as sitkh
 
 import nsol.InputArgparser as InputArgparser
 import nsol.DataReader as dr

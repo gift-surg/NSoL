@@ -16,8 +16,8 @@ import sys
 import os
 from itertools import repeat
 
-import pysitk.PythonHelper as ph
-import pysitk.SimpleITKHelper as sitkh
+import pysitk.python_helper as ph
+import pysitk.simple_itk_helper as sitkh
 import nsol.ReaderParameterStudy as ReaderParameterStudy
 import nsol.InputArgparser as InputArgparser
 

@@ -13,7 +13,7 @@ import SimpleITK as sitk
 import matplotlib.pyplot as plt
 from abc import ABCMeta, abstractmethod
 
-import pysitk.PythonHelper as ph
+import pysitk.python_helper as ph
 
 from nsol.ParameterStudy import ParameterStudy
 

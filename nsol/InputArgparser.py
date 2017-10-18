@@ -10,7 +10,7 @@
 import argparse
 import inspect
 
-import pysitk.PythonHelper as ph
+import pysitk.python_helper as ph
 
 from nsol.SimilarityMeasures import SimilarityMeasures as \
     SimilarityMeasures

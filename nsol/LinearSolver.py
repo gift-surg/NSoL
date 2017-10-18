@@ -12,7 +12,7 @@ import sys
 import numpy as np
 from abc import ABCMeta, abstractmethod
 
-import pysitk.PythonHelper as ph
+import pysitk.python_helper as ph
 
 from nsol.Solver import Solver
 from nsol.LossFunctions import LossFunctions as lf

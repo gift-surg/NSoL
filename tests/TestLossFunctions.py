@@ -11,7 +11,7 @@ import numpy as np
 import unittest
 import sys
 import matplotlib.pyplot as plt
-import pysitk.PythonHelper as ph
+import pysitk.python_helper as ph
 
 # Import modules
 from nsol.LossFunctions import LossFunctions as lf

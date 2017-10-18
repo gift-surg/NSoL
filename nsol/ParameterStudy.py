@@ -11,7 +11,7 @@ import os
 import itertools
 from abc import ABCMeta, abstractmethod
 
-import pysitk.PythonHelper as ph
+import pysitk.python_helper as ph
 from nsol.definitions import FILENAME_EXTENSION
 
 

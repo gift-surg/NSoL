@@ -11,7 +11,7 @@ import numpy as np
 import re
 import natsort
 
-import pysitk.PythonHelper as ph
+import pysitk.python_helper as ph
 
 from nsol.ParameterStudy import ParameterStudy
 from nsol.definitions import REGEX_FILENAMES

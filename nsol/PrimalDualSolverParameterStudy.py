@@ -8,7 +8,7 @@
 
 import numpy as np
 
-import pysitk.PythonHelper as ph
+import pysitk.python_helper as ph
 from nsol.SolverParameterStudy import SolverParameterStudy
 import nsol.PrimalDualSolver as pd
 

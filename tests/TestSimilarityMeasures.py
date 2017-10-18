@@ -10,7 +10,7 @@ import numpy as np
 import unittest
 import sys
 import matplotlib.pyplot as plt
-import pysitk.PythonHelper as ph
+import pysitk.python_helper as ph
 
 from nsol.SimilarityMeasures import SimilarityMeasures as sim_meas
 from nsol.definitions import DIR_TEST

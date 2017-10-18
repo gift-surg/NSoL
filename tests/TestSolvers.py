@@ -12,7 +12,7 @@ import numpy as np
 import unittest
 import sys
 import matplotlib.pyplot as plt
-import pysitk.PythonHelper as ph
+import pysitk.python_helper as ph
 
 # Import modules
 import nsol.LinearOperators as LinearOperators

@@ -14,8 +14,8 @@ import re
 import numpy as np
 import SimpleITK as sitk
 
-import pysitk.PythonHelper as ph
-import pysitk.SimpleITKHelper as sitkh
+import pysitk.python_helper as ph
+import pysitk.simple_itk_helper as sitkh
 
 import nsol.LinearOperators as LinearOperators
 import nsol.Noise as Noise
