@@ -89,14 +89,14 @@ where all remaining dependencies can be installed using `pip`:
 
 TVL1/TVL2/HuberL2/HuberL1 Denoising can be run via
 
-* `python runDenoising.py \
+* `nsol_run_denoising \
 --observation path-to-observation-png-nii-mat \
 --result path-to-denoised-result-png-nii-mat \
 --reconstruction-type TVL1 \
 --alpha 0.05 \
 --iterations 50
 `
-* `python runDenoising.py \
+* `nsol_run_denoising \
 --observation path-to-observation-png-nii-mat \
 --reference path-to-reference-png-nii-mat \
 --result path-to-denoised-result-png-nii-mat \
@@ -108,7 +108,7 @@ TVL1/TVL2/HuberL2/HuberL1 Denoising can be run via
 ### Deconvolution
 Examples for TK0L2/TK1L2/TVL2/HuberL2 deconvolution calls are
 
-* `python runDeconvolution.py \
+* `nsol_run_deconvolution \
 --observation path-to-observation-png-nii-mat \
 --result path-to-denoised-result-png-nii-mat \
 --reconstruction-type HuberL2 \
@@ -116,7 +116,7 @@ Examples for TK0L2/TK1L2/TVL2/HuberL2 deconvolution calls are
 --alpha 0.05 \
 --iterations 50
 `
-* `python runDeconvolution.py \
+* `nsol_run_deconvolution \
 --observation path-to-observation-png-nii-mat \
 --reference path-to-reference-png-nii-mat \
 --result path-to-denoised-result-png-nii-mat \
@@ -130,7 +130,7 @@ Examples for TK0L2/TK1L2/TVL2/HuberL2 deconvolution calls are
 
 ### Parameter Studies
 Parameter studies for the denoising problem (and, similarly, for deconvolution problem) can be performed by, e.g.,
-* `python runDenoisingStudy.py \
+* `nsol_run_denoising_study \
 --observation path-to-observation-png-nii-mat \
 --dir-output path-to-parameter-study \
 --reference path-to-reference-png-nii-mat \
@@ -139,7 +139,7 @@ Parameter studies for the denoising problem (and, similarly, for deconvolution p
 `
 
 The results can be visualized by
-* `python showParameterStudy.py \
+* `nsol_show_parameter_study \
 --dir-input path-to-parameter-study \
 --study-name TVL2-Denoising
 `
