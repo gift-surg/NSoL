@@ -1,6 +1,13 @@
-# NumericalSolver 
+# Numerical Solver Library 
 
-This software package provides the implementation of a collection of different numerical solvers developed in support of various research-focused toolkits within the [GIFT-Surg][giftsurg] project.
+The Numerical Solver Library (NSoL) is a Python-based open-source toolkit for research developed within the [GIFT-Surg][giftsurg] project and contains several implementations of denoising and deconvolution algorithms.
+Please note that currently **only Python 2** is supported.
+
+The algorithm and software were developed by [Michael Ebner][mebner] at the [Translational Imaging Group][tig] in the [Centre for Medical Image Computing][cmic] at [University College London (UCL)][ucl].
+
+If you have any questions or comments (or find bugs), please drop an email to `michael.ebner.14@ucl.ac.uk`.
+
+## Features
 
 Implemented solvers include
 * **Primal-Dual Methods** as described in [[Chambolle and Pock, 2010]](https://link.springer.com/article/10.1007/s10851-010-0251-1)
@@ -20,9 +27,8 @@ and
 
 in 1D, 2D or 3D for a variety of different regularizers $`\text{Reg}`$ and data loss functions $`\varrho`$. 
 
-If you have any questions or comments (or find bugs), please drop me an email to `michael.ebner.14@ucl.ac.uk`.
 
-## Features
+---
 
 The **available regularizers**, depending on the minimization problem, include
 * Zeroth-order Tikhonov (TK0): $`\text{Reg}(\vec{x}) = \frac{1}{2}\Vert \vec{x} \Vert_{\ell^2}^2`$
@@ -58,15 +64,24 @@ in the course of **parameter studies**. Implemented similarity measures are
 
 ## Installation
 
-Required dependencies can be installed using `pip` by running
+This toolkit is currently supported for **Python 2 only** and was tested on
+
+* Mac OS X 10.10 and 10.12
+* Ubuntu 14.04 and 16.04
+
+In case NSoL is used in conjuction with any of the toolkits of [NiftyMIC][niftymic], [Volumetric Reconstruction From Printed Films][volumetricreconstructionfromprintedfilms] or [SimpleReg][simplereg], please 
+* install [ITK_NiftyMIC][itkniftymic]
+
+If NSoL is used standalone, please run instead
+* `pip install itk`
+
+Afterwards, clone this repository via 
+* `git clone git@cmiclab.cs.ucl.ac.uk:GIFT-Surg/NSoL.git`
+
+where all remaining dependencies can be installed using `pip`:
 * `pip install -r requirements.txt`
 * `pip install -e .`
 
-In addition, you will need to install `itk` for Python. In case you want to make use of the [Volumetric MRI Reconstruction from Motion Corrupted 2D Slices](https://cmiclab.cs.ucl.ac.uk/mebner/VolumetricReconstruction) tool or any of its dependencies, please install the ITK version as described there. Otherwise, simply run
-* `pip install itk`
-
-In order to run the provided unit tests, please execute
-* `python test/runTests.py`
 
 ## Usage
 
@@ -134,6 +149,22 @@ Copyright (c) 2017, [University College London][ucl].
 This framework is made available as free open-source software under the [BSD-3-Clause License][bsd]. Other licenses may apply for dependencies.
 
 
+[mebner]: http://cmictig.cs.ucl.ac.uk/people/phd-students/michael-ebner
+[tig]: http://cmictig.cs.ucl.ac.uk
 [bsd]: https://opensource.org/licenses/BSD-3-Clause
-[ucl]: http://www.ucl.ac.uk
 [giftsurg]: http://www.gift-surg.ac.uk
+[cmic]: http://cmic.cs.ucl.ac.uk
+[guarantors]: https://guarantorsofbrain.org/
+[ucl]: http://www.ucl.ac.uk
+[uclh]: http://www.uclh.nhs.uk
+[epsrc]: http://www.epsrc.ac.uk
+[wellcometrust]: http://www.wellcome.ac.uk
+[mssociety]: https://www.mssociety.org.uk/
+[nihr]: http://www.nihr.ac.uk/research
+[itkniftymic]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/ITK_NiftyMIC/wikis/home
+[niftymic]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/NiftyMIC
+[nsol]: https://cmiclab.cs.ucl.ac.uk/mebner/NSoL
+[simplereg]: https://cmiclab.cs.ucl.ac.uk/mebner/SimpleReg
+[simplereg-dependencies]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/SimpleReg/wikis/simplereg-dependencies
+[pysitk]: https://cmiclab.cs.ucl.ac.uk/mebner/PySiTK
+[volumetricreconstructionfromprintedfilms]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/VolumetricReconstructionFromPrintedFilms
