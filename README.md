@@ -163,8 +163,8 @@ This framework is made available as free open-source software under the [BSD-3-C
 [nihr]: http://www.nihr.ac.uk/research
 [itkniftymic]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/ITK_NiftyMIC/wikis/home
 [niftymic]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/NiftyMIC
-[nsol]: https://cmiclab.cs.ucl.ac.uk/mebner/NSoL
-[simplereg]: https://cmiclab.cs.ucl.ac.uk/mebner/SimpleReg
+[nsol]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/NSoL
+[simplereg]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/SimpleReg
 [simplereg-dependencies]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/SimpleReg/wikis/simplereg-dependencies
-[pysitk]: https://cmiclab.cs.ucl.ac.uk/mebner/PySiTK
+[pysitk]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/PySiTK
 [volumetricreconstructionfromprintedfilms]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/VolumetricReconstructionFromPrintedFilms
