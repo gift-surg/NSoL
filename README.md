@@ -135,7 +135,9 @@ Parameter studies for the denoising problem (and, similarly, for deconvolution p
 --dir-output path-to-parameter-study \
 --reference path-to-reference-png-nii-mat \
 --reconstruction-type TVL2 \
---study-name TVL2-Denoising
+--study-name TVL2-Denoising \
+--measures RMSE PSNR NCC NMI SSIM \
+--alpha-range 0.001 0.05 20
 `
 
 The results can be visualized by
