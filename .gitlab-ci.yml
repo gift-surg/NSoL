@@ -54,6 +54,7 @@ unittests:
   # only:
   #   - master
   script:
-    - coverage run -a --source . -m unittest discover -s "tests" -p "*_test.py"
+    - python -m unittest discover -s "tests" -p "*_test.py"
+    # - coverage run -a --source . -m unittest discover -s "tests" -p "*_test.py"
   tags:
     - gift-adelie
