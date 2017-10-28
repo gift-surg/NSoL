@@ -54,8 +54,16 @@ unittests:
   # only:
   #   - master
   script:
-    # - pip install coverage
+    # Install coverage: Otherwise packages in venv not recognized
+    - pip install coverage
+
+    # erase previously collected coverage data
+    - coverage erase
+    
+    # run unit tests and measure coverage
     - coverage run -a --source . -m unittest discover -s "tests" -p "*_test.py"
+    
+    # report coverage stats on modules
     - coverage report -m
   tags:
     - gift-adelie
