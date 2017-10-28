@@ -31,8 +31,8 @@ def main():
         description="Run TK0L2/TK1L2/TVL2/HuberL2 deconvolution",
     )
     input_parser.add_observation(required=True)
+    input_parser.add_result(required=True)
     input_parser.add_reference(required=False)
-    input_parser.add_result(required=False)
     input_parser.add_blur(default=1)
     input_parser.add_reconstruction_type(default="TVL2")
     input_parser.add_measures(default=["PSNR", "RMSE", "SSIM", "NCC", "NMI"])
@@ -166,49 +166,50 @@ def main():
             data_writer.write_data()
 
     # ----------------------------Visualize Results----------------------------
-    filename_prefix = args.reconstruction_type
+    if args.verbose:
+        filename_prefix = args.reconstruction_type
 
-    ph.show_arrays(
-        data_nda,
-        title=data_labels,
-        fig_number=None,
-        # cmap="jet",
-        cmap="Greys_r",
-        use_same_scaling=True,
-        directory=args.dir_output_figures,
-        filename=args.reconstruction_type+"_comparison.pdf",
-        save_figure=0 if args.dir_output_figures is None else 1,
-        fontsize=8,
-    )
-
-    # if args.reference is not None:
-    linestyles = ["-", ":", "-", "-."] * 10
-
-    for ob in observers:
-        ob.compute_measures()
-
-    for k in measures_dic.keys():
-        x = []
-        y = []
-        legend = []
-        for i, alpha in enumerate(args.alpha):
-            title = args.reconstruction_type + ": %s" % k
-            y.append(observers[i].get_measures()[k])
-            legend.append(r"$\alpha=%g$" % alpha)
-            x.append(range(0, len(y[-1])))
-        ph.show_curves(
-            y=y,
-            x=x,
-            xlabel="iteration",
-            labels=legend,
-            title=title,
-            linestyle=linestyles,
-            markers=ph.MARKERS,
-            markevery=10,
+        ph.show_arrays(
+            data_nda,
+            title=data_labels,
+            fig_number=None,
+            # cmap="jet",
+            cmap="Greys_r",
+            use_same_scaling=True,
             directory=args.dir_output_figures,
-            filename=filename_prefix+"_"+k+".pdf",
+            filename=args.reconstruction_type+"_comparison.pdf",
             save_figure=0 if args.dir_output_figures is None else 1,
+            fontsize=8,
         )
+
+        # if args.reference is not None:
+        linestyles = ["-", ":", "-", "-."] * 10
+
+        for ob in observers:
+            ob.compute_measures()
+
+        for k in measures_dic.keys():
+            x = []
+            y = []
+            legend = []
+            for i, alpha in enumerate(args.alpha):
+                title = args.reconstruction_type + ": %s" % k
+                y.append(observers[i].get_measures()[k])
+                legend.append(r"$\alpha=%g$" % alpha)
+                x.append(range(0, len(y[-1])))
+            ph.show_curves(
+                y=y,
+                x=x,
+                xlabel="iteration",
+                labels=legend,
+                title=title,
+                linestyle=linestyles,
+                markers=ph.MARKERS,
+                markevery=10,
+                directory=args.dir_output_figures,
+                filename=filename_prefix+"_"+k+".pdf",
+                save_figure=0 if args.dir_output_figures is None else 1,
+            )
 
     return 0
 
