@@ -15,10 +15,10 @@ import sys
 import os
 
 # Import modules for unit testing
-# from kernels_test import *
-# from loss_functions_test import *
+from kernels_test import *
+from loss_functions_test import *
 from similarity_measures_test import *
-# from solvers_test import *
+from solvers_test import *
 
 if __name__ == '__main__':
     print("\nUnit tests:\n--------------")
