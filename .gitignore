@@ -1,6 +1,7 @@
 results
 *.pyc
 *.egg-info
+.coverage
 html
 latex
 
