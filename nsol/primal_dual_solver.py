@@ -43,7 +43,10 @@ class PrimalDualSolver(Solver):
     #                          operator B
     # \param      B_conj       The conjugate of the continuous linear operator
     #                          B
-    # \param      L2           Squared operator norm of B, i.e. L2 = ||B||^2
+    # \param      L2           Squared operator norm of B, i.e.
+    #                          L2 = ||B||^2 = ||\nabla||^2 = ||div||^2;
+    #                          In 2D: L2 <= 8/h^2 (Chambolle, Pock, p.13)
+    #                          In 3D: L2 <= 16/h^2 (similar proof)
     # \param      x0           Initial value, 1D numpy data array
     # \param      alpha        Regularization parameter alpha > 0.
     # \param      iterations   Number of primal-dual iterations, int

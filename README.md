@@ -143,8 +143,8 @@ Parameter studies for the denoising problem (and, similarly, for deconvolution p
 The results can be visualized by
 * `nsol_show_parameter_study \
 --dir-input path-to-parameter-study \
---study-name TVL2-Denoising
-`
+--study-name TVL2-Denoising \
+--dir-output-figures dir-to-figures`
 
 ## Licensing and Copyright
 Copyright (c) 2017, [University College London][ucl].
