@@ -50,9 +50,9 @@ sigma2 = 1
 verbose = 0
 
 # Regularization parameter (including approximate suggestions for its values)
-# Approximate values for L2-deblurring: 0.01 (Gaussian)
-# Approximate values for L2-denoising: 0.6 (Gaussian)
-# Approximate values for L1-denoising: 0.6 (Salt and pepper)
+# Approximate alpha for L2-deblurring: 0.01 (Gaussian)
+# Approximate alpha for L2-denoising: 0.6 (Gaussian)
+# Approximate alpha for L1-denoising: 0.6 (Salt and pepper)
 # alpha = 0.6
 alpha = 0.01
 
@@ -257,7 +257,7 @@ if solver_PrimalDual:
         prox_g_conj=prox.prox_tv_conj,
         B=D_1D,
         B_conj=D_adj_1D,
-        L2=8,
+        L2=8 if dimension <= 2 else 16,
         x0=x0,
         alpha=alpha,
         iterations=PD_iterations,
