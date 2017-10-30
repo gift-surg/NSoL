@@ -89,34 +89,38 @@ where all remaining dependencies can be installed using `pip`:
 
 TVL1/TVL2/HuberL2/HuberL1 Denoising can be run via
 
-* `nsol_run_denoising \
+```
+nsol_run_denoising \
 --observation path-to-observation-png-nii-mat \
 --result path-to-denoised-result-png-nii-mat \
 --reconstruction-type TVL1 \
 --alpha 0.05 \
 --iterations 50
-`
-* `nsol_run_denoising \
+```
+```
+nsol_run_denoising \
 --observation path-to-observation-png-nii-mat \
 --reference path-to-reference-png-nii-mat \
 --result path-to-denoised-result-png-nii-mat \
 --reconstruction-type TVL1 \
 --alpha 0.05 \
 --iterations 50
-`
+```
 
 ### Deconvolution
 Examples for TK0L2/TK1L2/TVL2/HuberL2 deconvolution calls are
 
-* `nsol_run_deconvolution \
+```
+nsol_run_deconvolution \
 --observation path-to-observation-png-nii-mat \
 --result path-to-denoised-result-png-nii-mat \
 --reconstruction-type HuberL2 \
 --blur 1.2 \
 --alpha 0.05 \
 --iterations 50
-`
-* `nsol_run_deconvolution \
+```
+```
+nsol_run_deconvolution \
 --observation path-to-observation-png-nii-mat \
 --reference path-to-reference-png-nii-mat \
 --result path-to-denoised-result-png-nii-mat \
@@ -125,12 +129,13 @@ Examples for TK0L2/TK1L2/TVL2/HuberL2 deconvolution calls are
 --blur 1.2 \
 --iterations 50 \
 --data-loss soft_l1 \
---minimizer L-BFGS-B \
-`
+--minimizer L-BFGS-B
+```
 
 ### Parameter Studies
 Parameter studies for the denoising problem (and, similarly, for deconvolution problem) can be performed by, e.g.,
-* `nsol_run_denoising_study \
+```
+nsol_run_denoising_study \
 --observation path-to-observation-png-nii-mat \
 --dir-output path-to-parameter-study \
 --reference path-to-reference-png-nii-mat \
@@ -138,13 +143,15 @@ Parameter studies for the denoising problem (and, similarly, for deconvolution p
 --study-name TVL2-Denoising \
 --measures RMSE PSNR NCC NMI SSIM \
 --alpha-range 0.001 0.05 20
-`
+```
 
 The results can be visualized by
-* `nsol_show_parameter_study \
+```
+nsol_show_parameter_study \
 --dir-input path-to-parameter-study \
 --study-name TVL2-Denoising \
---dir-output-figures dir-to-figures`
+--dir-output-figures dir-to-figures
+```
 
 ## Licensing and Copyright
 Copyright (c) 2017, [University College London][ucl].
