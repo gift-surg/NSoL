@@ -15,35 +15,51 @@ Implemented solvers include
 
 to solve
 * **L1- and L2-denoising** problems, i.e.
-```math
-\vec{x}^*:=\text{argmin}_{\vec{x}} \Big[\Vert \vec{x} - \vec{x}_0 \Vert_{\ell^p}^p + \alpha\,\text{Reg}(\vec{x})\Big],\quad\text{for}\quad p\in\{1,\,2\},
-```
+<!--https://www.url-encode-decode.com/-->
+<!--```math-->
+<!--\vec{x}^*:=\text{argmin}_{\vec{x}}\Big[\Vert\vec{x}-\vec{x}_0\Vert_{\ell^p}^p+\alpha\,\text{Reg}(\vec{x})\Big],\quad\text{for}{\quad}p\in\{1,\,2\},-->
+<!--```-->
+<p align="center">
+<img src="http://latex.codecogs.com/svg.latex?%5Cvec%7Bx%7D%5E%2A%3A%3D%5Ctext%7Bargmin%7D_%7B%5Cvec%7Bx%7D%7D%5CBig%5B%5CVert%5Cvec%7Bx%7D-%5Cvec%7Bx%7D_0%5CVert_%7B%5Cell%5Ep%7D%5Ep%2B%5Calpha%5C%2C%5Ctext%7BReg%7D%28%5Cvec%7Bx%7D%29%5CBig%5D%2C%5Cquad%5Ctext%7Bfor%7D%7B%5Cquad%7Dp%5Cin%5C%7B1%2C%5C%2C2%5C%7D%2C">
+</p>
 and
 
 * **robust L2-deconvolution** problems, i.e.
-```math
-\vec{x}^*:=\text{argmin}_{\vec{x}} \Big[\sum_{i=1}^N \varrho\big( (A\vec{x} - \vec{b})_i^2 )  + \alpha\,\text{Reg}(\vec{x})\Big],
-```
-
-in 1D, 2D or 3D for a variety of different regularizers $`\text{Reg}`$ and data loss functions $`\varrho`$. 
-
+<!--https://www.url-encode-decode.com/-->
+<!--```math-->
+<!--\vec{x}^*:=\text{argmin}_{\vec{x}}\Big[\sum_{i=1}^N\varrho\big((A\vec{x}-\vec{b})_i^2)+\alpha\,\text{Reg}(\vec{x})\Big],-->
+<!--```-->
+<p align="center">
+<img src="http://latex.codecogs.com/svg.latex?%5Cvec%7Bx%7D%5E%2A%3A%3D%5Ctext%7Bargmin%7D_%7B%5Cvec%7Bx%7D%7D%5CBig%5B%5Csum_%7Bi%3D1%7D%5EN%5Cvarrho%5Cbig%28%28A%5Cvec%7Bx%7D-%5Cvec%7Bb%7D%29_i%5E2%29%2B%5Calpha%5C%2C%5Ctext%7BReg%7D%28%5Cvec%7Bx%7D%29%5CBig%5D%2C">
+</p>
+in 1D, 2D or 3D for a variety of regularizers ![img](http://latex.codecogs.com/svg.latex?%5Ctext%7BReg%7D) and data loss functions ![img](http://latex.codecogs.com/svg.latex?%5Cvarrho).
 
 ---
 
 The **available regularizers**, depending on the minimization problem, include
-* Zeroth-order Tikhonov (TK0): $`\text{Reg}(\vec{x}) = \frac{1}{2}\Vert \vec{x} \Vert_{\ell^2}^2`$
-* First-order Tikhonov (TK1): $`\text{Reg}(\vec{x}) = \frac{1}{2}\Vert \nabla \vec{x} \Vert_{\ell^2}^2`$
-* Isotropic Total Variation (TV): $`\text{Reg}(\vec{x}) = \text{TV}_\text{iso}(\vec{x}) = \big\Vert |\nabla \vec{x}| \big\Vert_{\ell^1}`$
-* Huber Function: $`\text{Reg}(\vec{x}) = \frac{1}{2\gamma} \big| |\nabla \vec{x}| \big|_{\gamma}`$
+<!-- * Zeroth-order Tikhonov (TK0): $`\text{Reg}(\vec{x}) = \frac{1}{2}\Vert \vec{x} \Vert_{\ell^2}^2`$ -->
+<!-- * First-order Tikhonov (TK1): $`\text{Reg}(\vec{x}) = \frac{1}{2}\Vert \nabla \vec{x} \Vert_{\ell^2}^2`$ -->
+<!-- * Isotropic Total Variation (TV): $`\text{Reg}(\vec{x}) = \text{TV}_\text{iso}(\vec{x}) = \big\Vert |\nabla \vec{x}| \big\Vert_{\ell^1}`$ -->
+<!-- * Huber Function: $`\text{Reg}(\vec{x}) = \frac{1}{2\gamma} \big| |\nabla \vec{x}| \big|_{\gamma}`$ -->
+
+* Zeroth-order Tikhonov (TK0): ![img](http://latex.codecogs.com/svg.latex?%5Ctext%7BReg%7D%28%5Cvec%7Bx%7D%29%3D%5Cfrac%7B1%7D%7B2%7D%5CVert%5Cvec%7Bx%7D%5CVert_%7B%5Cell%5E2%7D%5E2)
+* First-order Tikhonov (TK1): ![img](http://latex.codecogs.com/svg.latex?%5Ctext%7BReg%7D%28%5Cvec%7Bx%7D%29%3D%5Cfrac%7B1%7D%7B2%7D%5CVert%5Cnabla%5Cvec%7Bx%7D%5CVert_%7B%5Cell%5E2%7D%5E2)
+* Isotropic Total Variation (TV): ![img](http://latex.codecogs.com/svg.latex?%5Ctext%7BReg%7D%28%5Cvec%7Bx%7D%29%3D%5Ctext%7BTV%7D_%5Ctext%7Biso%7D%28%5Cvec%7Bx%7D%29%3D%5Cbig%5CVert%7C%5Cnabla%5Cvec%7Bx%7D%7C%5Cbig%5CVert_%7B%5Cell%5E1%7D)
+* Huber Function: ![img](http://latex.codecogs.com/svg.latex?%5Ctext%7BReg%7D%28%5Cvec%7Bx%7D%29%3D%5Cfrac%7B1%7D%7B2%5Cgamma%7D%5Cbig%7C%7C%5Cnabla%5Cvec%7Bx%7D%7C%5Cbig%7C_%7B%5Cgamma%7D)
 
 ---
 
 **Data loss functions** $`\varrho`$ are motivated by [SciPy](https://docs.scipy.org/doc/scipy-0.19.0/reference/generated/scipy.optimize.least_squares.html) and allow for robust outlier rejection. Implemented data loss functions are:
-* `linear`: $`\varrho(e) = e `$ 
-* `soft_l1`: $`\varrho(e) = 2 (\sqrt{1+e} - 1)`$ 
-* `huber`: $`\varrho(e) = |e|_\gamma = \begin{cases} e, & e < \gamma^2 \\ 2\gamma\sqrt{e} - \gamma^2, & e\ge \gamma^2\end{cases}`$
-* `arctan`: $`\varrho(e) = \arctan(e)`$
-* `cauchy`: $`\varrho(e) = \ln(1 + e)`$
+<!--$`\varrho(e)=e`$-->
+<!--$`\varrho(e)=2(\sqrt{1+e}-1)`$ -->
+<!--$`\varrho(e)=|e|_\gamma=\begin{cases}e,&e<\gamma^2\\2\gamma\sqrt{e}-\gamma^2,&e\ge\gamma^2\end{cases}`$-->
+<!--$`\varrho(e)=\arctan(e)`$-->
+<!--$`\varrho(e)=\ln(1 + e)`$-->
+* `linear`: ![img](http://latex.codecogs.com/svg.latex?%5Cvarrho%28e%29%3De)
+* `soft_l1`: ![img](http://latex.codecogs.com/svg.latex?%5Cvarrho%28e%29%3D2%28%5Csqrt%7B1%2Be%7D-1%29)
+* `huber`: ![img](http://latex.codecogs.com/svg.latex?%5Cvarrho%28e%29%3D%7Ce%7C_%5Cgamma%3D%5Cbegin%7Bcases%7De%2C%26e%3C%5Cgamma%5E2%5C%5C2%5Cgamma%5Csqrt%7Be%7D-%5Cgamma%5E2%2C%26e%5Cge%5Cgamma%5E2%5Cend%7Bcases%7D)
+* `arctan`: ![img](http://latex.codecogs.com/svg.latex?%5Cvarrho%28e%29%3D%5Carctan%28e%29)
+* `cauchy`: ![img](http://latex.codecogs.com/svg.latex?%5Cvarrho%28e%29%3D%5Cln%281%2Be%29)
 
 ---
 
