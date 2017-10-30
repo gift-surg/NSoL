@@ -76,7 +76,7 @@ If NSoL is used standalone, please run instead
 * `pip install itk`
 
 Afterwards, clone this repository via 
-* `git clone git@cmiclab.cs.ucl.ac.uk:GIFT-Surg/NSoL.git`
+* `git clone git@github.com:gift-surg/NSoL.git`
 
 where all remaining dependencies can be installed using `pip`:
 * `pip install -r requirements.txt`
@@ -172,10 +172,10 @@ Associated publications are
 [wellcometrust]: http://www.wellcome.ac.uk
 [mssociety]: https://www.mssociety.org.uk/
 [nihr]: http://www.nihr.ac.uk/research
-[itkniftymic]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/ITK_NiftyMIC/wikis/home
-[niftymic]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/NiftyMIC
-[nsol]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/NSoL
-[simplereg]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/SimpleReg
-[simplereg-dependencies]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/SimpleReg/wikis/simplereg-dependencies
-[pysitk]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/PySiTK
-[volumetricreconstructionfromprintedfilms]: https://cmiclab.cs.ucl.ac.uk/GIFT-Surg/VolumetricReconstructionFromPrintedFilms
+[itkniftymic]: https://github.com/gift-surg/ITK_NiftyMIC/wikis/home
+[niftymic]: https://github.com/gift-surg/NiftyMIC
+[nsol]: https://github.com/gift-surg/NSoL
+[simplereg]: https://github.com/gift-surg/SimpleReg
+[simplereg-dependencies]: https://github.com/gift-surg/SimpleReg/wikis/simplereg-dependencies
+[pysitk]: https://github.com/gift-surg/PySiTK
+[volumetricreconstructionfromprintedfilms]: https://github.com/gift-surg/VolumetricReconstructionFromPrintedFilms
