@@ -32,6 +32,7 @@ and
 <p align="center">
 <img src="http://latex.codecogs.com/svg.latex?%5Cvec%7Bx%7D%5E%2A%3A%3D%5Ctext%7Bargmin%7D_%7B%5Cvec%7Bx%7D%7D%5CBig%5B%5Csum_%7Bi%3D1%7D%5EN%5Cvarrho%5Cbig%28%28A%5Cvec%7Bx%7D-%5Cvec%7Bb%7D%29_i%5E2%29%2B%5Calpha%5C%2C%5Ctext%7BReg%7D%28%5Cvec%7Bx%7D%29%5CBig%5D%2C">
 </p>
+
 in 1D, 2D or 3D for a variety of regularizers ![img](http://latex.codecogs.com/svg.latex?%5Ctext%7BReg%7D) and data loss functions ![img](http://latex.codecogs.com/svg.latex?%5Cvarrho).
 
 ---
