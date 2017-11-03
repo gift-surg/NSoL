@@ -151,7 +151,7 @@ class SolverParameterStudy(ParameterStudy):
     #     if nda.ndim == 3:
     #         filename = os.path.join(self._directory, title + ".nii.gz")
     #         image_sitk = sitk.GetImageFromArray(nda)
-    #         sitk.WriteImage(image_sitk, title)
+    #         sitkh.write_nifti_image_sitk(image_sitk, title)
 
     #     else:
     #         fig = plt.figure(1)

@@ -66,4 +66,4 @@ class DataWriter(object):
         if self._image_sitk is not None:
             image_sitk.CopyInformation(self._image_sitk)
 
-        sitk.WriteImage(image_sitk, self._path_to_file)
+        sitkh.write_nifti_image_sitk(image_sitk, self._path_to_file)
