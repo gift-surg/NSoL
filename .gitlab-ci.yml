@@ -41,7 +41,7 @@ before_script:
     - pip install .
 
     - deactivate
-    - source ${venv}/bin/activate
+    - source ${venv_dir}/bin/activate
 
 after_script:
     # delete tmp-directory
