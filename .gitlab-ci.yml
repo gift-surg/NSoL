@@ -40,6 +40,9 @@ before_script:
     # run installation
     - pip install .
 
+    - deactivate
+    - source ${venv}/bin/activate
+
 after_script:
     # delete tmp-directory
     - rm -rfv ${TMPDIR}
