@@ -1,6 +1,1 @@
-scikit_image>=0.12.3
-scipy>=0.19.1
-natsort>=5.0.3
-numpy>=1.13.1
-SimpleITK>=1.0.1
--e git+https://github.com/gift-surg/PySiTK.git#egg=PySiTK
+git+https://github.com/gift-surg/PySiTK.git@v0.1#egg=PySiTK-0.1
