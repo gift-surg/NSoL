@@ -12,8 +12,7 @@ import SimpleITK as sitk
 
 import pysitk.python_helper as ph
 
-from nsol.definitions import \
-    DIR_TMP, DIR_TEST
+from nsol.definitions import DIR_TMP, DIR_TEST
 
 
 class RunDenoisingStudy(unittest.TestCase):
