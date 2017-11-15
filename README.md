@@ -97,7 +97,7 @@ Afterwards, clone this repository via
 
 where all remaining dependencies can be installed using `pip`:
 * `pip install -r requirements.txt`
-* `pip install .`
+* `pip install -e .`
 
 
 ## Usage

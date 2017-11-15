@@ -38,10 +38,7 @@ before_script:
     - pip install -r requirements.txt
 
     # run installation
-    - pip install .
-
-    - deactivate
-    - source ${venv_dir}/bin/activate
+    - pip install -e .
 
 after_script:
     # delete tmp-directory
