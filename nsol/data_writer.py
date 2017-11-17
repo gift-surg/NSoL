@@ -48,6 +48,7 @@ class DataWriter(object):
     def write_data(self):
         ph.create_directory(os.path.dirname(self._path_to_file))
         self._write_data[self._file_type]()
+        ph.print_info("File written to '%s'" % self._path_to_file)
 
     def _write_data_png(self):
         ph.write_image(self._nda, self._path_to_file)

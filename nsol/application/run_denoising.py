@@ -36,7 +36,7 @@ def main():
         description="Run TVL1/TVL2/HuberL1/HuberL2 denoising",
     )
     input_parser.add_observation(required=True)
-    input_parser.add_result(required=True)
+    input_parser.add_result(required=False)
     input_parser.add_reference(required=False)
     input_parser.add_reconstruction_type(default="TVL2")
     input_parser.add_measures(default=["PSNR", "RMSE", "SSIM", "NCC", "NMI"])
@@ -54,27 +54,44 @@ def main():
     data_nda = []
     data_labels = []
 
-    if args.result is not None and len(args.alpha) > 1:
-        raise ValueError("Result can only be written for one alpha")
+    if len(args.alpha) > 1 and args.result is not None:
+        ph.print_warning("Multiple alphas overwrite result")
+    elif len(args.alpha) == 1 and args.result is None:
+        raise IOError("'--result' must be specified")
+
+    if args.result is None:
+        ph.print_warning("No output ('--result') provided")
 
     # --------------------------------Read Data--------------------------------
     data_reader = dr.DataReader(args.observation)
     data_reader.read_data()
     observed_nda = data_reader.get_data()
+    dimension = observed_nda.ndim
+
     data_nda.append(observed_nda)
-    data_labels.append("observed:\n%s" % os.path.basename(args.observation))
+    if dimension < 3:
+        data_labels.append("observed:\n%s" %
+                           os.path.basename(args.observation))
+    elif dimension == 3:
+        data_labels.append(
+            os.path.basename(args.observation).split(".")[0])
 
     if args.reference is not None:
         data_reader = dr.DataReader(args.reference)
         data_reader.read_data()
         reference_nda = data_reader.get_data()
         data_nda.append(reference_nda)
-        data_labels.append("reference:\n%s" % os.path.basename(args.reference))
+
+        if dimension < 3:
+            data_labels.append("reference:\n%s" %
+                               os.path.basename(args.reference))
+        elif dimension == 3:
+            data_labels.append(
+                os.path.basename(args.reference).split(".")[0])
+
         x_ref = reference_nda.flatten()
 
     # ------------------------------Set Up Solver------------------------------
-    dimension = observed_nda.ndim
-
     b = observed_nda.flatten()
     x0 = observed_nda.flatten()
     x_scale = np.max(observed_nda)
@@ -114,8 +131,12 @@ def main():
                          args.reconstruction_type)
 
     for i, alpha in enumerate(args.alpha):
-        title_prefix = args.reconstruction_type + \
-            " (" + r"$\alpha=%g$)" % alpha
+        if dimension < 3:
+            title_prefix = args.reconstruction_type + \
+                " (" + r"$\alpha=%g$)" % alpha
+        elif dimension == 3:
+            title_prefix = ("%s_alpha=%g" % (
+                args.reconstruction_type, alpha)).replace(".", "p")
 
         if args.solver == "PD":
             solver = pd.PrimalDualSolver(
@@ -165,9 +186,6 @@ def main():
         # ---------------------------Run Reconstruction------------------------
         solver.run()
         recons[i] = np.array(solver.get_x().reshape(*X_shape))
-        print("Computational time %s: %s" %
-              (args.reconstruction_type, solver.get_computational_time()))
-
         data_nda.append(recons[i])
         data_labels.append(title_prefix)
 
@@ -180,17 +198,25 @@ def main():
     if args.verbose:
         filename_prefix = args.reconstruction_type
 
-        ph.show_arrays(
-            data_nda,
-            title=data_labels,
-            fig_number=None,
-            cmap="jet",
-            use_same_scaling=True,
-            directory=args.dir_output_figures,
-            filename=args.reconstruction_type+"_comparison.pdf",
-            save_figure=0 if args.dir_output_figures is None else 1,
-            fontsize=8,
-        )
+        if dimension == 2:
+            ph.show_arrays(
+                data_nda,
+                title=data_labels,
+                fig_number=None,
+                cmap="jet",
+                use_same_scaling=True,
+                directory=args.dir_output_figures,
+                filename=args.reconstruction_type+"_comparison.pdf",
+                save_figure=0 if args.dir_output_figures is None else 1,
+                fontsize=8,
+            )
+        elif dimension == 3:
+            images_sitk = [None] * len(data_nda)
+            observation_sitk = data_reader.get_image_sitk()
+            for i, nda in enumerate(data_nda):
+                images_sitk[i] = sitk.GetImageFromArray(nda)
+                images_sitk[i].CopyInformation(observation_sitk)
+            sitkh.show_sitk_image(images_sitk, label=data_labels)
 
         if args.reference is not None:
             linestyles = ["-", ":", "-", "-."] * 10
