@@ -14,15 +14,19 @@ import argparse
 import numpy as np
 import sys
 import os
+import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 from itertools import repeat
 
 import pysitk.python_helper as ph
 import pysitk.simple_itk_helper as sitkh
+
+import nsol.data_reader as dr
 import nsol.reader_parameter_study as ReaderParameterStudy
 import nsol.input_argparser as InputArgparser
 
 
-def show_L_curve(parameter_study_reader, lines, dir_output=None):
+def show_L_curve(parameter_study_reader, lines, ctr, dir_output=None):
     name = parameter_study_reader.get_parameter_study_name()
 
     line_to_parameter_labels_dic = \
@@ -55,46 +59,56 @@ def show_L_curve(parameter_study_reader, lines, dir_output=None):
             [i for item in ph.LINESTYLES[0:-1]
              for i in repeat(item, len(line))])
 
-        # Only if connecting curve is desired
-        x_curve.append([nda_data[i, -1] for i in line])
-        y_curve.append([nda_reg[i, -1] for i in line])
-        labels_curve.append(None)
-        linestyle_curve.append((10*ph.LINESTYLES[0:-1])[j])
-        markers_curve.append("None")
-
-    # Build connecting curve
-    x_curve.extend([i] for i in x)
-    y_curve.extend([i] for i in y)
-    labels_curve.extend(i for i in labels)
-    linestyle_curve.extend(i for i in linestyle)
-    markers_curve.extend(i for i in markers)
-
     # Plot
-    xlabel = "Data"
-    ylabel = "Regularizer"
-    title = "%s: L-curve" % name
-    ph.show_curves(
-        # y=y, x=x, linestyle=linestyle,  # no connecting curve
-        # markers=markers, labels=labels,
-        y=y_curve, x=x_curve, linestyle=linestyle_curve,  # connecting curve
-        markers=markers_curve, labels=labels_curve,
-        xlabel=xlabel,
-        ylabel=ylabel,
-        title=title,
-        markevery=1,
-        y_axis_style="loglog",
-        # y_axis_style="semilogy",
-        filename=name+"_L-curve.pdf",
-        directory=dir_output,
-        save_figure=0 if dir_output is None else 1,
+    fig = plt.figure(ph.add_one(ctr))
+    fig.clf()
+    ax = fig.gca()
+
+    # Draw connecting line and an arrow to indicate increasing alpha
+    l = plt.plot(x, y, color="lightgrey")
+    start_ind = 0
+    end_ind = 1
+    l[0].axes.annotate(
+        '',
+        xytext=(x[start_ind], y[start_ind]),
+        xy=(x[end_ind], y[end_ind]),
+        arrowprops=dict(arrowstyle="->", color="lightgrey"),
+        size=20,
     )
 
+    for c in range(len(y)):
+        l = plt.plot(x[c], y[c], label=labels[c])
 
-def show_measures(parameter_study_reader, lines, dir_output=None):
+        # Extract line object to adjust line settings
+        l = l[0]
+        l.set_linestyle(linestyle[c])
+        l.set_marker(markers[c])
+
+    legend = plt.legend(loc="best", shadow=False, frameon=True)
+    plt.grid()
+    plt.xlabel("Data")
+    plt.xlabel("Regularizer")
+    plt.title("%s: L-curve" % name)
+
+    try:
+        # Open windows (and also save them) in full screen
+        manager = plt.get_current_fig_manager()
+        manager.full_screen_toggle()
+    except:
+        pass
+    plt.show(block=False)
+
+    if dir_output is not None:
+        ph.save_fig(fig, dir_output, "%s_L-curve.pdf" % name)
+
+
+def show_measures(parameter_study_reader, lines, ctr, dir_output=None):
     name = parameter_study_reader.get_parameter_study_name()
 
     line_to_parameter_labels_dic = \
         parameter_study_reader.get_line_to_parameter_labels()
+
+    markers = ph.MARKERS * 100
 
     # Plot
     for m in parameter_study_reader.get_measures():
@@ -113,27 +127,54 @@ def show_measures(parameter_study_reader, lines, dir_output=None):
                 [i for item in ph.LINESTYLES[0:-1]
                  for i in repeat(item, len(line))])
 
-        xlabel = "iteration"
-        # labels = m
-        title = "%s: %s" % (name, m)
-        ph.show_curves(y,
-                       xlabel=xlabel,
-                       # ylabel=ylabel,
-                       linestyle=linestyle,
-                       labels=labels,
-                       title=title,
-                       markers=ph.MARKERS*100,
-                       markevery=10,
-                       filename=name+"_"+m+".pdf",
-                       directory=dir_output,
-                       save_figure=0 if dir_output is None else 1,
-                       )
+        if len(y[0]) < 10:
+            markevery = 1
+        else:
+            markevery = 10
+
+        fig = plt.figure(ph.add_one(ctr))
+        fig.clf()
+        ax = fig.gca()
+        for c in range(len(y)):
+            l = plt.plot(y[c], label=labels[c])
+
+            # Extract line object to adjust line settings
+            l = l[0]
+            l.set_linestyle(linestyle[c])
+            l.set_marker(markers[c])
+            l.set_markevery(markevery)
+
+        # Only integers on x-axis
+        ax.xaxis.set_major_locator(MaxNLocator(integer=True))
+
+        if m in ["NCC", "SSIM"]:
+            ax.set_ylim([0, 1])
+        elif m == "NMI":
+            ax.set_ylim([1, 1.3])
+
+        legend = plt.legend(loc="best", shadow=False, frameon=True)
+        plt.grid()
+        plt.xlabel("iteration")
+        plt.title("%s: %s" % (name, m))
+
+        try:
+            # Open windows (and also save them) in full screen
+            manager = plt.get_current_fig_manager()
+            manager.full_screen_toggle()
+        except:
+            pass
+        plt.show(block=False)
+
+        if dir_output is not None:
+            ph.save_fig(fig, dir_output, "%s_%s.pdf" % (name, m))
 
 
 def show_reconstructions(parameter_study_reader,
                          lines,
                          dir_output=None,
                          colormap="Greys_r",
+                         reference=None,
+                         reference_mask=None,
                          ):
 
     try:
@@ -152,6 +193,12 @@ def show_reconstructions(parameter_study_reader,
 
         data_nda = [reconstructions_dic[str(ell)].reshape(
             reconstructions_dic["shape"]) for ell in line]
+
+        if reference is not None:
+            data_reader = dr.DataReader(reference)
+            data_reader.read_data()
+            data_nda.insert(0, data_reader.get_data())
+            labels.insert(0, "Reference")
 
         if len(reconstructions_dic["shape"]) == 2:
             try:
@@ -186,8 +233,26 @@ def show_reconstructions(parameter_study_reader,
                 recon_sitk.SetOrigin(origin)
                 recon_sitk.SetDirection(direction)
                 recons_sitk.append(recon_sitk)
-            labels = [line.replace(".", "p") for line in labels]
-            sitkh.show_sitk_image(recons_sitk, label=labels)
+
+            labels_sitk = ["%s_%s" % (name, line.replace(".", "p"))
+                           for line in labels]
+
+            if reference_mask is not None:
+                segmentation_sitk = sitk.ReadImage(reference_mask)
+                try:
+                    recon_sitk - sitk.Cast(segmentation_sitk,
+                                           recon_sitk.GetPixelIDValue())
+                except:
+                    raise IOError(
+                        "Reference mask must be in same physical as "
+                        "the computed reconstructions")
+            else:
+                segmentation_sitk = None
+            sitkh.show_sitk_image(
+                recons_sitk,
+                label=labels_sitk,
+                segmentation=segmentation_sitk,
+                dir_output=dir_output)
 
 
 def main():
@@ -203,6 +268,15 @@ def main():
     input_parser.add_study_name(required=True)
     input_parser.add_dir_output_figures()
     input_parser.add_colormap(default="Greys_r")
+    input_parser.add_reference()
+    input_parser.add_option(
+        option_string="--reference-mask", type=str)
+    input_parser.add_option(
+        option_string="--show-reconstructions",
+        help="Turn on/off visualization of reconstructions",
+        type=int,
+        default=1,
+    )
 
     args = input_parser.parse_args()
     input_parser.print_arguments(args)
@@ -236,10 +310,18 @@ def main():
                 # Get lines in result files associated to varying 'alpha'
                 lines.append(parameter_study_reader.get_lines_to_parameters(p))
 
-    show_L_curve(parameter_study_reader, lines, args.dir_output_figures)
-    show_measures(parameter_study_reader, lines, args.dir_output_figures)
-    show_reconstructions(parameter_study_reader, lines,
-                         args.dir_output_figures, colormap=args.colormap)
+    # Figure ctr
+    ctr = [0]
+    show_L_curve(parameter_study_reader, lines, ctr, args.dir_output_figures)
+    show_measures(parameter_study_reader, lines, ctr, args.dir_output_figures)
+
+    if args.show_reconstructions:
+        show_reconstructions(parameter_study_reader,
+                             lines,
+                             args.dir_output_figures,
+                             colormap=args.colormap,
+                             reference=args.reference,
+                             reference_mask=args.reference_mask)
 
     return 0
 
