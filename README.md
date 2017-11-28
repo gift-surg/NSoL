@@ -73,7 +73,7 @@ in the course of **parameter studies**. Implemented similarity measures are
 * Sum of Squared Differences (SSD)
 * Mean Square Error (MSE)
 * Root Mean Square Error (RMSE)
-* Peak-Signal-to-Noise-Ratio (PSNR)
+* Peak-Signal-to-Noise Ratio (PSNR)
 * Mutual Information (MI)
 * Normalized Mutual Information (NMI)
 * Structural Similarity (SSIM)
@@ -179,9 +179,9 @@ This work is partially funded by the UCL [Engineering and Physical Sciences Rese
 
 ## References
 Associated publications are 
-* [Xie2017] Xie, Y., Thom, M., Ebner, M., Wykes, V., Desjardins, A., Miserocchi, A., Ourselin, S., McEvoy, A. W., and Vercauteren, T. (In press). Wide-Field Spectrally-Resolved Quantitative Fluorescence Imaging System: Towards Neurosurgical Guidance in Glioma Resection. Journal of Biomedical Optics.
 * [[Ebner2018]](https://www.sciencedirect.com/science/article/pii/S1053811917308042) Ebner, M., Chung, K. K., Prados, F., Cardoso, M. J., Chard, D. T., Vercauteren, T., & Ourselin, S. (2018). Volumetric reconstruction from printed films: Enabling 30 year longitudinal analysis in MR neuroimaging. NeuroImage, 165, 238–250.
-* [Ranzini2017] Ranzini, M. B., Ebner, M., Cardoso, M. J., Fotiadou, A., Vercauteren, T., Henckel, J., Hart, A., Ourselin, S., and Modat, M. (2017). Joint Multimodal Segmentation of Clinical CT and MR from Hip Arthroplasty Patients. MICCAI Workshop on Computational Methods and Clinical Applications in Musculoskeletal Imaging (MSKI) 2017.
+* [[Xie2017]](https://www.spiedigitallibrary.org/journals/Journal_of_Biomedical_Optics/volume-22/issue-11/116006/Wide-field-spectrally-resolved-quantitative-fluorescence-imaging-system--toward/10.1117/1.JBO.22.11.116006.full) Xie, Y., Thom, M., Ebner, M., Wykes, V., Desjardins, A., Miserocchi, A., Ourselin, S., McEvoy, A. W., and Vercauteren, T. (2017). Wide-field spectrally resolved quantitative fluorescence imaging system: toward neurosurgical guidance in glioma resection. Journal of Biomedical Optics, 22(11).
+* [[Ranzini2017]](https://mski2017.files.wordpress.com/2017/09/miccai-mski2017.pdf) Ranzini, M. B., Ebner, M., Cardoso, M. J., Fotiadou, A., Vercauteren, T., Henckel, J., Hart, A., Ourselin, S., and Modat, M. (2017). Joint Multimodal Segmentation of Clinical CT and MR from Hip Arthroplasty Patients. MICCAI Workshop on Computational Methods and Clinical Applications in Musculoskeletal Imaging (MSKI) 2017.
 * [[Ebner2017]](https://link.springer.com/chapter/10.1007%2F978-3-319-52280-7_1) Ebner, M., Chouhan, M., Patel, P. A., Atkinson, D., Amin, Z., Read, S., Punwani, S., Taylor, S., Vercauteren, T., and Ourselin, S. (2017). Point-Spread-Function-Aware Slice-to-Volume Registration: Application to Upper Abdominal MRI Super-Resolution. In Zuluaga, M. A., Bhatia, K., Kainz, B., Moghari, M. H., and Pace, D. F., editors, Reconstruction, Segmentation, and Analysis of Medical Images. RAMBO 2016, volume 10129 of Lecture Notes in Computer Science, pages 3–13. Springer International Publishing.
 
 [mebner]: http://cmictig.cs.ucl.ac.uk/people/phd-students/michael-ebner
