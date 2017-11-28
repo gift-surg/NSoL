@@ -252,7 +252,8 @@ def show_reconstructions(parameter_study_reader,
                 recons_sitk,
                 label=labels_sitk,
                 segmentation=segmentation_sitk,
-                dir_output=dir_output)
+                dir_output=dir_output,
+                show_comparison_file=True)
 
 
 def main():

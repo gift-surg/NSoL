@@ -27,7 +27,7 @@ setup(name='NSoL',
       license='BSD-3-Clause',
       packages=['nsol'],
       install_requires=[
-          "pysitk==0.1",
+          "pysitk>=0.1",
           "scikit_image>=0.12.3",
           "scipy>=0.19.1",
           "natsort>=5.0.3",
