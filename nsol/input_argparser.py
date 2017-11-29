@@ -242,7 +242,8 @@ class InputArgparser(object):
         self,
         option_string="--colormap",
         type=str,
-        help="Specify colormap type to be applied for visualization. "
+        help="Specify colormap type to be applied for visualization "
+        "(Only for 2D). "
         "E.g. 'Greys_r', 'jet'",
         default=None,
     ):
@@ -342,6 +343,17 @@ class InputArgparser(object):
         type=int,
         help="Turn on/off verbose output.",
         default=1,
+    ):
+        self._add_argument(dict(locals()))
+
+    def add_option(
+        self,
+        option_string="--option",
+        nargs=None,
+        type=float,
+        help="Add option.",
+        default=None,
+        required=False,
     ):
         self._add_argument(dict(locals()))
 

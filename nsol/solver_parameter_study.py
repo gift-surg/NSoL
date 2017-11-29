@@ -139,37 +139,6 @@ class SolverParameterStudy(ParameterStudy):
             # Reset solver to initial value
             self._solver.set_x0(self._solver.get_x0())
 
-
-    # def _save_to_image(self, nda, vals, colorbar=True):
-
-    #     # Build filename
-    #     title = self._name + "_"
-    #     title += ("_").join(["%s%s" % (k, v)
-    #                          for k, v in zip(self._parameters.keys(), vals)])
-    #     title = title.replace(".", "p")
-
-    #     if nda.ndim == 3:
-    #         filename = os.path.join(self._directory, title + ".nii.gz")
-    #         image_sitk = sitk.GetImageFromArray(nda)
-    #         sitkh.write_nifti_image_sitk(image_sitk, title)
-
-    #     else:
-    #         fig = plt.figure(1)
-    #         fig.clf()
-    #         im = plt.imshow(nda)
-    #         plt.axis('off')
-    #         plt.title(title)
-    #         if colorbar:
-    #             # add_axes([left, bottom, width, height])
-    #             cax = fig.add_axes([0.92, 0.05, 0.01, 0.9])
-    #             fig.colorbar(im, cax=cax)
-    #         plt.show(block=False)
-
-    #         filename = os.path.join(self._directory, title + ".pdf")
-    #         fig.savefig(filename)
-
-    #     ph.print_info("Array written to '%s'" % filename)
-
     ##
     # Creates file where all parameters configurations are stored.
     # \date       2017-08-05 19:25:04+0100
