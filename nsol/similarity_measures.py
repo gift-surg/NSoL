@@ -83,7 +83,7 @@ class SimilarityMeasures(object):
     @staticmethod
     def peak_signal_to_noise_ratio(x, x_ref):
         mse = SimilarityMeasures.mean_squared_error(x, x_ref)
-        return 10 * np.log10(np.max(x) ** 2 / mse)
+        return 10 * np.log10(np.max(x_ref) ** 2 / mse)
 
     ##
     # Compute normalized cross correlation (symmetric)
