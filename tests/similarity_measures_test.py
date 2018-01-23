@@ -45,13 +45,6 @@ class SimilarityMeasuresTest(unittest.TestCase):
         self.assertEqual(np.around(
             diff, decimals=self.accuracy), np.inf)
 
-        diff = sim_meas.peak_signal_to_noise_ratio(
-            self.x, np.zeros_like(self.x))
-        error = 10 * np.log10(self.x.size * np.max(self.x) ** 2 /
-                              np.sum(np.square(self.x)))
-        self.assertEqual(np.around(
-            abs(diff-error), decimals=self.accuracy), 0)
-
     def test_normalized_cross_correlation(self):
         diff = sim_meas.normalized_cross_correlation(self.x, self.x)
         self.assertEqual(np.around(
