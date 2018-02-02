@@ -4,4 +4,6 @@ results
 .coverage
 html
 latex
+.idea
+*sublime*
 
