@@ -260,14 +260,14 @@ class SimilarityMeasures(object):
         "NMI": normalized_mutual_information.__func__,
     }
 
-    # Worst-case values for each similarity measure to avoid undefined states
-    ZERO = {
+    # Values for each similarity measure to 'define' undefined states
+    UNDEF = {
         "SSD": np.NaN,
         "MSE": np.NaN,
         "RMSE": np.NaN,
         "PSNR": np.NaN,
-        "SSIM": 0,
-        "NCC": -1,
-        "MI": 0,
-        "NMI": 0,
+        "SSIM": np.NaN,
+        "NCC": np.NaN,
+        "MI": np.NaN,
+        "NMI": np.NaN,
     }
