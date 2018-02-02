@@ -114,7 +114,7 @@ class SimilarityMeasures(object):
     # \param      x      numpy data array
     # \param      x_ref  reference numpy data array
     #
-    # \return     Structural similarity as scalar value <= 1
+    # \return     Structural similarity as scalar value between 0 and 1
     #
     @staticmethod
     def structural_similarity(x, x_ref):
@@ -258,4 +258,16 @@ class SimilarityMeasures(object):
         "NCC": normalized_cross_correlation.__func__,
         "MI": mutual_information.__func__,
         "NMI": normalized_mutual_information.__func__,
+    }
+
+    # Worst-case values for each similarity measure to avoid undefined states
+    ZERO = {
+        "SSD": np.NaN,
+        "MSE": np.NaN,
+        "RMSE": np.NaN,
+        "PSNR": np.NaN,
+        "SSIM": 0,
+        "NCC": -1,
+        "MI": 0,
+        "NMI": 0,
     }
