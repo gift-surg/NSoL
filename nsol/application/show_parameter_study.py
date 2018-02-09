@@ -238,7 +238,8 @@ def show_reconstructions(parameter_study_reader,
                            for line in labels]
 
             if reference_mask is not None:
-                segmentation_sitk = sitk.ReadImage(reference_mask)
+                segmentation_sitk = sitkh.read_nifti_image_sitk(
+                    reference_mask, sitk.sitkUInt8)
                 try:
                     recon_sitk - sitk.Cast(segmentation_sitk,
                                            recon_sitk.GetPixelIDValue())

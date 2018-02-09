@@ -17,9 +17,6 @@ import natsort
 import pysitk.python_helper as ph
 import pysitk.simple_itk_helper as sitkh
 
-# from nsol.definitions import REGEX_FILENAMES
-# from nsol.definitions import ALLOWED_INPUT_FILE_EXTENSIONS
-
 
 class DataReader(object):
 
@@ -64,5 +61,6 @@ class DataReader(object):
         self._nda = ndas[0]
 
     def _read_data_nii(self):
-        self._image_sitk = sitk.ReadImage(self._path_to_file)
+        self._image_sitk = sitkh.read_nifti_image_sitk(
+            self._path_to_file)
         self._nda = sitk.GetArrayFromImage(self._image_sitk)
