@@ -18,7 +18,7 @@ long_description = "This library contains the implementation of several " \
     "Provided solver include Tikhonov, ADMM and Primal-Dual solvers."
 
 setup(name='NSoL',
-      version='0.1.2',
+      version='0.1.3',
       description=description,
       long_description=long_description,
       url='https://github.com/gift-surg/NSoL',
