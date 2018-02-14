@@ -51,7 +51,9 @@ class ProximalOperators(object):
                                   verbose=0,
                                   data_loss="linear",
                                   data_loss_scale=1,
+                                  minimizer="lsmr",
                                   x_scale=1,
+                                  bounds=(0, np.inf),
                                   ):
 
         # Identity
@@ -69,6 +71,8 @@ class ProximalOperators(object):
             x_scale=x_scale,
             data_loss=data_loss,
             data_loss_scale=data_loss_scale,
+            minimizer=minimizer,
+            bounds=bounds,
         )
         tikhonov.run()
         return tikhonov.get_x()
