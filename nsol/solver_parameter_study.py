@@ -7,6 +7,7 @@
 #
 
 import os
+import six
 import itertools
 import numpy as np
 import SimpleITK as sitk
@@ -83,7 +84,7 @@ class SolverParameterStudy(ParameterStudy):
     def _run(self):
 
         dic_parameter = {}
-        dic_x = {k: v for k, v in self._reconstruction_info.iteritems()}
+        dic_x = {k: v for k, v in six.iteritems(self._reconstruction_info)}
 
         # Create list from itertools. Then total number of iterations known
         iterations = list(itertools.product(*self._parameters.values()))

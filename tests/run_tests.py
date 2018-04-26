@@ -9,10 +9,7 @@
 #
 
 
-# Import libraries
 import unittest
-import sys
-import os
 
 # Import modules for unit testing
 from kernels_test import *
