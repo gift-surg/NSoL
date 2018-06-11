@@ -51,7 +51,8 @@ class DataWriter(object):
         ph.print_info("File written to '%s'" % self._path_to_file)
 
     def _write_data_png(self):
-        ph.write_image(self._nda, self._path_to_file)
+        nda = np.round(np.array(self._nda)).astype(np.uint8)
+        ph.write_image(nda, self._path_to_file)
 
     def _write_data_txt(self):
         ph.write_array_to_file(self._path_to_file, self._nda)
