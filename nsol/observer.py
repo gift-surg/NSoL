@@ -6,7 +6,6 @@
 # \date       July 2017
 #
 
-# Import libraries
 import numpy as np
 
 import pysitk.python_helper as ph
@@ -72,7 +71,7 @@ class Observer(object):
     #                           evaluate
     #
     def set_measures(self, measures_dic):
-        measures_names = measures_dic.keys()
+        measures_names = list(measures_dic.keys())
         for i in range(0, len(measures_names)):
             self._measures_names.append(measures_names[i])
             self._measures.append(measures_dic[measures_names[i]])

@@ -7,8 +7,9 @@
 # \date       September 2017
 #
 
-import argparse
+import six
 import inspect
+import argparse
 
 import pysitk.python_helper as ph
 
@@ -378,7 +379,7 @@ class InputArgparser(object):
 
         # Build dictionary for additional, optional parameters
         kwargs = {}
-        for key, value in allvars.iteritems():
+        for key, value in six.iteritems(allvars):
             kwargs[key] = value
 
         # Add information on default value in case provided
