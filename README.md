@@ -1,7 +1,6 @@
 # Numerical Solver Library 
 
 The Numerical Solver Library (NSoL) is a Python-based open-source toolkit for research developed within the [GIFT-Surg][giftsurg] project and contains several implementations of denoising and deconvolution algorithms.
-Please note that currently **only Python 2** is supported.
 
 The algorithm and software were developed by [Michael Ebner][mebner] at the [Translational Imaging Group][tig] in the [Centre for Medical Image Computing][cmic] at [University College London (UCL)][ucl].
 
@@ -81,10 +80,12 @@ in the course of **parameter studies**. Implemented similarity measures are
 
 ## Installation
 
-This toolkit is currently supported for **Python 2 only** and was tested on
+NSoL was developed in
 
 * Mac OS X 10.10 and 10.12
 * Ubuntu 14.04 and 16.04
+
+and tested for Python 2.7.12 and 3.5.2.
 
 In case NSoL is used in conjuction with any of the toolkits of [NiftyMIC][niftymic], [Volumetric Reconstruction From Printed Films][volumetricreconstructionfromprintedfilms] or [SimpleReg][simplereg], please 
 * install [ITK_NiftyMIC][itkniftymic]
@@ -184,7 +185,7 @@ Associated publications are
 * [[Ranzini2017]](https://mski2017.files.wordpress.com/2017/09/miccai-mski2017.pdf) Ranzini, M. B., Ebner, M., Cardoso, M. J., Fotiadou, A., Vercauteren, T., Henckel, J., Hart, A., Ourselin, S., and Modat, M. (2017). Joint Multimodal Segmentation of Clinical CT and MR from Hip Arthroplasty Patients. MICCAI Workshop on Computational Methods and Clinical Applications in Musculoskeletal Imaging (MSKI) 2017.
 * [[Ebner2017]](https://link.springer.com/chapter/10.1007%2F978-3-319-52280-7_1) Ebner, M., Chouhan, M., Patel, P. A., Atkinson, D., Amin, Z., Read, S., Punwani, S., Taylor, S., Vercauteren, T., and Ourselin, S. (2017). Point-Spread-Function-Aware Slice-to-Volume Registration: Application to Upper Abdominal MRI Super-Resolution. In Zuluaga, M. A., Bhatia, K., Kainz, B., Moghari, M. H., and Pace, D. F., editors, Reconstruction, Segmentation, and Analysis of Medical Images. RAMBO 2016, volume 10129 of Lecture Notes in Computer Science, pages 3–13. Springer International Publishing.
 
-[mebner]: http://cmictig.cs.ucl.ac.uk/people/phd-students/michael-ebner
+[mebner]: https://www.linkedin.com/in/ebnermichael
 [tig]: http://cmictig.cs.ucl.ac.uk
 [bsd]: https://opensource.org/licenses/BSD-3-Clause
 [giftsurg]: http://www.gift-surg.ac.uk
