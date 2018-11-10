@@ -1,7 +1,6 @@
 # Numerical Solver Library 
 
 The Numerical Solver Library (NSoL) is a Python-based open-source toolkit for research developed within the [GIFT-Surg][giftsurg] project and contains several implementations of denoising and deconvolution algorithms.
-Please note that currently **only Python 2** is supported.
 
 The algorithm and software were developed by [Michael Ebner][mebner] at the [Translational Imaging Group][tig] in the [Centre for Medical Image Computing][cmic] at [University College London (UCL)][ucl].
 
@@ -81,10 +80,12 @@ in the course of **parameter studies**. Implemented similarity measures are
 
 ## Installation
 
-This toolkit is currently supported for **Python 2 only** and was tested on
+NSoL was developed in
 
 * Mac OS X 10.10 and 10.12
 * Ubuntu 14.04 and 16.04
+
+and tested for Python 2.7.12 and 3.5.2.
 
 In case NSoL is used in conjuction with any of the toolkits of [NiftyMIC][niftymic], [Volumetric Reconstruction From Printed Films][volumetricreconstructionfromprintedfilms] or [SimpleReg][simplereg], please 
 * install [ITK_NiftyMIC][itkniftymic]
@@ -171,7 +172,7 @@ nsol_show_parameter_study \
 ```
 
 ## Licensing and Copyright
-Copyright (c) 2017, [University College London][ucl].
+Copyright (c) 2018, [University College London][ucl].
 This framework is made available as free open-source software under the [BSD-3-Clause License][bsd]. Other licenses may apply for dependencies.
 
 ## Funding
@@ -179,12 +180,13 @@ This work is partially funded by the UCL [Engineering and Physical Sciences Rese
 
 ## References
 Associated publications are 
+* [[EbnerWang2018]](http://link.springer.com/10.1007/978-3-030-00928-1_36) Ebner, M., Wang, G., Li, W., Aertsen, M., Patel, P. A., Melbourne, A., Doel, T., David, A. L., Deprest, J., Ourselin, S., & Vercauteren, T. (2018). An Automated Localization, Segmentation and Reconstruction Framework for Fetal Brain MRI. In Medical Image Computing and Computer-Assisted Intervention -- MICCAI 2018 (pp. 313–320). Springer
 * [[Ebner2018]](https://www.sciencedirect.com/science/article/pii/S1053811917308042) Ebner, M., Chung, K. K., Prados, F., Cardoso, M. J., Chard, D. T., Vercauteren, T., & Ourselin, S. (2018). Volumetric reconstruction from printed films: Enabling 30 year longitudinal analysis in MR neuroimaging. NeuroImage, 165, 238–250.
 * [[Xie2017]](https://www.spiedigitallibrary.org/journals/Journal_of_Biomedical_Optics/volume-22/issue-11/116006/Wide-field-spectrally-resolved-quantitative-fluorescence-imaging-system--toward/10.1117/1.JBO.22.11.116006.full) Xie, Y., Thom, M., Ebner, M., Wykes, V., Desjardins, A., Miserocchi, A., Ourselin, S., McEvoy, A. W., and Vercauteren, T. (2017). Wide-field spectrally resolved quantitative fluorescence imaging system: toward neurosurgical guidance in glioma resection. Journal of Biomedical Optics, 22(11).
 * [[Ranzini2017]](https://mski2017.files.wordpress.com/2017/09/miccai-mski2017.pdf) Ranzini, M. B., Ebner, M., Cardoso, M. J., Fotiadou, A., Vercauteren, T., Henckel, J., Hart, A., Ourselin, S., and Modat, M. (2017). Joint Multimodal Segmentation of Clinical CT and MR from Hip Arthroplasty Patients. MICCAI Workshop on Computational Methods and Clinical Applications in Musculoskeletal Imaging (MSKI) 2017.
 * [[Ebner2017]](https://link.springer.com/chapter/10.1007%2F978-3-319-52280-7_1) Ebner, M., Chouhan, M., Patel, P. A., Atkinson, D., Amin, Z., Read, S., Punwani, S., Taylor, S., Vercauteren, T., and Ourselin, S. (2017). Point-Spread-Function-Aware Slice-to-Volume Registration: Application to Upper Abdominal MRI Super-Resolution. In Zuluaga, M. A., Bhatia, K., Kainz, B., Moghari, M. H., and Pace, D. F., editors, Reconstruction, Segmentation, and Analysis of Medical Images. RAMBO 2016, volume 10129 of Lecture Notes in Computer Science, pages 3–13. Springer International Publishing.
 
-[mebner]: http://cmictig.cs.ucl.ac.uk/people/phd-students/michael-ebner
+[mebner]: https://www.linkedin.com/in/ebnermichael
 [tig]: http://cmictig.cs.ucl.ac.uk
 [bsd]: https://opensource.org/licenses/BSD-3-Clause
 [giftsurg]: http://www.gift-surg.ac.uk
