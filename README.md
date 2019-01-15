@@ -97,7 +97,6 @@ Afterwards, clone this repository via
 * `git clone git@github.com:gift-surg/NSoL.git`
 
 where all remaining dependencies can be installed using `pip`:
-* `pip install -r requirements.txt`
 * `pip install -e .`
 
 

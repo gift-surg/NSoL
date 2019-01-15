@@ -1,4 +1,5 @@
-results
+results/
+dist/
 *.pyc
 *.egg-info
 .coverage

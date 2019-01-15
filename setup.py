@@ -11,30 +11,27 @@
 
 from setuptools import setup
 
-description = 'Numerical Solver Library to estimate argmin_x [f(x) + alpha g(x)]'
-long_description = "This library contains the implementation of several " \
-    "numerical solvers to estimate a solution for " \
-    "argmin_x [f(x) + alpha g(x)]. " \
-    "Provided solver include Tikhonov, ADMM and Primal-Dual solvers."
+with open("README.md", "r") as fh:
+    long_description = fh.read()
+
+
+def install_requires(fname="requirements.txt"):
+    with open(fname) as f:
+        content = f.readlines()
+    content = [x.strip() for x in content]
+    return content
 
 setup(name='NSoL',
       version='0.2rc1',
-      description=description,
+      description="Numerical Solver Library for argmin_x [f(x) + alpha g(x)]",
       long_description=long_description,
+      long_description_content_type="text/markdown",
       url='https://github.com/gift-surg/NSoL',
       author='Michael Ebner',
       author_email='michael.ebner.14@ucl.ac.uk',
       license='BSD-3-Clause',
       packages=['nsol'],
-      install_requires=[
-          "pysitk>=0.2",
-          "scikit_image>=0.12.3",
-          "scipy>=0.19.1",
-          "natsort>=5.0.3",
-          "numpy>=1.13.1",
-          "SimpleITK>=1.0.1",
-          "six>=1.10.0",
-      ],
+      install_requires=install_requires(),
       zip_safe=False,
       keywords='development numericalsolver convexoptimisation',
       classifiers=[
