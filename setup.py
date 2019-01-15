@@ -23,7 +23,9 @@ def install_requires(fname="requirements.txt"):
 
 setup(name='NSoL',
       version='0.1.6',
-      description="Numerical Solver Library for argmin_x [f(x) + alpha g(x)]",
+      description="The Numerical Solver Library (NSoL) is a research-focused "
+      "toolkit for denoising and deconvolution applications using ADMM and "
+      "Primal-Dual methods.",
       long_description=long_description,
       long_description_content_type="text/markdown",
       url='https://github.com/gift-surg/NSoL',
