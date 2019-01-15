@@ -9,7 +9,7 @@
 # \date       July 2017
 #
 
-from setuptools import setup
+from setuptools import setup, find_packages
 
 with open("README.md", "r") as fh:
     long_description = fh.read()
@@ -30,7 +30,7 @@ setup(name='NSoL',
       author='Michael Ebner',
       author_email='michael.ebner.14@ucl.ac.uk',
       license='BSD-3-Clause',
-      packages=['nsol'],
+      packages=find_packages(),
       install_requires=install_requires(),
       zip_safe=False,
       keywords='development numericalsolver convexoptimisation',
