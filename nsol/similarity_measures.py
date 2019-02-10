@@ -29,6 +29,21 @@ class SimilarityMeasures(object):
         return np.sum(np.abs(x - x_ref))
 
     ##
+    # Compute mean of absolute error (symmetric)
+    # \date       2019-02-10 11:29:07+0000
+    #
+    # \param      x      numpy data array
+    # \param      x_ref  reference numpy data array
+    #
+    # \return     mean of absolute error as scalar value >= 0
+    #
+    @staticmethod
+    def mean_absolute_error(x, x_ref):
+        mae = SimilarityMeasures.sum_of_absolute_differences(x, x_ref)
+        mae /= float(x.size)
+        return mae
+
+    ##
     # Compute sum of squared differences (symmetric)
     # \date       2017-08-04 10:09:05+0100
     #
@@ -251,6 +266,7 @@ class SimilarityMeasures(object):
     # Dictionary for all similarity measures
     similarity_measures = {
         "SSD": sum_of_squared_differences.__func__,
+        "MAE": mean_absolute_error.__func__,
         "MSE": mean_squared_error.__func__,
         "RMSE": root_mean_square_error.__func__,
         "PSNR": peak_signal_to_noise_ratio.__func__,
@@ -263,6 +279,7 @@ class SimilarityMeasures(object):
     # Values for each similarity measure to 'define' undefined states
     UNDEF = {
         "SSD": np.NaN,
+        "MAE": np.NaN,
         "MSE": np.NaN,
         "RMSE": np.NaN,
         "PSNR": np.NaN,
