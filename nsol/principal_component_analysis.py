@@ -330,14 +330,14 @@ class AdmmRobustPrincipalComponentAnalysis(object):
         z = zeros((m, N * n))
         U = zeros((m, n))
 
-        print '\n%3s\t%10s\t%10s\t%10s\t%10s\t%10s' % (
+        print('\n%3s\t%10s\t%10s\t%10s\t%10s\t%10s' % (
             'iter',
             'r norm',
             'eps pri',
             's norm',
             'eps dual',
             'objective',
-        )
+        ))
 
         # Saving state
         h = {}
@@ -398,14 +398,14 @@ class AdmmRobustPrincipalComponentAnalysis(object):
                 RELTOL * sqrt(N) * norm(rho * U, 'fro')
 
             if (k == 0) or (mod(k + 1, 10) == 0):
-                print '%4d\t%10.4f\t%10.4f\t%10.4f\t%10.4f\t%10.2f' % (
+                print('%4d\t%10.4f\t%10.4f\t%10.4f\t%10.4f\t%10.2f' % (
                     k + 1,
                     h['r_norm'][k],
                     h['eps_pri'][k],
                     h['s_norm'][k],
                     h['eps_dual'][k],
                     h['objval'][k],
-                )
+                ))
             if (h['r_norm'][k] < h['eps_pri'][k]) \
                     and (h['s_norm'][k] < h['eps_dual'][k]):
                 break
