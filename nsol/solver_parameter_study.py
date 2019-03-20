@@ -7,6 +7,7 @@
 #
 
 import os
+import re
 import six
 import itertools
 import numpy as np
@@ -17,6 +18,7 @@ from abc import ABCMeta, abstractmethod
 import pysitk.python_helper as ph
 
 from nsol.parameter_study import ParameterStudy
+from nsol.reader_parameter_study import ReaderParameterStudy
 
 
 ##
@@ -33,6 +35,7 @@ class SolverParameterStudy(ParameterStudy):
                  dir_output,
                  name,
                  reconstruction_info,
+                 append,
                  ):
 
         ParameterStudy.__init__(self, directory=dir_output, name=name)
@@ -41,6 +44,9 @@ class SolverParameterStudy(ParameterStudy):
         self._parameters = parameters
         self._observer = observer
         self._reconstruction_info = reconstruction_info
+
+        # Append (instead of overwrite) potentially existing study
+        self._append = append
 
     ##
     # Run parameter study and write results to specified files
@@ -55,10 +61,17 @@ class SolverParameterStudy(ParameterStudy):
         self._observer.clear_x_list()
         self._solver.set_observer(self._observer)
 
-        # Create files where output is written to
-        self._create_file_parameters()
-        self._create_files_measures()
-        self._create_file_computational_time()
+        # Create or append to a previous study
+        bool_prev_study = ph.file_exists(self._get_path_to_file_parameters())
+        if not self._append or not bool_prev_study:
+            self._create_file_parameters()
+            self._create_files_measures()
+            self._create_file_computational_time()
+
+            # Overwrite append-flag in case set as a new study is created
+            self._append = False
+        else:
+            self._check_that_studies_match()
 
         time_start = ph.start_timing()
 
@@ -81,18 +94,56 @@ class SolverParameterStudy(ParameterStudy):
     def get_parameters(self):
         return self._parameters
 
+    ##
+    # Check that study can be appended
+    # \date       2019-03-20 15:41:55+0000
+    #
+    # \param      self  The object
+    #
+    def _check_that_studies_match(self):
+
+        reader_parameter_study = ReaderParameterStudy(
+            directory=self._directory, name=self._name)
+        reader_parameter_study.read_study()
+        header_prev_study = reader_parameter_study.get_file_header()
+        header = self._get_fileheader()
+
+        # split header information into its settings (but ignore date info etc)
+        header_list = header.split(" ")[1:-2]
+        header_prev_study_list = header_prev_study.split(" ")[1:-2]
+
+        for i in range(len(header_list)):
+            # eliminate "," at the end of string
+            h1 = re.sub(",", "", header_list[i])
+            h2 = re.sub(",", "", header_prev_study_list[i])
+            if h1 != h2:
+                raise RuntimeError(
+                    "Study cannot be appended as parameter settings do "
+                    "not match: %s != %s" % (h1, h2))
+
     def _run(self):
 
         dic_parameter = {}
-        dic_x = {k: v for k, v in six.iteritems(self._reconstruction_info)}
 
         # Create list from itertools. Then total number of iterations known
         iterations = list(itertools.product(*self._parameters.values()))
 
+        if self._append:
+            # Retrieve previous reconstructions and iterations
+            reader_parameter_study = ReaderParameterStudy(
+                directory=self._directory, name=self._name)
+            reader_parameter_study.read_study()
+            previous_iterations = len(
+                reader_parameter_study.get_parameters_to_line().keys())
+            dic_x = dict(reader_parameter_study.get_reconstructions())
+        else:
+            previous_iterations = 0
+            dic_x = {k: v for k, v in six.iteritems(self._reconstruction_info)}
+
         for i, vals in enumerate(iterations):
 
             ph.print_title("%s: Iteration %d/%d" %
-                           (self._name, i+1, len(iterations)))
+                           (self._name, i + 1, len(iterations)))
 
             for j, key in enumerate(self._parameters.keys()):
 
@@ -127,7 +178,7 @@ class SolverParameterStudy(ParameterStudy):
 
             # Write last iteration of reconstruction to file
             # Data array is associated to line in parameters file
-            var = str(i)
+            var = str(i + previous_iterations)
             dic_x[var] = np.array(
                 self._observer.get_x_list()[-1], dtype=np.float16)
 

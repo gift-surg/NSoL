@@ -37,7 +37,7 @@ def show_L_curve(parameter_study_reader, lines, ctr, dir_output=None):
     labels = []
     y = []
     x = []
-    markers = ph.MARKERS*100
+    markers = ph.MARKERS * 100
 
     linestyle = []
     linestyle_curve = []
@@ -206,7 +206,7 @@ def show_reconstructions(parameter_study_reader,
                 if len(lines) == 1:
                     filename = name + "_reconstructions.pdf"
                 else:
-                    filename = name + "_reconstructions_%d.pdf" % (j+1)
+                    filename = name + "_reconstructions_%d.pdf" % (j + 1)
 
                 ph.show_arrays(data_nda,
                                title=labels,
