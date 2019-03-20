@@ -128,7 +128,8 @@ class SolverParameterStudy(ParameterStudy):
             # Write last iteration of reconstruction to file
             # Data array is associated to line in parameters file
             var = str(i)
-            dic_x[var] = np.array(self._observer.get_x_list()[-1])
+            dic_x[var] = np.array(
+                self._observer.get_x_list()[-1], dtype=np.float16)
 
             # Write results of all obtained arrays at each iteration
             # (Previous results will be overwritten at each iteration)
