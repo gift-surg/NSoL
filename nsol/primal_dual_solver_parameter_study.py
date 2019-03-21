@@ -42,6 +42,7 @@ class PrimalDualSolverParameterStudy(SolverParameterStudy):
                      "alg_type": ["ALG2", "ALG2_AHMOD", "ALG3"],
                  },
                  reconstruction_info={},
+                 append=False,
                  ):
 
         if not isinstance(solver, pd.PrimalDualSolver):
@@ -54,6 +55,7 @@ class PrimalDualSolverParameterStudy(SolverParameterStudy):
             dir_output=dir_output,
             name=name,
             reconstruction_info=reconstruction_info,
+            append=append,
         )
 
     def _get_fileheader(self):

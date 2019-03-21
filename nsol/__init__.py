@@ -6,7 +6,7 @@ from nsol.__about__ import (
     __title__,
     __uri__,
     __version__,
- )
+)
 
 __all__ = [
     "__author__",

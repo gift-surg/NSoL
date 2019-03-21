@@ -37,7 +37,7 @@ def show_L_curve(parameter_study_reader, lines, ctr, dir_output=None):
     labels = []
     y = []
     x = []
-    markers = ph.MARKERS*100
+    markers = ph.MARKERS * 100
 
     linestyle = []
     linestyle_curve = []
@@ -183,6 +183,7 @@ def show_reconstructions(parameter_study_reader,
         print("Error: '%s'. Visualization skipped." % e)
         return
 
+    ph.print_info("Prepare comparison of reconstructions ... ")
     name = parameter_study_reader.get_parameter_study_name()
     line_to_parameter_labels_dic = \
         parameter_study_reader.get_line_to_parameter_labels()
@@ -205,7 +206,7 @@ def show_reconstructions(parameter_study_reader,
                 if len(lines) == 1:
                     filename = name + "_reconstructions.pdf"
                 else:
-                    filename = name + "_reconstructions_%d.pdf" % (j+1)
+                    filename = name + "_reconstructions_%d.pdf" % (j + 1)
 
                 ph.show_arrays(data_nda,
                                title=labels,
@@ -228,7 +229,8 @@ def show_reconstructions(parameter_study_reader,
             recons_sitk = []
 
             for nda in data_nda:
-                recon_sitk = sitk.GetImageFromArray(nda)
+                # Convert to float32 (no float16 in SimpleITK)
+                recon_sitk = sitk.GetImageFromArray(nda.astype(np.float32))
                 recon_sitk.SetSpacing(spacing)
                 recon_sitk.SetOrigin(origin)
                 recon_sitk.SetDirection(direction)

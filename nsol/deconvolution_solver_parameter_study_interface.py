@@ -121,6 +121,7 @@ class DeconvolutionSolverStudyInterface(object):
                  data_loss_scale=1,
                  tv_solver="PD",
                  verbose=0,
+                 append=0,
                  ):
 
         self._A = A
@@ -145,6 +146,9 @@ class DeconvolutionSolverStudyInterface(object):
         self._L2 = L2
         self._rho = rho
         self._verbose = verbose
+
+        # Append (instead of overwrite) potentially existing study
+        self._append = append
 
         self._set_up_solver = {
             "TK0L2": self._set_up_solver_TK0L2,
@@ -325,7 +329,7 @@ class DeconvolutionSolverStudyInterface(object):
             lambda x: prior_meas.zeroth_order_tikhonov(x)
         measures_dic["Data"] = \
             lambda x: loss_fun.get_ell2_cost_from_residual(
-                self._A(x)-self._b,
+                self._A(x) - self._b,
                 loss=self._data_loss,
                 f_scale=self._data_loss_scale)
 
@@ -334,7 +338,7 @@ class DeconvolutionSolverStudyInterface(object):
             lambda x: prior_meas.first_order_tikhonov(x, self._D)
         measures_dic["Data"] = \
             lambda x: loss_fun.get_ell2_cost_from_residual(
-                self._A(x)-self._b,
+                self._A(x) - self._b,
                 loss=self._data_loss,
                 f_scale=self._data_loss_scale)
 
@@ -343,7 +347,7 @@ class DeconvolutionSolverStudyInterface(object):
             lambda x: prior_meas.total_variation(x, self._D, self._dimension)
         measures_dic["Data"] = \
             lambda x: loss_fun.get_ell2_cost_from_residual(
-                self._A(x)-self._b,
+                self._A(x) - self._b,
                 loss=self._data_loss,
                 f_scale=self._data_loss_scale)
 
@@ -352,7 +356,7 @@ class DeconvolutionSolverStudyInterface(object):
             lambda x: prior_meas.huber(x, self._D, self._dimension)
         measures_dic["Data"] = \
             lambda x: loss_fun.get_ell2_cost_from_residual(
-                self._A(x)-self._b,
+                self._A(x) - self._b,
                 loss=self._data_loss,
                 f_scale=self._data_loss_scale)
 
@@ -441,6 +445,7 @@ class DeconvolutionParameterStudyInterface(DeconvolutionSolverStudyInterface):
                  data_loss_scale=1,
                  tv_solver="PD",
                  verbose=0,
+                 append=False,
                  ):
 
         super(self.__class__, self).__init__(
@@ -466,6 +471,7 @@ class DeconvolutionParameterStudyInterface(DeconvolutionSolverStudyInterface):
             dimension=dimension,
             tv_solver=tv_solver,
             verbose=verbose,
+            append=append,
         )
         self._name = name
         self._parameters = parameters
@@ -508,6 +514,7 @@ class DeconvolutionParameterStudyInterface(DeconvolutionSolverStudyInterface):
             parameters=self._parameters,
             name=self._name,
             reconstruction_info=self._reconstruction_info,
+            append=self._append,
         )
         return parameter_study
 
@@ -520,6 +527,7 @@ class DeconvolutionParameterStudyInterface(DeconvolutionSolverStudyInterface):
                 parameters=self._parameters,
                 name=self._name,
                 reconstruction_info=self._reconstruction_info,
+                append=self._append,
             )
         elif self._tv_solver == "ADMM":
             parameter_study = admmparam.ADMMLinearSolverParameterStudy(
@@ -528,6 +536,7 @@ class DeconvolutionParameterStudyInterface(DeconvolutionSolverStudyInterface):
                 parameters=self._parameters,
                 name=self._name,
                 reconstruction_info=self._reconstruction_info,
+                append=self._append,
             )
         return parameter_study
 
@@ -538,5 +547,6 @@ class DeconvolutionParameterStudyInterface(DeconvolutionSolverStudyInterface):
             parameters=self._parameters,
             name=self._name,
             reconstruction_info=self._reconstruction_info,
+            append=self._append,
         )
         return parameter_study

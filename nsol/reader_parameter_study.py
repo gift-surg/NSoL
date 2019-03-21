@@ -53,6 +53,13 @@ class ReaderParameterStudy(ParameterStudy):
         # Rebuild dictionary which was used for the parameter study as input
         self._parameters_dic = self._get_parameters()
 
+        parameters = self._get_parameters()
+        for k in parameters.keys():
+            if len(parameters[k]) == 0:
+                raise RuntimeError(
+                    "Directory '%s' does not contain "
+                    "suitable parameter study info" % self._directory)
+
     ##
     # Gets the reconstructions.
     # \date       2017-09-12 14:09:51+0100
@@ -78,6 +85,24 @@ class ReaderParameterStudy(ParameterStudy):
     def get_measures(self):
         self._check_that_study_was_read()
         return self._measures
+
+    ##
+    # Gets the file header.
+    # \date       2019-03-20 15:36:41+0000
+    #
+    # \param      self  The object
+    #
+    # \return     The file header as string.
+    #
+    def get_file_header(self):
+        self._check_that_study_was_read()
+
+        # Fetch information on used parameters from file. List of strings
+        # holds information of a single line in file
+        path_to_file_parameters = self._get_path_to_file_parameters()
+        lines = ph.read_file_line_by_line(path_to_file_parameters)
+
+        return lines[0]
 
     ##
     # Gets the results for selected measure.
@@ -286,7 +311,7 @@ class ReaderParameterStudy(ParameterStudy):
             line = parameters_to_line_dic[tuple(key)]
             lines[i] = line
 
-        lines = sorted(lines)
+        # lines = sorted(lines)
 
         return lines
 

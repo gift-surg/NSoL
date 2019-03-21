@@ -44,6 +44,7 @@ class ADMMLinearSolverParameterStudy(SolverParameterStudy):
                      # "data_loss_scale": [1., 1.2],
                  },
                  reconstruction_info={},
+                 append=False,
                  ):
 
         if not isinstance(solver, admm.ADMMLinearSolver):
@@ -56,6 +57,7 @@ class ADMMLinearSolverParameterStudy(SolverParameterStudy):
             dir_output=dir_output,
             name=name,
             reconstruction_info=reconstruction_info,
+            append=append,
         )
 
     def _get_fileheader(self):
