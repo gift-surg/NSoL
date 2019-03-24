@@ -71,6 +71,7 @@ class SolverParameterStudy(ParameterStudy):
             # Overwrite append-flag in case set as a new study is created
             self._append = False
         else:
+            ph.print_info("Append previous study ... ")
             self._check_that_studies_match()
 
         time_start = ph.start_timing()
@@ -102,6 +103,11 @@ class SolverParameterStudy(ParameterStudy):
     #
     def _check_that_studies_match(self):
 
+        def raise_error(h1, h2, info=""):
+            msg = "Study cannot be appended as parameter settings do " \
+                "not match: %s != %s%s" % (h1, h2, info)
+            raise RuntimeError(msg)
+
         reader_parameter_study = ReaderParameterStudy(
             directory=self._directory, name=self._name)
         reader_parameter_study.read_study()
@@ -112,14 +118,35 @@ class SolverParameterStudy(ParameterStudy):
         header_list = header.split(" ")[1:-2]
         header_prev_study_list = header_prev_study.split(" ")[1:-2]
 
+        # check each individual option
         for i in range(len(header_list)):
+
             # eliminate "," at the end of string
             h1 = re.sub(",", "", header_list[i])
             h2 = re.sub(",", "", header_prev_study_list[i])
-            if h1 != h2:
-                raise RuntimeError(
-                    "Study cannot be appended as parameter settings do "
-                    "not match: %s != %s" % (h1, h2))
+
+            # test if study name and non-numeric parameters matches,
+            # e.g. TVL2 and minimizer=lsmr
+            if h1 == h2:
+                continue
+
+            # test if numeric parameter values match, e.g. alpha=0.01
+            if "=" in h1 and "=" in h2:
+                h1_var, h1_val = h1.split("=")
+                h2_var, h2_val = h2.split("=")
+
+                if h1_var != h2_var:
+                    raise_error(h1, h2)
+
+                if ph.is_float(h1_val) and ph.is_float(h2_val):
+                    try:
+                        np.testing.assert_almost_equal(
+                            float(h1_val), float(h2_val), decimal=6)
+                        continue
+                    except AssertionError as e:
+                        raise_error(h1, h2, ". %s" % e)
+
+            raise_error(h1, h2)
 
     def _run(self):
 
