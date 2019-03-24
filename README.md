@@ -70,6 +70,7 @@ Additionally, the choice of finding optimal reconstruction parameters is facilit
 in the course of **parameter studies**. Implemented similarity measures are
 
 * Sum of Squared Differences (SSD)
+* Mean Absolute Error (MAE)
 * Mean Square Error (MSE)
 * Root Mean Square Error (RMSE)
 * Peak-Signal-to-Noise Ratio (PSNR)
