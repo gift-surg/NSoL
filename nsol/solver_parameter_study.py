@@ -175,11 +175,12 @@ class SolverParameterStudy(ParameterStudy):
             for j, key in enumerate(self._parameters.keys()):
 
                 # Update varying parameters of solver
-                map(eval("self._solver.set_" + key), [vals[j]])
+                getattr(self._solver, "set_%s" % key)(vals[j])
 
                 # Store current parameter values and print it on the screen
-                dic_parameter[key] = eval(
-                    "str(self._solver.get_" + key + "())")
+                dic_parameter[key] = str(
+                    getattr(self._solver, "get_%s" % key)())
+
                 ph.print_info(key + " = %s" % (dic_parameter[key]))
 
             # Execute solver
