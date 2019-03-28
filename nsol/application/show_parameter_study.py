@@ -8,12 +8,12 @@
 # \date       September 2017
 #
 
-# Import libraries
 import SimpleITK as sitk
 import argparse
 import numpy as np
 import sys
 import os
+import re
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
 from itertools import repeat
@@ -26,7 +26,7 @@ import nsol.reader_parameter_study as ReaderParameterStudy
 import nsol.input_argparser as InputArgparser
 
 
-def show_L_curve(parameter_study_reader, lines, ctr, dir_output=None):
+def show_L_curve(parameter_study_reader, lines, dir_output=None):
     name = parameter_study_reader.get_parameter_study_name()
 
     line_to_parameter_labels_dic = \
@@ -60,7 +60,7 @@ def show_L_curve(parameter_study_reader, lines, ctr, dir_output=None):
              for i in repeat(item, len(line))])
 
     # Plot
-    fig = plt.figure(ph.add_one(ctr))
+    fig = plt.figure("L-curve")
     fig.clf()
     ax = fig.gca()
 
@@ -85,9 +85,15 @@ def show_L_curve(parameter_study_reader, lines, ctr, dir_output=None):
         l.set_marker(markers[c])
 
     legend = plt.legend(loc="best", shadow=False, frameon=True)
-    plt.grid()
-    plt.xlabel("Data")
-    plt.xlabel("Regularizer")
+
+    plt.grid(True, which="major", ls="-", color='0.8')
+    plt.grid(True, which="minor", ls="--", color='0.9')
+
+    # plt.xscale("log")
+    # plt.yscale("log")
+
+    plt.xlabel("Data $\Phi(x)$")
+    plt.ylabel("Regularizer $\Psi(x)$")
     plt.title("%s: L-curve" % name)
 
     try:
@@ -102,7 +108,7 @@ def show_L_curve(parameter_study_reader, lines, ctr, dir_output=None):
         ph.save_fig(fig, dir_output, "%s_L-curve.pdf" % name)
 
 
-def show_measures(parameter_study_reader, lines, ctr, dir_output=None):
+def show_measures(parameter_study_reader, lines, dir_output=None):
     name = parameter_study_reader.get_parameter_study_name()
 
     line_to_parameter_labels_dic = \
@@ -110,17 +116,48 @@ def show_measures(parameter_study_reader, lines, ctr, dir_output=None):
 
     markers = ph.MARKERS * 100
 
+    measures = parameter_study_reader.get_measures()
+
+    # add overall cost to comparison plots
+    if len(parameter_study_reader.get_parameters().keys()) == 1 \
+            and "alpha" in parameter_study_reader.get_parameters().keys() \
+            and "Data" in measures \
+            and "Reg" in measures:
+        measures.insert(0, "Cost")
+
+    # Start from this iteration for plot
+    # (iter0 = 0 refers to initial value of reconstruction study)
+    iter0 = 0
+
     # Plot
-    for m in parameter_study_reader.get_measures():
+    for m in measures:
         y = []
         linestyle = []
         labels = []
         for line in lines:
-            nda = parameter_study_reader.get_results(m)
+
+            # labels (like 'alpha=0.01')
+            labels.extend([line_to_parameter_labels_dic[i] for i in line])
+
+            # Build total cost from individual data loss and regularizer term
+            if m == "Cost":
+                nda_data = parameter_study_reader.get_results("Data")
+                nda_reg = parameter_study_reader.get_results("Reg")
+                alphas_str = [re.sub("alpha=", "", l) for l in labels]
+                if any(not ph.is_float(alpha) for alpha in alphas_str):
+                    raise RuntimeError("Conversion of alpha's failed")
+                alphas = np.array(
+                    [float(alpha) for alpha in alphas_str]
+                ).reshape(-1, 1)
+
+                # cost = Phi(x) + alpha Psi(x)
+                nda = nda_data + alphas * nda_reg
+
+            else:
+                nda = parameter_study_reader.get_results(m)
 
             # Store all iterations for current parameter
-            y.extend([nda[i, :] for i in line])
-            labels.extend([line_to_parameter_labels_dic[i] for i in line])
+            y.extend([nda[i, iter0:] for i in line])
 
             # duplicate linestyle element len(line)-amount of times in list
             linestyle.extend(
@@ -130,13 +167,14 @@ def show_measures(parameter_study_reader, lines, ctr, dir_output=None):
         if len(y[0]) < 10:
             markevery = 1
         else:
-            markevery = 10
+            markevery = 5
 
-        fig = plt.figure(ph.add_one(ctr))
+        fig = plt.figure(m)
         fig.clf()
         ax = fig.gca()
+        x = np.arange(len(y[-1])) + iter0
         for c in range(len(y)):
-            l = plt.plot(y[c], label=labels[c])
+            l = plt.plot(x, y[c], label=labels[c])
 
             # Extract line object to adjust line settings
             l = l[0]
@@ -145,6 +183,7 @@ def show_measures(parameter_study_reader, lines, ctr, dir_output=None):
             l.set_markevery(markevery)
 
         # Only integers on x-axis
+        # plt.xticks(x[::5])
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
         if m in ["NCC", "SSIM"]:
@@ -152,10 +191,25 @@ def show_measures(parameter_study_reader, lines, ctr, dir_output=None):
         elif m == "NMI":
             ax.set_ylim([1, 1.3])
 
+        if m == "Data":
+            m_label = "Data $\Phi(x)$"
+            plt.yscale("log")
+        elif m == "Reg":
+            m_label = "Regularizer $\Psi(x)$"
+            plt.yscale("log")
+        elif m == "Cost":
+            m_label = "Total Cost $\Phi(x) + \\alpha\,\Psi(x)$"
+            plt.yscale("log")
+        else:
+            m_label = m
+            plt.yscale("linear")
+
         legend = plt.legend(loc="best", shadow=False, frameon=True)
-        plt.grid()
+        plt.grid(True, which="major", ls="-", color='0.8')
+        plt.grid(True, which="minor", ls="--", color='0.9')
+
         plt.xlabel("iteration")
-        plt.title("%s: %s" % (name, m))
+        plt.title("%s: %s" % (name, m_label))
 
         try:
             # Open windows (and also save them) in full screen
@@ -314,10 +368,8 @@ def main():
                 # Get lines in result files associated to varying 'alpha'
                 lines.append(parameter_study_reader.get_lines_to_parameters(p))
 
-    # Figure ctr
-    ctr = [0]
-    show_L_curve(parameter_study_reader, lines, ctr, args.dir_output_figures)
-    show_measures(parameter_study_reader, lines, ctr, args.dir_output_figures)
+    show_L_curve(parameter_study_reader, lines, args.dir_output_figures)
+    show_measures(parameter_study_reader, lines, args.dir_output_figures)
 
     if args.show_reconstructions:
         show_reconstructions(parameter_study_reader,
