@@ -86,8 +86,8 @@ def show_L_curve(parameter_study_reader, lines, ctr, dir_output=None):
 
     legend = plt.legend(loc="best", shadow=False, frameon=True)
     plt.grid()
-    plt.xlabel("Data")
-    plt.xlabel("Regularizer")
+    plt.xlabel("Data $\Phi(x)$")
+    plt.ylabel("Regularizer $\Psi(x)$")
     plt.title("%s: L-curve" % name)
 
     try:
