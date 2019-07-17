@@ -2,9 +2,10 @@
 
 The Numerical Solver Library (NSoL) is a Python-based open-source toolkit for research developed within the [GIFT-Surg][giftsurg] project and contains several implementations of denoising and deconvolution algorithms.
 
-The algorithm and software were developed by [Michael Ebner][mebner] at the [Translational Imaging Group][tig] in the [Centre for Medical Image Computing][cmic] at [University College London (UCL)][ucl].
+The algorithm and software were developed by [Michael Ebner][mebner]
+based at the [Wellcome/EPSRC Centre for Interventional and Surgical Sciences][weiss], [University College London (UCL)][ucl] (2015 -- 2019), and at the [Department of Surgical and Interventional Sciences][sie], [King's College London (KCL)][kcl] (since 2019).
 
-If you have any questions or comments, please drop an email to `michael.ebner.14@ucl.ac.uk`.
+If you have any questions or comments, please drop an email to `michael.ebner@kcl.ac.uk`.
 
 ## Features
 
@@ -172,7 +173,7 @@ nsol_show_parameter_study \
 ```
 
 ## Licensing and Copyright
-Copyright (c) 2018, [University College London][ucl].
+Copyright (c) 2019 Michael Ebner and contributors.
 This framework is made available as free open-source software under the [BSD-3-Clause License][bsd]. Other licenses may apply for dependencies.
 
 ## Funding
@@ -187,12 +188,14 @@ Associated publications are
 * [[Ebner2017]](https://link.springer.com/chapter/10.1007%2F978-3-319-52280-7_1) Ebner, M., Chouhan, M., Patel, P. A., Atkinson, D., Amin, Z., Read, S., Punwani, S., Taylor, S., Vercauteren, T., and Ourselin, S. (2017). Point-Spread-Function-Aware Slice-to-Volume Registration: Application to Upper Abdominal MRI Super-Resolution. In Zuluaga, M. A., Bhatia, K., Kainz, B., Moghari, M. H., and Pace, D. F., editors, Reconstruction, Segmentation, and Analysis of Medical Images. RAMBO 2016, volume 10129 of Lecture Notes in Computer Science, pages 3–13. Springer International Publishing.
 
 [mebner]: https://www.linkedin.com/in/ebnermichael
-[tig]: http://cmictig.cs.ucl.ac.uk
+[weiss]: https://www.ucl.ac.uk/interventional-surgical-sciences
 [bsd]: https://opensource.org/licenses/BSD-3-Clause
 [giftsurg]: http://www.gift-surg.ac.uk
 [cmic]: http://cmic.cs.ucl.ac.uk
 [guarantors]: https://guarantorsofbrain.org/
 [ucl]: http://www.ucl.ac.uk
+[kcl]: https://www.kcl.ac.uk
+[sie]: https://www.kcl.ac.uk/bmeis/our-departments/surgical-interventional-engineering
 [uclh]: http://www.uclh.nhs.uk
 [epsrc]: http://www.epsrc.ac.uk
 [wellcometrust]: http://www.wellcome.ac.uk
