@@ -17,6 +17,9 @@ from loss_functions_test import *
 from similarity_measures_test import *
 from solvers_test import *
 from run_denoising_test import *
+from run_deconvolution_test import *
+from run_denoising_study_test import *
+from run_deconvolution_study_test import *
 
 if __name__ == '__main__':
     print("\nUnit tests:\n--------------")
