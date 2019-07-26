@@ -186,10 +186,10 @@ def show_measures(parameter_study_reader, lines, dir_output=None):
         # plt.xticks(x[::5])
         ax.xaxis.set_major_locator(MaxNLocator(integer=True))
 
-        if m in ["NCC", "SSIM"]:
-            ax.set_ylim([0, 1])
-        elif m == "NMI":
-            ax.set_ylim([1, 1.3])
+        # if m in ["NCC", "SSIM"]:
+        #     ax.set_ylim([0, 1])
+        # elif m == "NMI":
+        #     ax.set_ylim([1, 1.3])
 
         if m == "Data":
             m_label = "Data $\Phi(x)$"

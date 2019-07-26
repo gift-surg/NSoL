@@ -2,9 +2,10 @@
 
 The Numerical Solver Library (NSoL) is a Python-based open-source toolkit for research developed within the [GIFT-Surg][giftsurg] project and contains several implementations of denoising and deconvolution algorithms.
 
-The algorithm and software were developed by [Michael Ebner][mebner] at the [Translational Imaging Group][tig] in the [Centre for Medical Image Computing][cmic] at [University College London (UCL)][ucl].
+The algorithm and software were developed by [Michael Ebner][mebner]
+at the [Wellcome/EPSRC Centre for Interventional and Surgical Sciences][weiss], [University College London (UCL)][ucl] (2015 -- 2019), and the [Department of Surgical and Interventional Sciences][sie], [King's College London (KCL)][kcl] (since 2019).
 
-If you have any questions or comments, please drop an email to `michael.ebner.14@ucl.ac.uk`.
+If you have any questions or comments, please drop an email to `michael.ebner@kcl.ac.uk`.
 
 ## Features
 
@@ -172,7 +173,7 @@ nsol_show_parameter_study \
 ```
 
 ## Licensing and Copyright
-Copyright (c) 2018, [University College London][ucl].
+Copyright (c) 2019 Michael Ebner and contributors.
 This framework is made available as free open-source software under the [BSD-3-Clause License][bsd]. Other licenses may apply for dependencies.
 
 ## Funding
@@ -180,6 +181,7 @@ This work is partially funded by the UCL [Engineering and Physical Sciences Rese
 
 ## References
 Associated publications are 
+* [[Ebner2019]](https://onlinelibrary.wiley.com/doi/abs/10.1002/mrm.27852) Ebner, M., Patel, P. A., Atkinson, D., Caselton, C., Firmin, F., Amin, Z., Bainbridge, A., De Coppi, P., Taylor, S. A., Ourselin, S., Chouhan, M. D., & Vercauteren, T. (2019). Super‐resolution for upper abdominal MRI: Acquisition and post‐processing protocol optimization using brain MRI control data and expert reader validation. Magnetic Resonance in Medicine.
 * [[EbnerWang2018]](http://link.springer.com/10.1007/978-3-030-00928-1_36) Ebner, M., Wang, G., Li, W., Aertsen, M., Patel, P. A., Melbourne, A., Doel, T., David, A. L., Deprest, J., Ourselin, S., & Vercauteren, T. (2018). An Automated Localization, Segmentation and Reconstruction Framework for Fetal Brain MRI. In Medical Image Computing and Computer-Assisted Intervention -- MICCAI 2018 (pp. 313–320). Springer
 * [[Ebner2018]](https://www.sciencedirect.com/science/article/pii/S1053811917308042) Ebner, M., Chung, K. K., Prados, F., Cardoso, M. J., Chard, D. T., Vercauteren, T., & Ourselin, S. (2018). Volumetric reconstruction from printed films: Enabling 30 year longitudinal analysis in MR neuroimaging. NeuroImage, 165, 238–250.
 * [[Xie2017]](https://www.spiedigitallibrary.org/journals/Journal_of_Biomedical_Optics/volume-22/issue-11/116006/Wide-field-spectrally-resolved-quantitative-fluorescence-imaging-system--toward/10.1117/1.JBO.22.11.116006.full) Xie, Y., Thom, M., Ebner, M., Wykes, V., Desjardins, A., Miserocchi, A., Ourselin, S., McEvoy, A. W., and Vercauteren, T. (2017). Wide-field spectrally resolved quantitative fluorescence imaging system: toward neurosurgical guidance in glioma resection. Journal of Biomedical Optics, 22(11).
@@ -187,12 +189,14 @@ Associated publications are
 * [[Ebner2017]](https://link.springer.com/chapter/10.1007%2F978-3-319-52280-7_1) Ebner, M., Chouhan, M., Patel, P. A., Atkinson, D., Amin, Z., Read, S., Punwani, S., Taylor, S., Vercauteren, T., and Ourselin, S. (2017). Point-Spread-Function-Aware Slice-to-Volume Registration: Application to Upper Abdominal MRI Super-Resolution. In Zuluaga, M. A., Bhatia, K., Kainz, B., Moghari, M. H., and Pace, D. F., editors, Reconstruction, Segmentation, and Analysis of Medical Images. RAMBO 2016, volume 10129 of Lecture Notes in Computer Science, pages 3–13. Springer International Publishing.
 
 [mebner]: https://www.linkedin.com/in/ebnermichael
-[tig]: http://cmictig.cs.ucl.ac.uk
+[weiss]: https://www.ucl.ac.uk/interventional-surgical-sciences
 [bsd]: https://opensource.org/licenses/BSD-3-Clause
 [giftsurg]: http://www.gift-surg.ac.uk
 [cmic]: http://cmic.cs.ucl.ac.uk
 [guarantors]: https://guarantorsofbrain.org/
 [ucl]: http://www.ucl.ac.uk
+[kcl]: https://www.kcl.ac.uk
+[sie]: https://www.kcl.ac.uk/bmeis/our-departments/surgical-interventional-engineering
 [uclh]: http://www.uclh.nhs.uk
 [epsrc]: http://www.epsrc.ac.uk
 [wellcometrust]: http://www.wellcome.ac.uk
