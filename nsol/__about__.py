@@ -1,6 +1,6 @@
 __title__ = "NSoL"
 __author__ = "Michael Ebner"
-__email__ = "michael.ebner.14@ucl.ac.uk"
+__email__ = "michael.ebner@kcl.ac.uk"
 __license__ = "BSD-3-Clause"
 __summary__ = "The Numerical Solver Library (NSoL) is a research-focused " \
     "toolkit for denoising and deconvolution applications using ADMM and " \

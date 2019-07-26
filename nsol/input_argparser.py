@@ -13,6 +13,7 @@ import argparse
 
 import pysitk.python_helper as ph
 
+import nsol
 from nsol.similarity_measures import SimilarityMeasures as \
     SimilarityMeasures
 from nsol.loss_functions import LossFunctions as \
@@ -35,7 +36,11 @@ class InputArgparser(object):
     def __init__(self,
                  description=None,
                  prog=None,
-                 epilog="Author: Michael Ebner (michael.ebner.14@ucl.ac.uk)",
+                 epilog="NSoL version: %s, Author: %s (%s)" % (
+                     nsol.__version__,
+                     nsol.__author__,
+                     nsol.__email__
+                 ),
                  ):
 
         kwargs = {}
@@ -47,6 +52,12 @@ class InputArgparser(object):
             kwargs['epilog'] = epilog
 
         self._parser = argparse.ArgumentParser(**kwargs)
+        self._parser.add_argument(
+            "--version",
+            action="version",
+            help="Show NSoL's version number and exit",
+            version="%s" % nsol.__version__,
+        )
 
     def get_parser(self):
         return self._parser
