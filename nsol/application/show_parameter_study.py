@@ -105,7 +105,7 @@ def show_L_curve(parameter_study_reader, lines, dir_output=None):
     plt.show(block=False)
 
     if dir_output is not None:
-        ph.save_fig(fig, dir_output, "%s_L-curve.pdf" % name)
+        ph.save_fig(fig, os.path.join(dir_output, "%s_L-curve.pdf" % name))
 
 
 def show_measures(parameter_study_reader, lines, dir_output=None):
@@ -220,7 +220,7 @@ def show_measures(parameter_study_reader, lines, dir_output=None):
         plt.show(block=False)
 
         if dir_output is not None:
-            ph.save_fig(fig, dir_output, "%s_%s.pdf" % (name, m))
+            ph.save_fig(fig, os.path.join(dir_output, "%s_%s.pdf" % (name, m)))
 
 
 def show_reconstructions(parameter_study_reader,
